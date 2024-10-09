@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
 import { Button } from "@/components/ui/button";
 import { ChevronUp, ChevronDown } from "lucide-react";
@@ -57,7 +57,15 @@ const TimeUnit = ({
   );
 };
 
-export default function Component() {
+type TimerProps = {
+  standardSeconds: Readonly<number>;
+  onStandardSecondsReached: () => void;
+};
+
+export default function Timer({
+  standardSeconds,
+  onStandardSecondsReached,
+}: TimerProps) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [mode, setMode] = useState<"before-start" | "paused" | "on-going">(
@@ -155,6 +163,12 @@ export default function Component() {
         break;
     }
   };
+
+  useEffect(() => {
+    if ((initialTime - displayTime) % standardSeconds === 0) {
+      onStandardSecondsReached();
+    }
+  }, [initialTime, displayTime, standardSeconds, onStandardSecondsReached]);
 
   return (
     <div className="w-full flex flex-col items-center p-6">
