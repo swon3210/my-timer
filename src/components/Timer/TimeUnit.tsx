@@ -24,9 +24,9 @@ const TimeUnit = ({
     trackMouse: true,
   });
 
-  return (
-    <div className="flex flex-col items-center" {...swipeHandlers}>
-      {platform === "WEB-PC" && (
+  if (platform === "WEB-PC") {
+    return (
+      <div className="flex flex-col items-center" {...swipeHandlers}>
         <Button
           variant="ghost"
           size="sm"
@@ -35,9 +35,7 @@ const TimeUnit = ({
         >
           <ChevronUp className="h-4 w-4" />
         </Button>
-      )}
-      <div className="text-2xl font-bold my-2">{formatTime(value)}</div>
-      {platform === "WEB-PC" && (
+        <div className="text-2xl font-bold my-2">{formatTime(value)}</div>
         <Button
           variant="ghost"
           size="sm"
@@ -46,7 +44,16 @@ const TimeUnit = ({
         >
           <ChevronDown className="h-4 w-4" />
         </Button>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex flex-col justify-center items-center h-96 overflow-y-auto"
+      {...swipeHandlers}
+    >
+      <div className="text-2xl font-bold my-2">{formatTime(value)}</div>
     </div>
   );
 };
