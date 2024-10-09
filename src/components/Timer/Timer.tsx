@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { formatTime } from "./_utils";
 import TimeUnit from "./TimeUnit";
+import { TimeUnitType } from "./_types";
 
 type TimerProps = {
   standardSeconds: Readonly<number>;
@@ -44,6 +45,20 @@ export default function Timer({
     }, 1000);
   };
 
+  const setTime = (unit: TimeUnitType, value: number) => {
+    switch (unit) {
+      case "hours":
+        setHours(value);
+        break;
+      case "minutes":
+        setMinutes(value);
+        break;
+      case "seconds":
+        setSeconds(value);
+        break;
+    }
+  };
+
   const handleStartTimerButtonClick = () => {
     if (hours > 0 || minutes > 0 || seconds > 0) {
       setMode("on-going");
@@ -57,10 +72,6 @@ export default function Timer({
 
   const handleContinueTimerButtonClick = () => {
     setMode("on-going");
-
-    // const time = hours * 3600 + minutes * 60 + seconds;
-    // setInitialTime(time);
-    // setDisplayTime(time);
     setTimerInterval();
   };
 
@@ -74,42 +85,6 @@ export default function Timer({
 
   const handleStopTimerButtonClick = () => {
     setMode("before-start");
-
-    // setInitialTime(0);
-    // setDisplayTime(0);
-    // setHours(0);
-    // setMinutes(0);
-    // setSeconds(0);
-  };
-
-  const handleTimeChange = (
-    unit: "hours" | "minutes" | "seconds",
-    direction: "up" | "down"
-  ) => {
-    if (mode === "on-going") {
-      return;
-    }
-
-    const increment = direction === "up" ? 1 : -1;
-    switch (unit) {
-      case "hours":
-        setHours((prev) => Math.max(0, Math.min(99, prev + increment)));
-        break;
-      case "minutes":
-      case "seconds":
-        const setter = unit === "minutes" ? setMinutes : setSeconds;
-        setter((prev) => {
-          const newValue = prev + increment;
-          if (newValue < 0) {
-            return 59;
-          }
-          if (newValue > 59) {
-            return 0;
-          }
-          return newValue;
-        });
-        break;
-    }
   };
 
   useEffect(() => {
@@ -157,23 +132,11 @@ export default function Timer({
 
       {mode === "before-start" && (
         <div className="flex justify-center items-center space-x-4 mb-6">
-          <TimeUnit
-            value={hours}
-            unit="hours"
-            onTimeChange={handleTimeChange}
-          />
+          <TimeUnit value={hours} unit="hours" setTime={setTime} />
           <span className="text-2xl font-bold my-2">:</span>
-          <TimeUnit
-            value={minutes}
-            unit="minutes"
-            onTimeChange={handleTimeChange}
-          />
+          <TimeUnit value={minutes} unit="minutes" setTime={setTime} />
           <span className="text-2xl font-bold my-2">:</span>
-          <TimeUnit
-            value={seconds}
-            unit="seconds"
-            onTimeChange={handleTimeChange}
-          />
+          <TimeUnit value={seconds} unit="seconds" setTime={setTime} />
         </div>
       )}
 
