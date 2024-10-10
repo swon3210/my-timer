@@ -17,6 +17,15 @@ const TimeUnit = ({
 }) => {
   const { platform } = usePlatform();
 
+  const timeUnitValues =
+    unit === "hours"
+      ? Array(99)
+          .fill(0)
+          .map((_, index) => index + 1)
+      : Array(59)
+          .fill(0)
+          .map((_, index) => index + 1);
+
   const changeTimeByDirection = (
     unit: TimeUnitType,
     direction: "up" | "down"
@@ -73,10 +82,14 @@ const TimeUnit = ({
 
   return (
     <div
-      className="flex flex-col justify-center items-center h-96 overflow-y-auto"
+      className="flex flex-col justify-center items-center h-32 overflow-y-auto"
       {...swipeHandlers}
     >
-      <div className="text-2xl font-bold my-2">{formatTime(value)}</div>
+      {timeUnitValues.map((timeUnitValue) => (
+        <div key={timeUnitValue} className="text-2xl font-bold my-2">
+          {formatTime(timeUnitValue)}
+        </div>
+      ))}
     </div>
   );
 };
