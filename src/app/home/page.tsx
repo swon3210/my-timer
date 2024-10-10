@@ -2,7 +2,9 @@
 
 import BackgroundGallery from "@/components/BackgroundGallery";
 import Timer from "@/components/Timer";
-import { loadImages } from "@/firebase";
+import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
+import { useImagesQuery } from "@/lib/queries";
+import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // 이미지 url 을 받아 해당 이미지를 prefetch 하는 함수
@@ -15,7 +17,11 @@ const getRandomIndex = (max: number) => {
 };
 
 export default function Home() {
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const categoryName = useAtomValue(categoryNameAtom);
+  const folderName = useAtomValue(folderNameAtom);
+
+  const { data: imageUrls = [] } = useImagesQuery({ categoryName, folderName });
+
   const [imageUrlIndex, setImageUrlIndex] = useState(0);
   const nextImageUrlIndexRef = useRef<number>();
 
@@ -78,21 +84,13 @@ export default function Home() {
     prefetchImage(imageUrls[nextIndex]);
   }, [imageUrlIndex, imageUrls]);
 
-  useEffect(() => {
-    loadImages().then((imageUrls) => {
-      if (imageUrls) {
-        setImageUrls(imageUrls);
-      }
-    });
-  }, []);
-
   return (
-    <main className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full flex justify-center items-center">
       <BackgroundGallery selectedImageUrl={selectedImageUrl} />
       <Timer
         standardSeconds={5}
         onStandardSecondsReached={handleStandardSecondsReached}
       />
-    </main>
+    </div>
   );
 }

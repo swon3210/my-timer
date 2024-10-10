@@ -15,23 +15,40 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const storage = getStorage(app, "gs://my-timer-12943.appspot.com");
-const storageRef = ref(storage, "images/raiden"); // 'images/' 디렉토리 참조
 
-// Firebase Storage에서 이미지 목록을 불러오는 함수
-async function loadImages() {
+export async function getFolderList(path: string) {
+  const folderRef = ref(storage, path);
+
   try {
-    // 'images/' 폴더 내 파일 목록 가져오기
-    const res = await listAll(storageRef);
+    // 'storagePath' 내 모든 파일 및 하위 폴더 목록 가져오기
+    const res = await listAll(folderRef);
+
+    // 폴더에 해당하는 prefix 목록을 가져옴 (폴더는 prefix로 구분)
+    const folders = res.prefixes.map((folderRef) => folderRef.fullPath);
+
+    return folders;
+  } catch (error) {
+    console.error("Error fetching folder list:", error);
+  }
+}
+
+export async function getImageListFromFolder(path: string) {
+  const folderRef = ref(storage, path);
+
+  try {
+    // 폴더 내 모든 파일 목록 가져오기
+    const res = await listAll(folderRef);
+
+    // 이미지 파일들의 다운로드 URL 가져오기
     const imageUrls = await Promise.all(
       res.items.map((itemRef) => getDownloadURL(itemRef))
     );
 
+    console.log("Image URLs from folder:", path, imageUrls);
     return imageUrls;
   } catch (error) {
-    console.error("Error fetching images:", error);
+    console.error("Error fetching image list:", error);
   }
 }
-
-export { loadImages };
 
 export default app;
