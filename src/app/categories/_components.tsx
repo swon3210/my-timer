@@ -1,6 +1,5 @@
 "use client";
 
-import clsx from "clsx";
 import { ArrowLeftCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
