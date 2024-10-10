@@ -74,7 +74,11 @@ export default function Home() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("touchstart", handleSwipe);
     };
-  });
+  }, [imageUrls]);
+
+  useEffect(() => {
+    setImageUrlIndex(getRandomIndex(imageUrls.length));
+  }, [imageUrls]);
 
   useEffect(() => {
     const prevIndex = (imageUrlIndex - 1 + imageUrls.length) % imageUrls.length;

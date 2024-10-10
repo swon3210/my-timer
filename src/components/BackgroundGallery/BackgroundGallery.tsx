@@ -7,7 +7,7 @@ const BackgroundGallery = ({ selectedImageUrl }: BackgroundGalleryProps) => {
     <div
       className="fixed top-0 left-0 w-full h-full -z-10"
       style={{
-        backgroundImage: `url(${selectedImageUrl})`,
+        backgroundImage: `url('${selectedImageUrl}')`,
         backgroundSize: "contain",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
