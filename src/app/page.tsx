@@ -3,11 +3,21 @@
 import BackgroundGallery from "@/components/BackgroundGallery";
 import Timer from "@/components/Timer";
 import { loadImages } from "@/firebase";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+// 이미지 url 을 받아 해당 이미지를 prefetch 하는 함수
+const prefetchImage = (imageUrl: string) => {
+  new Image().src = imageUrl;
+};
+
+const getRandomIndex = (max: number) => {
+  return Math.floor(Math.random() * max);
+};
 
 export default function Home() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [imageUrlIndex, setImageUrlIndex] = useState(0);
+  const nextImageUrlIndexRef = useRef<number>();
 
   const selectedImageUrl = imageUrls[imageUrlIndex];
 
@@ -16,7 +26,14 @@ export default function Home() {
       return;
     }
 
-    setImageUrlIndex(Math.floor(Math.random() * imageUrls.length));
+    if (nextImageUrlIndexRef.current == null) {
+      setImageUrlIndex(getRandomIndex(imageUrls.length));
+    } else {
+      setImageUrlIndex(nextImageUrlIndexRef.current);
+    }
+
+    nextImageUrlIndexRef.current = getRandomIndex(imageUrls.length);
+    prefetchImage(imageUrls[nextImageUrlIndexRef.current]);
   }, [imageUrls]);
 
   useEffect(() => {
@@ -30,9 +47,36 @@ export default function Home() {
       }
     };
 
+    const handleSwipe = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const x = touch.clientX;
+      const screenWidth = window.innerWidth;
+      const threshold = 100;
+
+      if (x < threshold) {
+        setImageUrlIndex(
+          (prev) => (prev - 1 + imageUrls.length) % imageUrls.length
+        );
+      } else if (x > screenWidth - threshold) {
+        setImageUrlIndex((prev) => (prev + 1) % imageUrls.length);
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("touchstart", handleSwipe);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("touchstart", handleSwipe);
+    };
   });
+
+  useEffect(() => {
+    const prevIndex = (imageUrlIndex - 1 + imageUrls.length) % imageUrls.length;
+    const nextIndex = (imageUrlIndex + 1) % imageUrls.length;
+
+    prefetchImage(imageUrls[prevIndex]);
+    prefetchImage(imageUrls[nextIndex]);
+  }, [imageUrlIndex, imageUrls]);
 
   useEffect(() => {
     loadImages().then((imageUrls) => {

@@ -1,61 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useSwipeable } from "react-swipeable";
 import { Button } from "@/components/ui/button";
-import { ChevronUp, ChevronDown } from "lucide-react";
-import usePlatform from "@/lib/hooks";
-
-const formatTime = (value: number) => {
-  return value.toString().padStart(2, "0");
-};
-
-const TimeUnit = ({
-  value,
-  unit,
-  onTimeChange,
-}: {
-  value: number;
-  unit: "hours" | "minutes" | "seconds";
-  onTimeChange: (
-    unit: "hours" | "minutes" | "seconds",
-    direction: "up" | "down"
-  ) => void;
-}) => {
-  const { platform } = usePlatform();
-
-  const swipeHandlers = useSwipeable({
-    onSwipedUp: () => onTimeChange(unit, "up"),
-    onSwipedDown: () => onTimeChange(unit, "down"),
-    trackMouse: true,
-  });
-
-  return (
-    <div className="flex flex-col items-center" {...swipeHandlers}>
-      {platform === "WEB-PC" && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full p-0"
-          onClick={() => onTimeChange(unit, "up")}
-        >
-          <ChevronUp className="h-4 w-4" />
-        </Button>
-      )}
-      <div className="text-2xl font-bold my-2">{formatTime(value)}</div>
-      {platform === "WEB-PC" && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full p-0"
-          onClick={() => onTimeChange(unit, "down")}
-        >
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-      )}
-    </div>
-  );
-};
+import { formatTime } from "./_utils";
+import TimeUnit from "./TimeUnit";
 
 type TimerProps = {
   standardSeconds: Readonly<number>;
@@ -180,6 +128,7 @@ export default function Timer({
               strokeWidth="4"
               stroke="currentColor"
               fill="transparent"
+              opacity={0.2}
               r="48"
               cx="50"
               cy="50"
@@ -192,12 +141,13 @@ export default function Timer({
               strokeLinecap="round"
               stroke="currentColor"
               fill="transparent"
+              opacity={0.4}
               r="48"
               cx="50"
               cy="50"
             />
           </svg>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl font-bold">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl font-bold opacity-50">
             {formatTime(Math.floor(displayTime / 3600))}:
             {formatTime(Math.floor((displayTime % 3600) / 60))}:
             {formatTime(displayTime % 60)}
