@@ -32,9 +32,9 @@ export default function CategoriesPage({
   };
 
   return (
-    <div className="w-full h-full mx-auto px-4 py-12">
+    <div className="w-full h-full mx-auto p-4">
       <div className="w-full h-full max-w-[1024px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:pt-32">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence>
             {folderNames.map((folderName) => (
               <motion.div
