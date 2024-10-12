@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
+import { platformAtom } from "./atoms";
 
 const usePlatform = () => {
-  const [platform, setPlatform] = useState<
-    "IOS" | "AOS" | "WEB-PC" | "WEB-MOBILE"
-  >();
+  const [platform, setPlatform] = useAtom(platformAtom);
 
   useEffect(() => {
     const userAgent = navigator.userAgent;

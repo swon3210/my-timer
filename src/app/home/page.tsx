@@ -2,7 +2,7 @@
 
 import BackgroundGallery from "@/components/BackgroundGallery";
 import Timer from "@/components/Timer";
-import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
+import { categoryNameAtom, folderNameAtom, platformAtom } from "@/lib/atoms";
 import { useImagesQuery } from "@/lib/queries";
 import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,6 +19,7 @@ const getRandomIndex = (max: number) => {
 export default function Home() {
   const categoryName = useAtomValue(categoryNameAtom);
   const folderName = useAtomValue(folderNameAtom);
+  const platform = useAtomValue(platformAtom);
 
   const { data: imageUrls = [] } = useImagesQuery({ categoryName, folderName });
 
@@ -42,6 +43,19 @@ export default function Home() {
     prefetchImage(imageUrls[nextImageUrlIndexRef.current]);
   }, [imageUrls]);
 
+  const handleBackgroundClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    // 클릭한 좌표 획득
+    const { clientX } = event;
+
+    if (clientX < window.innerWidth / 2) {
+      setImageUrlIndex(
+        (prev) => (prev - 1 + imageUrls.length) % imageUrls.length
+      );
+    } else {
+      setImageUrlIndex((prev) => (prev + 1) % imageUrls.length);
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
@@ -53,26 +67,9 @@ export default function Home() {
       }
     };
 
-    const handleSwipe = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      const x = touch.clientX;
-      const screenWidth = window.innerWidth;
-      const threshold = 100;
-
-      if (x < threshold) {
-        setImageUrlIndex(
-          (prev) => (prev - 1 + imageUrls.length) % imageUrls.length
-        );
-      } else if (x > screenWidth - threshold) {
-        setImageUrlIndex((prev) => (prev + 1) % imageUrls.length);
-      }
-    };
-
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("touchstart", handleSwipe);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("touchstart", handleSwipe);
     };
   }, [imageUrls]);
 
@@ -88,8 +85,15 @@ export default function Home() {
     prefetchImage(imageUrls[nextIndex]);
   }, [imageUrlIndex, imageUrls]);
 
+  if (platform == null) {
+    return null;
+  }
+
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div
+      className="w-full h-full flex justify-center items-center"
+      onClick={handleBackgroundClick}
+    >
       <BackgroundGallery selectedImageUrl={selectedImageUrl} />
       <Timer
         standardSeconds={5}
