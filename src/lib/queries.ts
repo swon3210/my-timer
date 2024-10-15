@@ -1,5 +1,12 @@
-import { getFolderList, getImageListFromFolder } from "@/app/api/firebase";
 import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "./api";
+import { z } from "zod";
+
+const getImageUrlsResponseSchema = z.object({
+  data: z.object({
+    images: z.array(z.string()),
+  }),
+});
 
 export const useImagesQuery = ({
   categoryName,
@@ -17,16 +24,28 @@ export const useImagesQuery = ({
         throw new Error("categoryName 혹은 folderName 이 비어있습니다");
       }
 
-      const response = await getImageListFromFolder(
-        `/images/${decodeURIComponent(categoryName)}/${decodeURIComponent(
-          folderName
-        )}`
-      );
-      return response;
+      // TODO : 예외처리
+      const response = await axiosInstance.get("/api/folders/images", {
+        params: {
+          path: `/images/${decodeURIComponent(
+            categoryName
+          )}/${decodeURIComponent(folderName)}`,
+        },
+      });
+
+      const { data } = getImageUrlsResponseSchema.parse(response);
+
+      return data.images;
     },
     enabled: categoryName != null && folderName != null,
   });
 };
+
+const getFolderNamesResponseSchema = z.object({
+  data: z.object({
+    folders: z.array(z.string()),
+  }),
+});
 
 export const useFolderNamesQuery = ({
   categoryName,
@@ -38,8 +57,20 @@ export const useFolderNamesQuery = ({
   return useQuery({
     queryKey: IMAGE_QUERY_KEY,
     queryFn: async ({ queryKey: [, { categoryName }] }) => {
-      const response = await getFolderList(`/images/${categoryName}`);
-      return response;
+      if (categoryName == null) {
+        throw new Error("categoryName 이 비어있습니다");
+      }
+
+      // TODO : 예외처리
+      const response = await axiosInstance.get("/api/folders", {
+        params: {
+          path: `/images/${decodeURIComponent(categoryName)}`,
+        },
+      });
+
+      const { data } = getFolderNamesResponseSchema.parse(response);
+
+      return data.folders;
     },
     enabled: categoryName != null,
     // TODO : 타입 정합성 맞추기
@@ -54,8 +85,16 @@ export const useCategoryNamesQuery = () => {
   return useQuery({
     queryKey: IMAGE_QUERY_KEY,
     queryFn: async () => {
-      const response = await getFolderList(`/images`);
-      return response;
+      // TODO : 예외처리
+      const response = await axiosInstance.get("/api/folders", {
+        params: {
+          path: `/images`,
+        },
+      });
+
+      const { data } = getFolderNamesResponseSchema.parse(response);
+
+      return data.folders;
     },
     select: (data) => data?.map((folder) => folder.split("/").pop()),
   });
