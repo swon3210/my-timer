@@ -16,7 +16,7 @@ const usePlatform = () => {
     } else {
       setPlatform("WEB-MOBILE");
     }
-  }, []);
+  }, [setPlatform]);
 
   return {
     platform,

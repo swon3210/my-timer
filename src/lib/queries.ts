@@ -1,4 +1,4 @@
-import { getFolderList, getImageListFromFolder } from "@/firebase";
+import { getFolderList, getImageListFromFolder } from "@/app/api/firebase";
 import { useQuery } from "@tanstack/react-query";
 
 export const useImagesQuery = ({
@@ -14,7 +14,7 @@ export const useImagesQuery = ({
     queryKey: IMAGE_QUERY_KEY,
     queryFn: async ({ queryKey: [, { categoryName, folderName }] }) => {
       if (categoryName == null || folderName == null) {
-        throw new Error("categoryName or folderName is null");
+        throw new Error("categoryName 혹은 folderName 이 비어있습니다");
       }
 
       const response = await getImageListFromFolder(

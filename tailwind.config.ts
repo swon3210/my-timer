@@ -12,6 +12,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      maxWidth: {
+        "app-container": "1024px",
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

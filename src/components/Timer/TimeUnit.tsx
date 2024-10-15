@@ -126,8 +126,8 @@ const TimeUnit = ({
   }
 
   return (
-    <div className="relative h-32">
-      <div className="absolute top-0 left-0 w-full h-12 bg-white/80 z-10 pointer-events-none"></div>
+    <div className="relative h-36">
+      {/* <div className="absolute top-0 left-0 w-full h-12 bg-white/80 z-10 pointer-events-none"></div> */}
       <div
         ref={timeValuesContainerRef}
         className="flex flex-col items-center h-full overflow-y-auto snap-y snap-mandatory scrollbar-hidden"
@@ -151,7 +151,7 @@ const TimeUnit = ({
           </div>
         ))}
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-12 bg-white/80 z-10 pointer-events-none"></div>
+      {/* <div className="absolute bottom-0 left-0 w-full h-12 bg-white/80 z-10 pointer-events-none"></div> */}
     </div>
   );
 };

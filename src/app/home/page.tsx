@@ -2,7 +2,8 @@
 
 import BackgroundGallery from "@/components/BackgroundGallery";
 import Timer from "@/components/Timer";
-import { categoryNameAtom, folderNameAtom, platformAtom } from "@/lib/atoms";
+import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
+import usePlatform from "@/lib/hooks";
 import { useImagesQuery } from "@/lib/queries";
 import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,14 +20,14 @@ const getRandomIndex = (max: number) => {
 export default function Home() {
   const categoryName = useAtomValue(categoryNameAtom);
   const folderName = useAtomValue(folderNameAtom);
-  const platform = useAtomValue(platformAtom);
+  const { platform } = usePlatform();
 
   const { data: imageUrls = [] } = useImagesQuery({ categoryName, folderName });
 
   const [imageUrlIndex, setImageUrlIndex] = useState(0);
   const nextImageUrlIndexRef = useRef<number>();
 
-  const selectedImageUrl = imageUrls[imageUrlIndex];
+  const selectedImageUrl = imageUrls[imageUrlIndex] as string | undefined;
 
   const handleStandardSecondsReached = useCallback(() => {
     if (imageUrls.length === 0) {
@@ -43,7 +44,9 @@ export default function Home() {
     prefetchImage(imageUrls[nextImageUrlIndexRef.current]);
   }, [imageUrls]);
 
-  const handleBackgroundClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleBackgroundGalleryClick = (
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
     // 클릭한 좌표 획득
     const { clientX } = event;
 
@@ -90,14 +93,18 @@ export default function Home() {
   }
 
   return (
-    <div
-      className="w-full h-full flex justify-center items-center"
-      onClick={handleBackgroundClick}
-    >
-      <BackgroundGallery selectedImageUrl={selectedImageUrl} />
+    <div className="w-full h-full flex justify-center items-center">
+      {selectedImageUrl && (
+        <BackgroundGallery
+          selectedImageUrl={selectedImageUrl}
+          onClick={handleBackgroundGalleryClick}
+          className="fixed top-0 left-0 z-0"
+        />
+      )}
       <Timer
         standardSeconds={5}
         onStandardSecondsReached={handleStandardSecondsReached}
+        className="relative z-10"
       />
     </div>
   );

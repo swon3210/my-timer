@@ -11,10 +11,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="w-full max-w-app-container mx-auto min-h-full">
+    <main className="w-full h-full max-w-app-container mx-auto">
       <div className="flex items-center h-16 px-2">
         <BackButton />
-        <h3 className="text-xl font-semibold">폴더</h3>
+        <h3 className="text-xl font-semibold">설정</h3>
       </div>
 
       {children}

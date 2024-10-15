@@ -5,14 +5,17 @@ import { Button } from "@/components/ui/button";
 import { formatTime } from "./_utils";
 import TimeUnit from "./TimeUnit";
 import { TimeUnitType } from "./_types";
+import clsx from "clsx";
 
 type TimerProps = {
   standardSeconds: Readonly<number>;
+  className?: string;
   onStandardSecondsReached: () => void;
 };
 
 export default function Timer({
   standardSeconds,
+  className,
   onStandardSecondsReached,
 }: TimerProps) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -94,7 +97,12 @@ export default function Timer({
   }, [initialTime, displayTime, standardSeconds, onStandardSecondsReached]);
 
   return (
-    <div className="w-full flex flex-col items-center p-6">
+    <div
+      className={clsx(
+        "w-full flex flex-col items-center p-6 max-w-72",
+        className
+      )}
+    >
       {mode !== "before-start" && (
         <div className="relative w-64 h-64 mb-6">
           <svg className="w-full h-full" viewBox="0 0 100 100">
