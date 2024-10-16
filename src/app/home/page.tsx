@@ -98,7 +98,7 @@ export default function Home() {
         <BackgroundGallery
           selectedImageUrl={selectedImageUrl}
           onClick={handleBackgroundGalleryClick}
-          className="fixed top-0 left-0 z-0"
+          className="fixed top-0 left-0 z-0 hidden"
         />
       )}
       <Timer

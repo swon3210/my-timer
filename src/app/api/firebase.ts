@@ -25,7 +25,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-const storage = getStorage(app, "gs://my-timer-12943.appspot.com");
+const storage = getStorage(app, "gs://my-timer-12943.appspot.com24");
 
 export async function getFolderList(path: string) {
   const folderRef = storageRef(storage, path);
