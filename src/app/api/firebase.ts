@@ -116,7 +116,7 @@ export type AppSettings = {
   selectedVoice: string;
 };
 
-export const saveSettings = async (
+export const saveAppSettings = async (
   userId: string,
   settings: AppSettings
 ): Promise<void> => {
@@ -128,7 +128,7 @@ export const saveSettings = async (
   }
 };
 
-export const getSettings = async (userId: string) => {
+export const getAppSettings = async (userId: string) => {
   try {
     const settingsRef = dbRef(database, `users/${userId}/settings`);
     const snapshot = await get(settingsRef);
