@@ -11,6 +11,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { getDatabase, ref as dbRef, set, get } from "firebase/database";
+import { AppSettings } from "@/lib/types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDeylqDbJ872XSsURgrRKbCcExj_sVlkqY",
@@ -108,13 +109,6 @@ export const signIn = async ({
 };
 
 const database = getDatabase(app);
-
-export type AppSettings = {
-  shouldExposeTimer: boolean;
-  tickSeconds: number;
-  selectedBGM: string;
-  selectedVoice: string;
-};
 
 export const saveAppSettings = async (
   userId: string,

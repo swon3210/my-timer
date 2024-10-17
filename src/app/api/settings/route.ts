@@ -1,14 +1,7 @@
-import { z } from "zod";
 import { getAppSettings, saveAppSettings } from "../firebase";
+import { appSettingsSchema } from "@/lib/types";
 
-export type AppSettings = z.infer<typeof setAppSettingsRequestParams>;
-
-const setAppSettingsRequestParams = z.object({
-  shouldExposeTimer: z.boolean(),
-  tickSeconds: z.number(),
-  selectedBGM: z.string(),
-  selectedVoice: z.string(),
-});
+const setAppSettingsRequestParams = appSettingsSchema;
 
 export async function GET() {
   const appSettings = await getAppSettings("2");
