@@ -15,13 +15,25 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { signIn } from "@/app/api/firebase";
 import { toast } from "sonner";
+import axios from "axios";
 
 type SignInFormValues = {
   email: string;
   showPassword: boolean;
   password: string;
+};
+
+const requestSignIn = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  const response = await axios.post("/api/auth/sign-in", { email, password });
+
+  return response.data;
 };
 
 export default function SignInPage() {
@@ -37,7 +49,7 @@ export default function SignInPage() {
 
   const handleFormSubmit = handleSubmit(async (formValues) => {
     try {
-      await signIn({
+      await requestSignIn({
         email: formValues.email,
         password: formValues.password,
       });

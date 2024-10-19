@@ -4,13 +4,11 @@ import {
   ref as storageRef,
   listAll,
   getDownloadURL,
+  uploadBytes,
+  deleteObject,
 } from "firebase/storage";
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
 import { getDatabase, ref as dbRef, set, get } from "firebase/database";
+import { AppSettings } from "@/lib/types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDeylqDbJ872XSsURgrRKbCcExj_sVlkqY",
@@ -23,9 +21,9 @@ const firebaseConfig = {
   appId: "1:517814501841:web:2082fb3ef4954b36b7a0f0",
 };
 
-const app = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
 
-const storage = getStorage(app, "gs://my-timer-12943.appspot.com24");
+const storage = getStorage(firebaseApp, "gs://my-timer-12943.appspot.com");
 
 export async function getFolderList(path: string) {
   const folderRef = storageRef(storage, path);
@@ -40,6 +38,26 @@ export async function getFolderList(path: string) {
     return folders;
   } catch (error) {
     console.error("Error fetching folder list:", error);
+  }
+}
+
+export async function addFolder(path: string) {
+  const folderRef = storageRef(storage, path);
+
+  try {
+    await uploadBytes(folderRef, new ArrayBuffer(0));
+  } catch (error) {
+    console.error("Error adding folder:", error);
+  }
+}
+
+export async function deleteFolder(path: string) {
+  const folderRef = storageRef(storage, path);
+
+  try {
+    await deleteObject(folderRef);
+  } catch (error) {
+    console.error("Error deleting folder:", error);
   }
 }
 
@@ -60,63 +78,29 @@ export async function getImageListFromFolder(path: string) {
   }
 }
 
-const auth = getAuth(app);
+export async function addImage(path: string, image: File) {
+  const imageRef = storageRef(storage, path);
 
-export const signUp = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-    console.log("회원가입 성공:", user);
-    return user;
+    await uploadBytes(imageRef, image);
   } catch (error) {
-    console.error("회원가입 실패:", error);
-    throw error;
+    console.error("Error adding image:", error);
   }
-};
+}
 
-// 로그인 함수
-export const signIn = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
+export async function deleteImage(path: string) {
+  const imageRef = storageRef(storage, path);
+
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-    console.log("로그인 성공:", user);
-    return user;
+    await deleteObject(imageRef);
   } catch (error) {
-    console.error("로그인 실패:", error);
-    throw error;
+    console.error("Error deleting image:", error);
   }
-};
+}
 
-const database = getDatabase(app);
+const database = getDatabase(firebaseApp);
 
-export type AppSettings = {
-  shouldExposeTimer: boolean;
-  tickSeconds: number;
-  selectedBGM: string;
-  selectedVoice: string;
-};
-
-export const saveSettings = async (
+export const saveAppSettings = async (
   userId: string,
   settings: AppSettings
 ): Promise<void> => {
@@ -128,7 +112,7 @@ export const saveSettings = async (
   }
 };
 
-export const getSettings = async (userId: string) => {
+export const getAppSettings = async (userId: string) => {
   try {
     const settingsRef = dbRef(database, `users/${userId}/settings`);
     const snapshot = await get(settingsRef);
@@ -144,4 +128,4 @@ export const getSettings = async (userId: string) => {
   }
 };
 
-export default app;
+export default firebaseApp;

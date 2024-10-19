@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getImageListFromFolder } from "../../firebase";
+import { addImage, deleteImage, getImageListFromFolder } from "../../firebase";
 
 const getFoldersRequestParams = z.string();
 
@@ -11,4 +11,20 @@ export async function GET(request: Request) {
   const images = await getImageListFromFolder(path);
 
   return Response.json({ images });
+}
+
+export async function POST(request: Request) {
+  const { path, image } = await request.json();
+
+  await addImage(path, image);
+
+  return Response.json({});
+}
+
+export async function DELETE(request: Request) {
+  const { path } = await request.json();
+
+  await deleteImage(path);
+
+  return Response.json({});
 }

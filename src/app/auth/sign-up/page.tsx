@@ -14,15 +14,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { signUp } from "@/app/api/firebase";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 type SignUpFormValues = {
   email: string;
   showPassword: boolean;
   password: string;
   confirmPassword: string;
+};
+
+const requestSignUp = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  const response = await axios.post("/api/auth/sign-up", { email, password });
+  return response.data;
 };
 
 export default function SignUpPage() {
@@ -46,7 +57,7 @@ export default function SignUpPage() {
     }
 
     try {
-      await signUp({
+      await requestSignUp({
         email: formValues.email,
         password: formValues.password,
       });
