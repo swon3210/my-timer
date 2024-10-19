@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { platformAtom } from "./atoms";
 
 const usePlatform = () => {
@@ -21,6 +21,16 @@ const usePlatform = () => {
   return {
     platform,
   };
+};
+
+export const useIsMounted = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  return isMounted;
 };
 
 export default usePlatform;

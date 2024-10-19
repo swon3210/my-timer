@@ -1,11 +1,34 @@
-import { useQuery } from "@tanstack/react-query";
+"use client";
+
+import {
+  useQuery,
+  useSuspenseQuery,
+  // UseSuspenseQueryOptions,
+} from "@tanstack/react-query";
 import { axiosInstance } from "./api";
 import { z } from "zod";
+import { appSettingsSchema } from "./types";
+
+// const useCustomSuspenseQuery = <T>(
+//   options: UseSuspenseQueryOptions<T> & { initialData: T }
+// ) => {
+//   return useSuspenseQuery({
+//     ...options,
+//     // queryFn: (context) => {
+//     //   if (isServer) {
+//     //     return options.initialData;
+//     //   }
+
+//     //   if (typeof options.queryFn === "function") {
+//     //     return options.queryFn(context);
+//     //   }
+//     //   throw new Error("queryFn must be a function");
+//     // },
+//   });
+// };
 
 const getImageUrlsResponseSchema = z.object({
-  data: z.object({
-    images: z.array(z.string()),
-  }),
+  images: z.array(z.string()),
 });
 
 export const useImagesQuery = ({
@@ -33,18 +56,16 @@ export const useImagesQuery = ({
         },
       });
 
-      const { data } = getImageUrlsResponseSchema.parse(response);
+      const { images } = getImageUrlsResponseSchema.parse(response.data);
 
-      return data.images;
+      return images;
     },
     enabled: categoryName != null && folderName != null,
   });
 };
 
 const getFolderNamesResponseSchema = z.object({
-  data: z.object({
-    folders: z.array(z.string()),
-  }),
+  folders: z.array(z.string()),
 });
 
 export const useFolderNamesQuery = ({
@@ -68,9 +89,9 @@ export const useFolderNamesQuery = ({
         },
       });
 
-      const { data } = getFolderNamesResponseSchema.parse(response);
+      const { folders } = getFolderNamesResponseSchema.parse(response.data);
 
-      return data.folders;
+      return folders;
     },
     enabled: categoryName != null,
     // TODO : 타입 정합성 맞추기
@@ -92,10 +113,32 @@ export const useCategoryNamesQuery = () => {
         },
       });
 
-      const { data } = getFolderNamesResponseSchema.parse(response);
+      const { folders } = getFolderNamesResponseSchema.parse(response.data);
 
-      return data.folders;
+      return folders;
     },
     select: (data) => data?.map((folder) => folder.split("/").pop()),
+  });
+};
+
+const getSettingsResponseSchema = z.object({
+  appSettings: appSettingsSchema,
+});
+
+export const useSettingsSuspenseQuery = () => {
+  const SETTINGS_QUERY_KEY = ["settings"] as const;
+
+  return useSuspenseQuery({
+    queryKey: SETTINGS_QUERY_KEY,
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/settings");
+
+      const { appSettings } = getSettingsResponseSchema.parse(response.data);
+
+      return appSettings;
+    },
+    persister: undefined,
+    initialData: undefined,
+    initialDataUpdatedAt: undefined,
   });
 };
