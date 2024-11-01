@@ -6,8 +6,25 @@ export const useSaveAppSettingsMutation = (
   options?: UseMutationOptions<AppSettings, unknown, AppSettings>
 ) => {
   return useMutation({
-    mutationFn: async (appSettings: AppSettings) => {
+    mutationFn: async (appSettings) => {
       const response = await axiosInstance.post("/api/settings", appSettings);
+
+      return response.data;
+    },
+    ...options,
+  });
+};
+
+type AddFolderMutationProps = {
+  path: string;
+};
+
+export const useAddFolderMutation = (
+  options?: UseMutationOptions<unknown, unknown, AddFolderMutationProps>
+) => {
+  return useMutation({
+    mutationFn: async (props) => {
+      const response = await axiosInstance.post("/api/folders", props);
 
       return response.data;
     },

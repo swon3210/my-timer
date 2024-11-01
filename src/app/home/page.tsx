@@ -4,7 +4,9 @@ import BackgroundGallery from "@/components/BackgroundGallery";
 import Timer from "@/components/Timer";
 import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
 import usePlatform from "@/lib/hooks";
-import { useImagesQuery } from "@/lib/queries";
+import { useImagesQuery, useSettingsQuery } from "@/lib/queries";
+import { isLocalEnv } from "@/lib/utils";
+import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -17,10 +19,14 @@ const getRandomIndex = (max: number) => {
   return Math.floor(Math.random() * max);
 };
 
+const DEFAULT_TICK_SECONDS = 5;
+
 export default function Home() {
   const categoryName = useAtomValue(categoryNameAtom);
   const folderName = useAtomValue(folderNameAtom);
   const { platform } = usePlatform();
+
+  const { data: appSettings } = useSettingsQuery();
 
   const { data: imageUrls = [] } = useImagesQuery({ categoryName, folderName });
 
@@ -94,15 +100,16 @@ export default function Home() {
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      {selectedImageUrl && (
+      {selectedImageUrl && appSettings?.shouldExposeTimer && (
         <BackgroundGallery
           selectedImageUrl={selectedImageUrl}
           onClick={handleBackgroundGalleryClick}
-          className="fixed top-0 left-0 z-0 hidden"
+          className={clsx("fixed top-0 left-0 z-0", isLocalEnv() && "hidden")}
         />
       )}
       <Timer
-        standardSeconds={5}
+        simple={appSettings?.shouldExposeTimer}
+        standardSeconds={appSettings?.tickSeconds ?? DEFAULT_TICK_SECONDS}
         onStandardSecondsReached={handleStandardSecondsReached}
         className="relative z-10"
       />

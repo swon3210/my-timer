@@ -1,13 +1,22 @@
 "use client";
 
 import {
+  QueryKey,
   useQuery,
+  useQueryClient,
   useSuspenseQuery,
   // UseSuspenseQueryOptions,
 } from "@tanstack/react-query";
 import { axiosInstance } from "./api";
 import { z } from "zod";
 import { appSettingsSchema } from "./types";
+
+// TODO : QueryKey Name 타입 추가 필요
+export const useInvalidateQuery = () => {
+  const queryClient = useQueryClient();
+
+  return (queryKey: QueryKey) => queryClient.invalidateQueries({ queryKey });
+};
 
 // const useCustomSuspenseQuery = <T>(
 //   options: UseSuspenseQueryOptions<T> & { initialData: T }
@@ -68,12 +77,15 @@ const getFolderNamesResponseSchema = z.object({
   folders: z.array(z.string()),
 });
 
+export const getFolderNamesQueryKey = (categoryName: string | null) =>
+  ["folders", { categoryName }] as const;
+
 export const useFolderNamesQuery = ({
   categoryName,
 }: {
   categoryName: string | null;
 }) => {
-  const IMAGE_QUERY_KEY = ["folders", { categoryName }] as const;
+  const IMAGE_QUERY_KEY = getFolderNamesQueryKey(categoryName);
 
   return useQuery({
     queryKey: IMAGE_QUERY_KEY,
@@ -140,5 +152,20 @@ export const useSettingsSuspenseQuery = () => {
     persister: undefined,
     initialData: undefined,
     initialDataUpdatedAt: undefined,
+  });
+};
+
+export const useSettingsQuery = () => {
+  const SETTINGS_QUERY_KEY = ["settings"] as const;
+
+  return useQuery({
+    queryKey: SETTINGS_QUERY_KEY,
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/settings");
+
+      const { appSettings } = getSettingsResponseSchema.parse(response.data);
+
+      return appSettings;
+    },
   });
 };

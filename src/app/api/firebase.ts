@@ -45,7 +45,8 @@ export async function addFolder(path: string) {
   const folderRef = storageRef(storage, path);
 
   try {
-    await uploadBytes(folderRef, new ArrayBuffer(0));
+    // 빈 텍스트 파일 업로드
+    await uploadBytes(folderRef, new File([], ""));
   } catch (error) {
     console.error("Error adding folder:", error);
   }

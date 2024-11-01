@@ -22,3 +22,7 @@ export const setLocalStorageItem = <T>(key: string, value: T) => {
     console.error(error);
   }
 };
+
+export const isLocalEnv = () => {
+  return process.env.NODE_ENV === "development";
+};

@@ -8,12 +8,14 @@ import { TimeUnitType } from "./_types";
 import clsx from "clsx";
 
 type TimerProps = {
+  simple?: boolean;
   standardSeconds: Readonly<number>;
   className?: string;
   onStandardSecondsReached: () => void;
 };
 
 export default function Timer({
+  simple,
   standardSeconds,
   className,
   onStandardSecondsReached,
@@ -99,11 +101,11 @@ export default function Timer({
   return (
     <div
       className={clsx(
-        "w-full flex flex-col items-center p-6 max-w-72",
+        "w-full flex flex-col items-center p-6 max-w-72 gap-4",
         className
       )}
     >
-      {mode !== "before-start" && (
+      {mode !== "before-start" && !simple && (
         <div className="relative w-64 h-64 mb-6">
           <svg className="w-full h-full" viewBox="0 0 100 100">
             <circle
@@ -135,6 +137,14 @@ export default function Timer({
             {formatTime(Math.floor((displayTime % 3600) / 60))}:
             {formatTime(displayTime % 60)}
           </div>
+        </div>
+      )}
+
+      {mode !== "before-start" && simple && (
+        <div className="text-4xl font-bold opacity-50">
+          {formatTime(Math.floor(displayTime / 3600))}:
+          {formatTime(Math.floor((displayTime % 3600) / 60))}:
+          {formatTime(displayTime % 60)}
         </div>
       )}
 
@@ -179,7 +189,7 @@ export default function Timer({
           <Button
             variant="outline"
             size="lg"
-            className="rounded-full"
+            className="rounded-full bg-transparent border-none"
             onClick={handlePauseTimerButtonClick}
           >
             일시정지
