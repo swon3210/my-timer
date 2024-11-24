@@ -16,9 +16,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { path } = await request.json();
+  const { path, image } = await request.json();
 
-  await addFolder(`${path}.txt`);
+  await addFolder(path, image);
 
   return Response.json({});
 }

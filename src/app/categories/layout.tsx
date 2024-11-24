@@ -1,9 +1,10 @@
 "use client";
 
 import BackButton from "@/components/BackButton";
+// import useImageUploadModalOverlay from "@/components/ImageUploadModal";
 import { Button } from "@/components/ui/button";
-import { useAddFolderMutation } from "@/lib/mutations";
-import { getFolderNamesQueryKey, useInvalidateQuery } from "@/lib/queries";
+// import { useAddFolderMutation } from "@/lib/mutations";
+// import { getFolderNamesQueryKey, useInvalidateQuery } from "@/lib/queries";
 import { Plus } from "lucide-react";
 import { useParams } from "next/navigation";
 
@@ -12,9 +13,11 @@ import { useParams } from "next/navigation";
 //   description: "사진 폴더를 선택하는 페이지",
 // };
 
-const AddFolderButton = ({ categoryName }: { categoryName: string }) => {
-  const { mutateAsync: addFolder } = useAddFolderMutation();
-  const invalidateQuery = useInvalidateQuery();
+const AddFolderButton = ({}: { categoryName: string }) => {
+  // const { mutateAsync: addFolder } = useAddFolderMutation();
+  // const invalidateQuery = useInvalidateQuery();
+
+  // const { openImageUploadModalOverlay } = useImageUploadModalOverlay();
 
   const handleAddFolderButtonClick = async () => {
     const folderName = prompt("폴더 이름을 입력하세요.");
@@ -23,8 +26,14 @@ const AddFolderButton = ({ categoryName }: { categoryName: string }) => {
       return;
     }
 
-    await addFolder({ path: `images/${categoryName}/${folderName}` });
-    void invalidateQuery(getFolderNamesQueryKey(categoryName));
+    // const [file] = await openImageUploadModalOverlay();
+
+    // await addFolder({
+    //   path: `images/${categoryName}/${folderName}`,
+    //   image: file,
+    // });
+
+    // void invalidateQuery(getFolderNamesQueryKey(categoryName));
   };
 
   return (

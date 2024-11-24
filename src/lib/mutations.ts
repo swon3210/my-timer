@@ -17,6 +17,7 @@ export const useSaveAppSettingsMutation = (
 
 type AddFolderMutationProps = {
   path: string;
+  image: File;
 };
 
 export const useAddFolderMutation = (

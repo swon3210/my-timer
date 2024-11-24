@@ -41,12 +41,12 @@ export async function getFolderList(path: string) {
   }
 }
 
-export async function addFolder(path: string) {
+export async function addFolder(path: string, image: File) {
   const folderRef = storageRef(storage, path);
 
   try {
-    // 빈 텍스트 파일 업로드
-    await uploadBytes(folderRef, new File([], ""));
+    // 특정 폴더에 이미지 파일 업로드
+    await uploadBytes(folderRef, image);
   } catch (error) {
     console.error("Error adding folder:", error);
   }
