@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
-import { useFolderNamesQuery } from "@/lib/queries";
+import { useImageFolderNamesQuery } from "@/lib/queries";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
 import { FolderIcon } from "lucide-react";
@@ -20,7 +20,7 @@ export default function CategoriesPage({
   const [, setCategoryName] = useAtom(categoryNameAtom);
   const [, setFolderName] = useAtom(folderNameAtom);
 
-  const { data: folderNames = [] } = useFolderNamesQuery({
+  const { data: folderNames = [] } = useImageFolderNamesQuery({
     categoryName: params.categoryName,
   });
 

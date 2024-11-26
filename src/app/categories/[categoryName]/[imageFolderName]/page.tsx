@@ -17,7 +17,7 @@ const gridOptions = [
 export default function CategoriesPage({
   params,
 }: {
-  params: { categoryName: string; folderName: string };
+  params: { categoryName: string; imageFolderName: string };
 }) {
   const [gridLayoutColumnNumber, setGridLayoutColumnNumber] = useAtom(
     gridLayoutColumnNumberAtom
@@ -25,7 +25,7 @@ export default function CategoriesPage({
 
   const { data: imageUrls = [] } = useImagesQuery({
     categoryName: params.categoryName,
-    folderName: params.folderName,
+    folderName: params.imageFolderName,
   });
 
   const handleGridLayoutColumnNumberButtonClick = (value: number) => {

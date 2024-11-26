@@ -40,6 +40,11 @@ const getImageUrlsResponseSchema = z.object({
   images: z.array(z.string()),
 });
 
+export const getImagesQueryKey = (
+  categoryName: string | null,
+  folderName: string | null
+) => ["images", { categoryName, folderName }] as const;
+
 export const useImagesQuery = ({
   categoryName,
   folderName,
@@ -47,10 +52,8 @@ export const useImagesQuery = ({
   categoryName: string | null;
   folderName: string | null;
 }) => {
-  const IMAGE_QUERY_KEY = ["images", { categoryName, folderName }] as const;
-
   return useQuery({
-    queryKey: IMAGE_QUERY_KEY,
+    queryKey: getImagesQueryKey(categoryName, folderName),
     queryFn: async ({ queryKey: [, { categoryName, folderName }] }) => {
       if (categoryName == null || folderName == null) {
         throw new Error("categoryName 혹은 folderName 이 비어있습니다");
@@ -77,18 +80,16 @@ const getFolderNamesResponseSchema = z.object({
   folders: z.array(z.string()),
 });
 
-export const getFolderNamesQueryKey = (categoryName: string | null) =>
+export const getImageFolderNamesQueryKey = (categoryName: string | null) =>
   ["folders", { categoryName }] as const;
 
-export const useFolderNamesQuery = ({
+export const useImageFolderNamesQuery = ({
   categoryName,
 }: {
   categoryName: string | null;
 }) => {
-  const IMAGE_QUERY_KEY = getFolderNamesQueryKey(categoryName);
-
   return useQuery({
-    queryKey: IMAGE_QUERY_KEY,
+    queryKey: getImageFolderNamesQueryKey(categoryName),
     queryFn: async ({ queryKey: [, { categoryName }] }) => {
       if (categoryName == null) {
         throw new Error("categoryName 이 비어있습니다");
@@ -112,11 +113,11 @@ export const useFolderNamesQuery = ({
   });
 };
 
-export const useCategoryNamesQuery = () => {
-  const IMAGE_QUERY_KEY = ["categories"] as const;
+export const getCategoryNamesQueryKey = () => ["categories"] as const;
 
+export const useCategoryNamesQuery = () => {
   return useQuery({
-    queryKey: IMAGE_QUERY_KEY,
+    queryKey: getCategoryNamesQueryKey(),
     queryFn: async () => {
       // TODO : 예외처리
       const response = await axiosInstance.get("/api/folders", {

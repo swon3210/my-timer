@@ -1,11 +1,16 @@
 "use client";
 
 import BackButton from "@/components/BackButton";
-// import useImageUploadModalOverlay from "@/components/ImageUploadModal";
+import ImageUploadButton from "@/components/ImageUploadButton";
 import { Button } from "@/components/ui/button";
-// import { useAddFolderMutation } from "@/lib/mutations";
-// import { getFolderNamesQueryKey, useInvalidateQuery } from "@/lib/queries";
-import { Plus } from "lucide-react";
+import { useAddFolderMutation, useAddImagesMutation } from "@/lib/mutations";
+import {
+  getCategoryNamesQueryKey,
+  getImageFolderNamesQueryKey,
+  getImagesQueryKey,
+  useInvalidateQuery,
+} from "@/lib/queries";
+import { FolderPlus } from "lucide-react";
 import { useParams } from "next/navigation";
 
 // export const metadata = {
@@ -13,34 +18,71 @@ import { useParams } from "next/navigation";
 //   description: "사진 폴더를 선택하는 페이지",
 // };
 
-const AddFolderButton = ({}: { categoryName: string }) => {
-  // const { mutateAsync: addFolder } = useAddFolderMutation();
-  // const invalidateQuery = useInvalidateQuery();
+const AddFolderButton = () => {
+  const { mutateAsync: addFolder } = useAddFolderMutation();
+  const invalidateQuery = useInvalidateQuery();
 
-  // const { openImageUploadModalOverlay } = useImageUploadModalOverlay();
-
-  const handleAddFolderButtonClick = async () => {
+  const handleClick = async () => {
     const folderName = prompt("폴더 이름을 입력하세요.");
 
     if (!folderName) {
       return;
     }
 
-    // const [file] = await openImageUploadModalOverlay();
+    await addFolder({ path: `images/${folderName}` });
 
-    // await addFolder({
-    //   path: `images/${categoryName}/${folderName}`,
-    //   image: file,
-    // });
-
-    // void invalidateQuery(getFolderNamesQueryKey(categoryName));
+    void invalidateQuery(getCategoryNamesQueryKey());
   };
 
   return (
-    <Button variant="outline" size="icon" onClick={handleAddFolderButtonClick}>
-      <Plus className="w-4 h-4 text-gray-700" />
+    <Button variant="outline" size="icon" onClick={handleClick}>
+      <FolderPlus className="w-4 h-4 text-gray-700" />
     </Button>
   );
+};
+
+const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
+  const { mutateAsync: addImages } = useAddImagesMutation();
+  const invalidateQuery = useInvalidateQuery();
+
+  const handleImagesUploaded = async (images: File[]) => {
+    const folderName = prompt("이미지 폴더 이름을 입력하세요.");
+
+    if (!folderName) {
+      return;
+    }
+
+    await addImages({
+      path: `images/${categoryName}/${folderName}`,
+      images,
+    });
+
+    void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
+  };
+
+  return <ImageUploadButton onImagesUploaded={handleImagesUploaded} />;
+};
+
+const AddImagesToFolderButton = ({
+  categoryName,
+  imageFolderName,
+}: {
+  categoryName: string;
+  imageFolderName: string;
+}) => {
+  const { mutateAsync: addImages } = useAddImagesMutation();
+  const invalidateQuery = useInvalidateQuery();
+
+  const handleImagesUploaded = async (images: File[]) => {
+    await addImages({
+      path: `images/${categoryName}/${imageFolderName}`,
+      images,
+    });
+
+    void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
+  };
+
+  return <ImageUploadButton onImagesUploaded={handleImagesUploaded} />;
 };
 
 export default function RootLayout({
@@ -48,7 +90,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { categoryName } = useParams() as { categoryName?: string };
+  const { categoryName, imageFolderName } = useParams() as {
+    categoryName?: string;
+    imageFolderName?: string;
+  };
 
   return (
     <main className="w-full max-w-app-container mx-auto min-h-full">
@@ -57,7 +102,17 @@ export default function RootLayout({
           <BackButton />
           <h3 className="text-xl font-semibold">폴더</h3>
         </div>
-        {categoryName && <AddFolderButton categoryName={categoryName} />}
+        {/* 라우팅에 따른 분기로 로직 변경 */}
+        {imageFolderName && categoryName ? (
+          <AddImagesToFolderButton
+            categoryName={categoryName}
+            imageFolderName={imageFolderName}
+          />
+        ) : categoryName ? (
+          <AddImageFolderButton categoryName={categoryName} />
+        ) : (
+          <AddFolderButton />
+        )}
       </div>
 
       {children}

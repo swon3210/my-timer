@@ -17,7 +17,6 @@ export const useSaveAppSettingsMutation = (
 
 type AddFolderMutationProps = {
   path: string;
-  image: File;
 };
 
 export const useAddFolderMutation = (
@@ -26,6 +25,33 @@ export const useAddFolderMutation = (
   return useMutation({
     mutationFn: async (props) => {
       const response = await axiosInstance.post("/api/folders", props);
+
+      return response.data;
+    },
+    ...options,
+  });
+};
+
+type AddImagesMutationProps = {
+  path: string;
+  images: File[];
+};
+
+export const useAddImagesMutation = (
+  options?: UseMutationOptions<unknown, unknown, AddImagesMutationProps>
+) => {
+  return useMutation({
+    mutationFn: async (props) => {
+      const formData = new FormData();
+      formData.append("path", props.path);
+      props.images.forEach((image) => {
+        formData.append("images", image);
+      });
+
+      const response = await axiosInstance.post(
+        "/api/folders/images",
+        formData
+      );
 
       return response.data;
     },

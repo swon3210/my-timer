@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { X, Upload, Image as ImageIcon } from "lucide-react";
+import { X, Upload, Image as ImageIcon, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,23 +11,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useOverlay } from "@toss/use-overlay";
 
 type ImageUploadModalOverlayProps = {
-  isOpen: boolean;
-  close: () => void;
-  resolve: (files: File[]) => void;
+  onImagesUploaded: (files: File[]) => void;
 };
 
-const ImageUploadModalOverlay = ({
-  isOpen,
-}: // close,
-// resolve,
-ImageUploadModalOverlayProps) => {
+const ImageUploadButton = ({
+  onImagesUploaded,
+}: ImageUploadModalOverlayProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
 
   const handleDrop = (acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
+    onImagesUploaded(acceptedFiles);
+    setIsOpen(false);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -35,7 +33,7 @@ ImageUploadModalOverlayProps) => {
     accept: {
       "image/*": [],
     },
-    multiple: false,
+    multiple: true,
   });
 
   const removeFile = () => {
@@ -43,9 +41,11 @@ ImageUploadModalOverlayProps) => {
   };
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">이미지 업로드</Button>
+        <Button variant="outline" size="icon">
+          <Plus className="w-4 h-4 text-gray-700" />
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -104,23 +104,4 @@ ImageUploadModalOverlayProps) => {
   );
 };
 
-const useImageUploadModalOverlay = () => {
-  const overlay = useOverlay({ exitOnUnmount: true });
-
-  const openImageUploadModalOverlay = () =>
-    new Promise<File[]>((resolve) => {
-      overlay.open(({ close, isOpen }) => (
-        <ImageUploadModalOverlay
-          isOpen={isOpen}
-          close={close}
-          resolve={resolve}
-        />
-      ));
-    });
-
-  return {
-    openImageUploadModalOverlay,
-  };
-};
-
-export default useImageUploadModalOverlay;
+export default ImageUploadButton;

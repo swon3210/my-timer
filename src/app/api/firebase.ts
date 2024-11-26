@@ -41,12 +41,12 @@ export async function getFolderList(path: string) {
   }
 }
 
-export async function addFolder(path: string, image: File) {
-  const folderRef = storageRef(storage, path);
+export async function addFolder(path: string) {
+  const folderRef = storageRef(storage, path.concat("/.empty"));
 
   try {
-    // 특정 폴더에 이미지 파일 업로드
-    await uploadBytes(folderRef, image);
+    // 빈 폴더 업로드
+    await uploadBytes(folderRef, new Blob());
   } catch (error) {
     console.error("Error adding folder:", error);
   }
@@ -88,6 +88,37 @@ export async function addImage(path: string, image: File) {
     console.error("Error adding image:", error);
   }
 }
+
+export const addImages = async (folderPath: string, imageFiles: File[]) => {
+  try {
+    const storage = getStorage();
+    const uploadPromises = imageFiles.map(async (file) => {
+      // 파일명 생성 (현재 시간 + 원본 파일명)
+      const fileName = `${Date.now()}_${file.name}`;
+
+      // storage 참조 생성
+      const imageStorageRef = storageRef(storage, `${folderPath}/${fileName}`);
+
+      // 파일 업로드
+      const snapshot = await uploadBytes(imageStorageRef, file);
+
+      // 업로드된 파일의 다운로드 URL 가져오기
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      return {
+        fileName,
+        downloadURL,
+      };
+    });
+
+    // 모든 이미지 업로드 완료 대기
+    const results = await Promise.all(uploadPromises);
+    return results;
+  } catch (error) {
+    console.error("이미지 업로드 중 오류 발생:", error);
+    throw error;
+  }
+};
 
 export async function deleteImage(path: string) {
   const imageRef = storageRef(storage, path);
