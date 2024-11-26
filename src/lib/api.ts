@@ -1,5 +1,6 @@
+import { isServer } from "@tanstack/react-query";
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: process.env.ORIGIN ? process.env.ORIGIN : "http://localhost:3000",
+  baseURL: isServer ? undefined : window.location.origin,
 });
