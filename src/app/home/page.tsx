@@ -94,25 +94,26 @@ export default function Home() {
     prefetchImage(imageUrls[nextIndex]);
   }, [imageUrlIndex, imageUrls]);
 
-  if (platform == null) {
+  if (platform == null || appSettings == null) {
     return null;
   }
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      {selectedImageUrl && appSettings?.shouldExposeTimer && (
+      {selectedImageUrl && (
         <BackgroundGallery
           selectedImageUrl={selectedImageUrl}
           onClick={handleBackgroundGalleryClick}
           className={clsx("fixed top-0 left-0 z-0", isLocalEnv() && "hidden")}
         />
       )}
-      <Timer
-        simple={appSettings?.shouldExposeTimer}
-        standardSeconds={appSettings?.tickSeconds ?? DEFAULT_TICK_SECONDS}
-        onStandardSecondsReached={handleStandardSecondsReached}
-        className="relative z-10"
-      />
+      {appSettings.shouldExposeTimer && (
+        <Timer
+          standardSeconds={appSettings?.tickSeconds ?? DEFAULT_TICK_SECONDS}
+          onStandardSecondsReached={handleStandardSecondsReached}
+          className="relative z-10"
+        />
+      )}
     </div>
   );
 }
