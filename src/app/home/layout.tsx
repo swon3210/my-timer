@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <main className="w-full h-full">
       <div className="fixed z-10 top-0 right-0 p-4 flex flex-col gap-4">
-        <Link href="/auth/sign-in">
+        <Link href="/sign-in">
           <LogIn size={32} />
         </Link>
         <Link href="/categories">

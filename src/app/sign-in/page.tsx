@@ -184,7 +184,7 @@ export default function SignInPage() {
           <p className="text-xs text-center text-muted-foreground mt-4">
             계정이 없으신가요?{" "}
             <Link
-              href="/auth/sign-up"
+              href="/sign-up"
               className="text-orange-600 hover:text-orange-700 hover:underline"
             >
               회원가입

@@ -62,7 +62,7 @@ export default function SignUpPage() {
         password: formValues.password,
       });
       toast("회원가입에 성공했습니다");
-      router.replace("/auth/sign-in");
+      router.replace("/sign-in");
     } catch (error) {
       toast("회원가입에 실패했습니다");
       throw error;
@@ -163,10 +163,7 @@ export default function SignUpPage() {
         </CardFooter>
         <div className="text-center text-sm text-gray-600 mt-4 mb-6">
           이미 계정이 있으신가요?{" "}
-          <Link
-            href="/auth/sign-in"
-            className="text-orange-600 hover:underline"
-          >
+          <Link href="/sign-in" className="text-orange-600 hover:underline">
             로그인
           </Link>
         </div>
