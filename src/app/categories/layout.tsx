@@ -3,13 +3,14 @@
 import BackButton from "@/components/BackButton";
 import ImageUploadButton from "@/components/ImageUploadButton";
 import { Button } from "@/components/ui/button";
-import { useAddFolderMutation, useAddImagesMutation } from "@/lib/mutations";
+import { useAddFolderMutation } from "@/lib/mutations";
 import {
   getCategoryNamesQueryKey,
   getImageFolderNamesQueryKey,
   getImagesQueryKey,
   useInvalidateQuery,
 } from "@/lib/queries";
+import { useFirebase } from "@/providers/FirebaseProvider";
 import { FolderPlus } from "lucide-react";
 import { useParams } from "next/navigation";
 
@@ -42,7 +43,7 @@ const AddFolderButton = () => {
 };
 
 const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
-  const { mutateAsync: addImages } = useAddImagesMutation();
+  const { addImages } = useFirebase();
   const invalidateQuery = useInvalidateQuery();
 
   const handleImagesUploaded = async (images: File[]) => {
@@ -52,10 +53,7 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       return;
     }
 
-    await addImages({
-      path: `images/${categoryName}/${folderName}`,
-      images,
-    });
+    await addImages(`images/${categoryName}/${folderName}`, images);
 
     void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
   };
@@ -70,14 +68,11 @@ const AddImagesToFolderButton = ({
   categoryName: string;
   imageFolderName: string;
 }) => {
-  const { mutateAsync: addImages } = useAddImagesMutation();
   const invalidateQuery = useInvalidateQuery();
+  const { addImages } = useFirebase();
 
   const handleImagesUploaded = async (images: File[]) => {
-    await addImages({
-      path: `images/${categoryName}/${imageFolderName}`,
-      images,
-    });
+    await addImages(`images/${categoryName}/${imageFolderName}`, images);
 
     void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
   };

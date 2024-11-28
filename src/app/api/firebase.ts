@@ -10,7 +10,7 @@ import {
 import { getDatabase, ref as dbRef, set, get } from "firebase/database";
 import { AppSettings } from "@/lib/types";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
@@ -19,6 +19,8 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
+
+export type FirebaseConfig = typeof firebaseConfig;
 
 const firebaseApp = initializeApp(firebaseConfig);
 
@@ -75,16 +77,6 @@ export async function getImageListFromFolder(path: string) {
     return imageUrls;
   } catch (error) {
     console.error("Error fetching image list:", error);
-  }
-}
-
-export async function addImage(path: string, image: File) {
-  const imageRef = storageRef(storage, path);
-
-  try {
-    await uploadBytes(imageRef, image);
-  } catch (error) {
-    console.error("Error adding image:", error);
   }
 }
 
