@@ -5,7 +5,6 @@ import Timer from "@/components/Timer";
 import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
 import usePlatform from "@/lib/hooks";
 import { useImagesQuery, useSettingsQuery } from "@/lib/queries";
-import { isLocalEnv } from "@/lib/utils";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -104,7 +103,7 @@ export default function Home() {
         <BackgroundGallery
           selectedImageUrl={selectedImageUrl}
           onClick={handleBackgroundGalleryClick}
-          className={clsx("fixed top-0 left-0 z-0", isLocalEnv() && "hidden")}
+          className={clsx("fixed top-0 left-0 z-0")}
         />
       )}
       {appSettings.shouldExposeTimer && (

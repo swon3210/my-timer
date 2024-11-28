@@ -3,6 +3,7 @@
 import BackButton from "@/components/BackButton";
 import ImageUploadButton from "@/components/ImageUploadButton";
 import { Button } from "@/components/ui/button";
+import { optimizeImage } from "@/lib/image";
 import { useAddFolderMutation } from "@/lib/mutations";
 import {
   getCategoryNamesQueryKey,
@@ -53,7 +54,9 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       return;
     }
 
-    await addImages(`images/${categoryName}/${folderName}`, images);
+    const optimizedImages = await Promise.all(images.map(optimizeImage));
+
+    await addImages(`images/${categoryName}/${folderName}`, optimizedImages);
 
     void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
   };

@@ -14,7 +14,7 @@ import { createContext, useContext, useMemo } from "react";
 const FirebaseContext = createContext<{
   addImages: (
     folderPath: string,
-    imageFiles: File[]
+    imageFiles: File[] | Blob[]
   ) => Promise<
     {
       fileName: string;
@@ -59,7 +59,7 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
     return getStorage(firebaseApp);
   }, [firebaseApp]);
 
-  const addImages = async (folderPath: string, imageFiles: File[]) => {
+  const addImages = async (folderPath: string, imageFiles: File[] | Blob[]) => {
     if (!storage) {
       return [];
     }
@@ -67,7 +67,7 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const uploadPromises = imageFiles.map(async (file) => {
         // 파일명 생성 (현재 시간 + 원본 파일명)
-        const fileName = `${Date.now()}_${file.name}`;
+        const fileName = `${Date.now()}`;
 
         // storage 참조 생성
         const imageStorageRef = storageRef(

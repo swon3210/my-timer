@@ -1,9 +1,4 @@
 export const optimizeImage = async (file: File): Promise<Blob> => {
-  // 300KB 미만이면 원본 반환
-  if (file.size < 300 * 1024) {
-    return file;
-  }
-
   // 이미지 로드
   const image = new Image();
   const imageUrl = URL.createObjectURL(file);
@@ -40,8 +35,8 @@ export const optimizeImage = async (file: File): Promise<Blob> => {
           resolve(file); // 실패시 원본 반환
         }
       },
-      file.type,
-      0.7 // 품질 70%로 압축
+      "image/webp",
+      0.8 // 품질 80% 압축
     );
   });
 };
