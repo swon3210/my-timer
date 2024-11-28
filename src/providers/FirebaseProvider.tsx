@@ -64,11 +64,13 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
       return [];
     }
 
+    let index = 0;
+
     try {
       const uploadPromises = imageFiles.map(async (file) => {
         // 파일명 생성 (현재 시간 + 원본 파일명)
-        const fileName = `${Date.now()}`;
-
+        const fileName = `${Date.now()}_${index}`;
+        index++;
         // storage 참조 생성
         const imageStorageRef = storageRef(
           storage,
