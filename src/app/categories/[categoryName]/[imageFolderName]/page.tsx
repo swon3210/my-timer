@@ -2,10 +2,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { gridLayoutColumnNumberAtom } from "@/lib/atoms";
+import {
+  categoryNameAtom,
+  folderNameAtom,
+  gridLayoutColumnNumberAtom,
+} from "@/lib/atoms";
 import { useImagesQuery } from "@/lib/queries";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
+import { useRouter } from "next/navigation";
 
 const gridOptions = [
   { value: 1, label: "1x1" },
@@ -19,6 +24,11 @@ export default function CategoriesPage({
 }: {
   params: { categoryName: string; imageFolderName: string };
 }) {
+  const router = useRouter();
+
+  const [, setCategoryName] = useAtom(categoryNameAtom);
+  const [, setFolderName] = useAtom(folderNameAtom);
+
   const [gridLayoutColumnNumber, setGridLayoutColumnNumber] = useAtom(
     gridLayoutColumnNumberAtom
   );
@@ -31,22 +41,38 @@ export default function CategoriesPage({
   const handleGridLayoutColumnNumberButtonClick = (value: number) => {
     setGridLayoutColumnNumber(value);
   };
+
+  const handleFolderSelectButtonClick = (folderName: string) => {
+    setCategoryName(params.categoryName);
+    setFolderName(folderName);
+
+    router.push("/home");
+  };
+
   return (
     <div className="w-full h-full mx-auto px-4 py-12">
-      <div className="flex flex-wrap justify-center gap-4 mb-8">
-        {gridOptions.map((option) => (
-          <Button
-            key={option.value}
-            onClick={() =>
-              handleGridLayoutColumnNumberButtonClick(option.value)
-            }
-            variant={
-              gridLayoutColumnNumber === option.value ? "default" : "outline"
-            }
-          >
-            {option.label}
-          </Button>
-        ))}
+      <div className="flex flex-col items-center">
+        <div className="flex flex-wrap justify-center gap-4 mb-4">
+          {gridOptions.map((option) => (
+            <Button
+              key={option.value}
+              onClick={() =>
+                handleGridLayoutColumnNumberButtonClick(option.value)
+              }
+              variant={
+                gridLayoutColumnNumber === option.value ? "default" : "outline"
+              }
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
+        <Button
+          onClick={() => handleFolderSelectButtonClick(params.imageFolderName)}
+          className="mb-4 w-full max-w-sm"
+        >
+          선택하기
+        </Button>
       </div>
       <div className="w-full h-full max-w-app-container mx-auto">
         <div
