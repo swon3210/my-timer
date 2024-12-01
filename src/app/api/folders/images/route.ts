@@ -1,25 +1,27 @@
 import { z } from "zod";
 import { addImages, deleteImage, getImageListFromFolder } from "../../firebase";
+import { withAuth } from "../../firebase-admin";
+import { NextRequest, NextResponse } from "next/server";
 
 const getFoldersRequestParams = z.string();
 
-export async function GET(request: Request) {
+export const GET = withAuth(async function (request: NextRequest) {
   const path = getFoldersRequestParams.parse(
     new URL(request.url).searchParams.get("path")
   );
 
   const images = await getImageListFromFolder(path);
 
-  return Response.json({ images });
-}
+  return NextResponse.json({ images });
+});
 
-export async function POST(request: Request) {
+export const POST = withAuth(async function (request: NextRequest) {
   const formData = await request.formData();
   const path = formData.get("path") as string;
   const imageFiles = formData.getAll("images") as File[];
 
   if (!imageFiles || imageFiles.length === 0) {
-    return Response.json({ error: "파일이 없습니다." }, { status: 400 });
+    return NextResponse.json({ error: "파일이 없습니다." }, { status: 400 });
   }
 
   // File 객체 유효성 검사
@@ -28,18 +30,21 @@ export async function POST(request: Request) {
   });
 
   if (validFiles.length === 0) {
-    return Response.json({ error: "유효한 파일이 없습니다." }, { status: 400 });
+    return NextResponse.json(
+      { error: "유효한 파일이 없습니다." },
+      { status: 400 }
+    );
   }
 
   await addImages(path, imageFiles);
 
-  return Response.json({});
-}
+  return NextResponse.json({});
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withAuth(async function (request: NextRequest) {
   const { path } = await request.json();
 
   await deleteImage(path);
 
-  return Response.json({});
-}
+  return NextResponse.json({});
+});
