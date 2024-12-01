@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,6 @@ import { gridLayoutColumnNumberAtom } from "@/lib/atoms";
 import { useImagesQuery } from "@/lib/queries";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
-import Image from "next/image";
 
 const gridOptions = [
   { value: 1, label: "1x1" },
@@ -69,12 +69,11 @@ export default function CategoriesPage({
                   transition={{ duration: 0.5 }}
                   className="relative overflow-hidden rounded-lg shadow-sm flex flex-col justify-center items-center"
                 >
-                  <Image
+                  <img
                     src={imageUrl}
                     alt="이미지 미리보기"
                     className="object-cover"
-                    width={700}
-                    height={700}
+                    loading="lazy"
                   />
                 </motion.div>
               </button>
