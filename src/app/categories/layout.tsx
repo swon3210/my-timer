@@ -54,7 +54,9 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       return;
     }
 
-    const optimizedImages = await Promise.all(images.map(optimizeImage));
+    const optimizedImages = await Promise.all(
+      images.map((image) => optimizeImage(image, 0.8))
+    );
 
     await addImages(`images/${categoryName}/${folderName}`, optimizedImages);
 

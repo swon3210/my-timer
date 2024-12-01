@@ -1,4 +1,11 @@
-export const optimizeImage = async (file: File): Promise<Blob> => {
+export const optimizeImage = async (
+  file: File,
+  quality: number = 0.8
+): Promise<Blob> => {
+  if (file.size === 350 * 1024) {
+    return file;
+  }
+
   // 이미지 로드
   const image = new Image();
   const imageUrl = URL.createObjectURL(file);
@@ -36,7 +43,7 @@ export const optimizeImage = async (file: File): Promise<Blob> => {
         }
       },
       "image/webp",
-      0.8 // 품질 80% 압축
+      quality // 품질 95% 압축
     );
   });
 };
