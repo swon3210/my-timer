@@ -1,6 +1,7 @@
 "use client";
 
 import { FirebaseConfig } from "@/app/api/firebase";
+import { optimizeImage } from "@/lib/image";
 import { useQuery } from "@tanstack/react-query";
 import { initializeApp } from "firebase/app";
 import {
@@ -14,7 +15,7 @@ import { createContext, useContext, useMemo } from "react";
 const FirebaseContext = createContext<{
   addImages: (
     folderPath: string,
-    imageFiles: File[] | Blob[]
+    imageFiles: File[]
   ) => Promise<
     {
       fileName: string;
@@ -59,18 +60,19 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
     return getStorage(firebaseApp);
   }, [firebaseApp]);
 
-  const addImages = async (folderPath: string, imageFiles: File[] | Blob[]) => {
+  const addImages = async (folderPath: string, imageFiles: File[]) => {
     if (!storage) {
       return [];
     }
 
-    let index = 0;
+    const optimizedImages = await Promise.all(
+      imageFiles.map((image) => optimizeImage(image, 0.8))
+    );
 
     try {
-      const uploadPromises = imageFiles.map(async (file) => {
+      const uploadPromises = optimizedImages.map(async (file, index) => {
         // 파일명 생성 (현재 시간 + 원본 파일명)
-        const fileName = `${Date.now()}_${index}`;
-        index++;
+        const fileName = imageFiles[index].name;
         // storage 참조 생성
         const imageStorageRef = storageRef(
           storage,
