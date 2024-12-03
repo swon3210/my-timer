@@ -3,13 +3,13 @@
 import BackButton from "@/components/BackButton";
 import ImageUploadButton from "@/components/ImageUploadButton";
 import { Button } from "@/components/ui/button";
-import { useAddFolderMutation } from "@/lib/mutations";
 import {
   getCategoryNamesQueryKey,
   getImageFolderNamesQueryKey,
-  getImagesQueryKey,
-  useInvalidateQuery,
-} from "@/lib/queries";
+} from "@/domains/images/useImageFolderNamesQuery";
+import { getImagesQueryKey } from "@/domains/images/useImagesQuery";
+import { useAddFolderMutation } from "@/lib/mutations";
+import { useInvalidateQuery } from "@/lib/queries";
 import { useFirebase } from "@/providers/FirebaseProvider";
 import { FolderPlus } from "lucide-react";
 import { useParams } from "next/navigation";

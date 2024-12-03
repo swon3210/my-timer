@@ -15,9 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
 import { ForwardedRef, forwardRef, useEffect } from "react";
 import { AppSettings, appSettingsSchema } from "@/lib/types";
-import { useSettingsSuspenseQuery } from "@/lib/queries";
 import { useSaveAppSettingsMutation } from "@/lib/mutations";
 import { debounce } from "lodash";
+import { useSettingsSuspenseQuery } from "@/domains/users/useSettingsQuery";
 
 const SettingItem = ({
   icon,

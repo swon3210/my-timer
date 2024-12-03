@@ -2,12 +2,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import useImagesQuery from "@/domains/images/useImagesQuery";
 import {
   categoryNameAtom,
   folderNameAtom,
   gridLayoutColumnNumberAtom,
 } from "@/lib/atoms";
-import { useImagesQuery } from "@/lib/queries";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";

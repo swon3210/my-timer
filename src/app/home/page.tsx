@@ -2,9 +2,10 @@
 
 import BackgroundGallery from "@/components/BackgroundGallery";
 import Timer from "@/components/Timer";
+import useImagesQuery from "@/domains/images/useImagesQuery";
+import { useSettingsQuery } from "@/domains/users/useSettingsQuery";
 import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
 import usePlatform from "@/lib/hooks";
-import { useImagesQuery, useSettingsQuery } from "@/lib/queries";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useRef, useState } from "react";

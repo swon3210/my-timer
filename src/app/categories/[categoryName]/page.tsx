@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useImageFolderNamesQuery } from "@/domains/images/useImageFolderNamesQuery";
 import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
-import { useImageFolderNamesQuery } from "@/lib/queries";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
 import { FolderIcon } from "lucide-react";
