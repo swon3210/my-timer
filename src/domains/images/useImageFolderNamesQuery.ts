@@ -30,9 +30,9 @@ export const useImageFolderNamesQuery = ({
 
       const { folders } = getFolderNamesResponseSchema.parse(response.data);
 
-      return folders ?? [];
+      return folders;
     },
-    select: (data) => data?.map((folder) => folder.split("/").pop()),
+    select: (data) => data.map((folder) => folder.split("/").pop() ?? ""),
     enabled: categoryName != null,
     initialData: [],
   });

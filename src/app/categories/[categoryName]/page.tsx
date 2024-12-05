@@ -20,7 +20,7 @@ export default function CategoriesPage({
   const [, setCategoryName] = useAtom(categoryNameAtom);
   const [, setFolderName] = useAtom(folderNameAtom);
 
-  const { data: folderNames = [] } = useImageFolderNamesQuery({
+  const { data: folderNames } = useImageFolderNamesQuery({
     categoryName: params.categoryName,
   });
 
