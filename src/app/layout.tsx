@@ -4,6 +4,9 @@ import "./globals.css";
 import { QueryProvider } from "@/lib/providers";
 import { Toaster } from "sonner";
 import FirebaseProvider from "@/providers/FirebaseProvider";
+import { checkAuth } from "@/domains/users/fetchers";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,11 +24,20 @@ export const metadata: Metadata = {
   description: "나만의 타이머 어플리케이션",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = headers().get("x-pathname") || "";
+
+  const { success } = await checkAuth();
+  const isAuthPage = ["/sign-in", "/sign-up"].includes(pathname);
+
+  if (!success && !isAuthPage) {
+    redirect("/sign-in");
+  }
+
   return (
     <html lang="ko-kr">
       <body

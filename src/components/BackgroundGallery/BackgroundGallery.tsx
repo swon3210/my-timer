@@ -1,3 +1,4 @@
+import { isLocalEnv } from "@/lib/utils";
 import clsx from "clsx";
 
 type BackgroundGalleryProps = {
@@ -15,7 +16,9 @@ const BackgroundGallery = ({
     <div
       className={clsx("w-full h-full", className)}
       style={{
-        backgroundImage: `url('${selectedImageUrl.replaceAll("'", "\\'")}')`,
+        backgroundImage: isLocalEnv()
+          ? ""
+          : `url('${selectedImageUrl.replaceAll("'", "\\'")}')`,
         backgroundSize: "contain",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",

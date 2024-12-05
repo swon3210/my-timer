@@ -27,31 +27,45 @@ if (!admin.apps.length) {
 
 export type AuthRequest = NextRequest & { user: DecodedIdToken };
 
+export const hasAuth = async (req: NextRequest) => {
+  const sessionCookie = cookies().get("session")?.value;
+
+  if (!sessionCookie) {
+    return {
+      error: "인증되지 않았습니다.",
+      success: false,
+    };
+  }
+
+  try {
+    const decodedClaims = await adminAuth.verifySessionCookie(
+      sessionCookie,
+      true
+    );
+
+    (req as AuthRequest).user = decodedClaims;
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("인증 오류:", error);
+    return {
+      error: "유효하지 않은 세션입니다.",
+      success: false,
+    };
+  }
+};
+
 export function withAuth(handler: (req: NextRequest) => Promise<NextResponse>) {
   return async (req: NextRequest) => {
-    const sessionCookie = cookies().get("session")?.value;
+    const { success, error } = await hasAuth(req);
 
-    if (!sessionCookie) {
-      return NextResponse.json(
-        { error: "인증되지 않았습니다." },
-        { status: 401 }
-      );
+    if (!success) {
+      return NextResponse.json({ error }, { status: 401 });
     }
 
-    try {
-      const decodedClaims = await adminAuth.verifySessionCookie(
-        sessionCookie,
-        true
-      );
-      (req as AuthRequest).user = decodedClaims;
-      return handler(req);
-    } catch (error) {
-      console.error("인증 오류:", error);
-      return NextResponse.json(
-        { error: "유효하지 않은 세션입니다." },
-        { status: 401 }
-      );
-    }
+    return handler(req);
   };
 }
 
