@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import {
   getCategoryNamesQueryKey,
   getImageFolderNamesQueryKey,
+  useCategoryNamesQuery,
+  useImageFolderNamesQuery,
 } from "@/domains/images/useImageFolderNamesQuery";
 import { getImagesQueryKey } from "@/domains/images/useImagesQuery";
 import { useAddFolderMutation } from "@/lib/mutations";
@@ -20,6 +22,7 @@ import { useParams } from "next/navigation";
 // };
 
 const AddFolderButton = () => {
+  const { data: folderNames } = useCategoryNamesQuery();
   const { mutateAsync: addFolder } = useAddFolderMutation();
   const invalidateQuery = useInvalidateQuery();
 
@@ -27,6 +30,13 @@ const AddFolderButton = () => {
     const folderName = prompt("폴더 이름을 입력하세요.");
 
     if (!folderName) {
+      return;
+    }
+
+    const hasFolderName = folderNames.includes(folderName.trim());
+
+    if (hasFolderName) {
+      alert("이미 존재하는 폴더입니다.");
       return;
     }
 
@@ -43,6 +53,7 @@ const AddFolderButton = () => {
 };
 
 const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
+  const { data: imageFolderNames } = useImageFolderNamesQuery({ categoryName });
   const { addImages } = useFirebase();
   const invalidateQuery = useInvalidateQuery();
 
@@ -50,6 +61,13 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
     const folderName = prompt("이미지 폴더 이름을 입력하세요.");
 
     if (!folderName) {
+      return;
+    }
+
+    const hasFolderName = imageFolderNames.includes(folderName.trim());
+
+    if (hasFolderName) {
+      alert("이미 존재하는 폴더입니다.");
       return;
     }
 

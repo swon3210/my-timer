@@ -30,12 +30,11 @@ export const useImageFolderNamesQuery = ({
 
       const { folders } = getFolderNamesResponseSchema.parse(response.data);
 
-      return folders;
+      return folders ?? [];
     },
+    select: (data) => data?.map((folder) => folder.split("/").pop()),
     enabled: categoryName != null,
-    // TODO : 타입 정합성 맞추기
-    select: (data) =>
-      (data?.map((folder) => folder.split("/").pop()) ?? []) as string[],
+    initialData: [],
   });
 };
 
@@ -57,5 +56,6 @@ export const useCategoryNamesQuery = () => {
       return folders;
     },
     select: (data) => data?.map((folder) => folder.split("/").pop()),
+    initialData: [],
   });
 };
