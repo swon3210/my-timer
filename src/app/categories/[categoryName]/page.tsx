@@ -1,12 +1,17 @@
 "use client";
 
+import FolderItem from "@/components/FolderItem";
+import LongPressCheckWrapper from "@/components/LongPressChecker";
 import { Button } from "@/components/ui/button";
-import { useImageFolderNamesQuery } from "@/domains/images/useImageFolderNamesQuery";
-import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAtom } from "jotai";
-import { FolderIcon } from "lucide-react";
-import Image from "next/image";
+import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
+import {
+  categoryNameAtom,
+  folderNameAtom,
+  isSelectionModeAtom,
+  selectedFolderNamesAtom,
+} from "@/lib/atoms";
+import { AnimatePresence } from "framer-motion";
+import { useAtom, useAtomValue } from "jotai";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -19,10 +24,31 @@ export default function CategoriesPage({
 
   const [, setCategoryName] = useAtom(categoryNameAtom);
   const [, setFolderName] = useAtom(folderNameAtom);
+  const isSelectionMode = useAtomValue(isSelectionModeAtom);
 
   const { data: folderNames } = useImageFolderNamesQuery({
     categoryName: params.categoryName,
   });
+
+  const [selectedFolderNames, setSelectedFolderNames] = useAtom(
+    selectedFolderNamesAtom
+  );
+
+  const handleCheckedChange = (folderName: string, isChecked: boolean) => {
+    if (isChecked) {
+      setSelectedFolderNames([...selectedFolderNames, folderName]);
+    } else {
+      setSelectedFolderNames(
+        selectedFolderNames.filter((name) => name !== folderName)
+      );
+    }
+  };
+
+  const handleLongPress = (folderName: string) => {
+    if (isSelectionMode) {
+      setSelectedFolderNames([...selectedFolderNames, folderName]);
+    }
+  };
 
   const handleFolderSelectButtonClick = (folderName: string) => {
     setCategoryName(params.categoryName);
@@ -37,43 +63,40 @@ export default function CategoriesPage({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence>
             {folderNames.map((folderName) => (
-              <motion.div
+              <LongPressCheckWrapper
                 key={folderName}
-                layout
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.5 }}
-                className="relative overflow-hidden rounded-lg shadow-lg cursor-pointer group flex flex-col justify-center items-center gap-2 p-5"
+                handleLongPress={() => handleLongPress(folderName)}
+                isSelectionMode={isSelectionMode}
+                checked={selectedFolderNames.includes(folderName)}
+                onCheckedChange={(isChecked) =>
+                  handleCheckedChange(folderName, isChecked)
+                }
               >
-                <Image
-                  src="/folder-icon.png"
-                  alt="폴더 아이콘"
-                  className="object-cover transition-transform duration-300 group-hover:scale-110"
-                  width={24}
-                  height={24}
+                <FolderItem
+                  count={0}
+                  imageUrl="/folder-icon.png"
+                  imageAlt="폴더 아이콘"
+                  type="image-folder"
+                  folderName={folderName}
+                  bottomComponent={
+                    <div className="w-full flex justify-center items-center gap-2 mt-2">
+                      <Button
+                        onClick={() =>
+                          handleFolderSelectButtonClick(folderName)
+                        }
+                      >
+                        선택
+                      </Button>
+                      <Link
+                        key={folderName}
+                        href={`/categories/${params.categoryName}/${folderName}`}
+                      >
+                        <Button variant="secondary">미리보기</Button>
+                      </Link>
+                    </div>
+                  }
                 />
-                <h3 className="font-semibold text-lg text-center">
-                  {folderName}
-                </h3>
-                <p className="text-sm text-muted-foreground flex items-center">
-                  <FolderIcon className="w-4 h-4 mr-1" />
-                  {0}개의 폴더
-                </p>
-                <div className="w-full flex justify-center items-center gap-2 mt-2">
-                  <Button
-                    onClick={() => handleFolderSelectButtonClick(folderName)}
-                  >
-                    선택
-                  </Button>
-                  <Link
-                    key={folderName}
-                    href={`/categories/${params.categoryName}/${folderName}`}
-                  >
-                    <Button variant="secondary">미리보기</Button>
-                  </Link>
-                </div>
-              </motion.div>
+              </LongPressCheckWrapper>
             ))}
           </AnimatePresence>
         </div>

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { addFolder, deleteFolder, getFolderList } from "../firebase";
+import { addFolder, deleteFolders, getFolderList } from "../firebase";
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "../firebase-admin";
 
@@ -25,10 +25,16 @@ export const POST = withAuth(async function (request: NextRequest) {
   return NextResponse.json({});
 });
 
-export const DELETE = withAuth(async function (request: NextRequest) {
-  const { path } = await request.json();
+const deleteFoldersRequestParams = z.object({
+  paths: z.array(z.string()),
+});
 
-  await deleteFolder(path);
+export const DELETE = withAuth(async function (request: NextRequest) {
+  const { paths } = deleteFoldersRequestParams.parse({
+    paths: new URL(request.url).searchParams.get("paths")?.split(",") ?? [],
+  });
+
+  await deleteFolders(paths);
 
   return NextResponse.json({});
 });

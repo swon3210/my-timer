@@ -7,4 +7,15 @@ export const API_BASE_URL = isServer
 
 export const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
+  paramsSerializer: (params) => {
+    return Object.entries(params)
+      .map(([key, value]) => {
+        if (Array.isArray(value)) {
+          return `${key}=${value.join(",")}`;
+        }
+
+        return `${key}=${value}`;
+      })
+      .join("&");
+  },
 });

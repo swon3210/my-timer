@@ -53,13 +53,22 @@ export async function addFolder(path: string) {
   }
 }
 
-export async function deleteFolder(path: string) {
-  const folderRef = storageRef(storage, path);
-
+export async function deleteFolders(paths: string[]) {
   try {
-    await deleteObject(folderRef);
+    for (const path of paths) {
+      const folderRef = storageRef(storage, path);
+      const res = await listAll(folderRef);
+
+      // 모든 파일 삭제
+      await Promise.all(res.items.map((itemRef) => deleteObject(itemRef)));
+
+      // 재귀적으로 하위 폴더 삭제
+      for (const prefix of res.prefixes) {
+        await deleteFolders([prefix.fullPath]);
+      }
+    }
   } catch (error) {
-    console.error("Error deleting folder:", error);
+    console.error("폴더 삭제 중 오류 발생:", error);
   }
 }
 
