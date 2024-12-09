@@ -116,7 +116,7 @@ const XButton = ({ target }: SelectionModeButtonProps) => {
     categoryName?: string;
   };
 
-  const [selectedImages, setSelectedImages] = useAtom(selectedImagesAtom);
+  const [, setSelectedImages] = useAtom(selectedImagesAtom);
   const [selectedFolderNames, setSelectedFolderNames] = useAtom(
     selectedFolderNamesAtom
   );
@@ -126,7 +126,6 @@ const XButton = ({ target }: SelectionModeButtonProps) => {
   const handleXButtonClick = async () => {
     if (target === "images") {
       setSelectedImages([]);
-      console.log("selectedImages", selectedImages);
       return;
     }
 
