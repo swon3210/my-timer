@@ -25,7 +25,11 @@ const ImageUploadButton = ({
   const handleDrop = (acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
     onImagesUploaded(acceptedFiles);
-    setIsOpen(false);
+
+    setTimeout(() => {
+      setFiles([]);
+      setIsOpen(false);
+    }, 1000);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
