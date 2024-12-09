@@ -22,6 +22,7 @@ import { useFirebase } from "@/providers/FirebaseProvider";
 import { useAtom, useAtomValue } from "jotai";
 import { Check, FolderPlus, X } from "lucide-react";
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
 
 // export const metadata = {
 //   title: "My Timer 사진 폴더 선택",
@@ -48,6 +49,8 @@ const AddFolderButton = () => {
     }
 
     await addFolder({ path: `images/${folderName}` });
+
+    toast(`${folderName} 폴더를 업로드하였습니다.`);
 
     void invalidateQuery(getFolderNamesQueryKey());
   };
@@ -80,6 +83,10 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
 
     await addImages(`images/${categoryName}/${folderName}`, images);
 
+    toast(
+      `${folderName} 폴더에 ${images.length}개의 이미지를 업로드하였습니다.`
+    );
+
     void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
   };
 
@@ -98,6 +105,8 @@ const AddImagesToFolderButton = ({
 
   const handleImagesUploaded = async (images: File[]) => {
     await addImages(`images/${categoryName}/${imageFolderName}`, images);
+
+    toast(`${images.length}개의 이미지를 업로드하였습니다.`);
 
     void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
   };
@@ -141,6 +150,8 @@ const XButton = ({ target }: SelectionModeButtonProps) => {
         ? selectedFolderNames.map((name) => `${categoryName}/${name}`)
         : selectedFolderNames,
     });
+
+    toast(`${selectedFolderNames.length}개의 폴더가 삭제되었습니다.`);
 
     void invalidateQuery(getFolderNamesQueryKey());
 
