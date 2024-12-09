@@ -40,7 +40,7 @@ const FolderItem = ({
         <FolderIcon className="w-4 h-4 mr-1" />
         {count}개의 {type === "folder" ? "폴더" : "이미지"}
       </p>
-      <div className="grow" />
+      {bottomComponent != null && <div className="grow" />}
       {bottomComponent}
     </motion.div>
   );
