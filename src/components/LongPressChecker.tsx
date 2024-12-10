@@ -15,6 +15,12 @@ const LongPressCheckWrapper = ({
   checked,
   children,
 }: LongPressCheckWrapperProps) => {
+  const handleCheckedChange = () => {
+    if (isSelectionMode) {
+      onCheckedChange(!checked);
+    }
+  };
+
   return (
     <div
       role="button"
@@ -27,7 +33,7 @@ const LongPressCheckWrapper = ({
         const timer = setTimeout(() => handleLongPress(), 500);
         return () => clearTimeout(timer);
       }}
-      onClick={() => onCheckedChange(!checked)}
+      onClick={handleCheckedChange}
     >
       {children}
       {isSelectionMode && (
