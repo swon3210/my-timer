@@ -9,7 +9,7 @@ type LongPressCheckWrapperProps = {
 };
 
 const LongPressCheckWrapper = ({
-  handleLongPress,
+  // handleLongPress,
   onCheckedChange,
   isSelectionMode,
   checked,
@@ -29,10 +29,10 @@ const LongPressCheckWrapper = ({
       onContextMenu={(e) => {
         e.preventDefault();
       }}
-      onTouchStart={() => {
-        const timer = setTimeout(() => handleLongPress(), 500);
-        return () => clearTimeout(timer);
-      }}
+      // onTouchStart={() => {
+      //   const timer = setTimeout(() => handleLongPress(), 500);
+      //   return () => clearTimeout(timer);
+      // }}
       onClick={handleCheckedChange}
     >
       {children}

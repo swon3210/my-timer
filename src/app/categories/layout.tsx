@@ -132,6 +132,8 @@ const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
   const { mutateAsync: deleteFolders } = useDeleteFoldersMutation();
   const invalidateQuery = useInvalidateQuery();
 
+  const hasSelectedFolder = selectedFolderNames.length > 0;
+
   const handleXButtonClick = async () => {
     if (target === "images") {
       setSelectedImages([]);
@@ -139,6 +141,7 @@ const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
     }
 
     if (
+      !hasSelectedFolder ||
       !confirm(`${selectedFolderNames.length}개의 폴더를 삭제하시겠습니까?`)
     ) {
       return;
@@ -163,8 +166,19 @@ const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
   };
 
   return (
-    <Button variant="outline" size="icon" onClick={handleXButtonClick}>
-      <Trash className="w-4 h-4 text-gray-700" />
+    <Button
+      variant={hasSelectedFolder ? "destructive" : "outline"}
+      size="icon"
+      className="w-auto p-2"
+      onClick={handleXButtonClick}
+    >
+      <div className="flex items-center gap-1">
+        {selectedFolderNames.length}개 선택됨
+        <Trash
+          className="w-4 h-4 text-gray-700"
+          color={hasSelectedFolder ? "white" : undefined}
+        />
+      </div>
     </Button>
   );
 };
