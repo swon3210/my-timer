@@ -20,7 +20,7 @@ import { useAddFolderMutation } from "@/lib/mutations";
 import { useInvalidateQuery } from "@/lib/queries";
 import { useFirebase } from "@/providers/FirebaseProvider";
 import { useAtom, useAtomValue } from "jotai";
-import { Check, FolderPlus, X } from "lucide-react";
+import { Check, FolderPlus, Trash, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -118,7 +118,7 @@ type SelectionModeButtonProps = {
   target: "images" | "folders";
 };
 
-const XButton = ({ target }: SelectionModeButtonProps) => {
+const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
   const [, setIsSelectionMode] = useAtom(isSelectionModeAtom);
 
   const { categoryName } = useParams() as {
@@ -157,6 +157,29 @@ const XButton = ({ target }: SelectionModeButtonProps) => {
 
     if (categoryName) {
       void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
+    }
+
+    setIsSelectionMode(false);
+  };
+
+  return (
+    <Button variant="outline" size="icon" onClick={handleXButtonClick}>
+      <Trash className="w-4 h-4 text-gray-700" />
+    </Button>
+  );
+};
+
+const XButton = ({ target }: SelectionModeButtonProps) => {
+  const [, setIsSelectionMode] = useAtom(isSelectionModeAtom);
+
+  const [, setSelectedImages] = useAtom(selectedImagesAtom);
+  const [, setSelectedFolderNames] = useAtom(selectedFolderNamesAtom);
+
+  const handleXButtonClick = async () => {
+    if (target === "images") {
+      setSelectedImages([]);
+    } else {
+      setSelectedFolderNames([]);
     }
 
     setIsSelectionMode(false);
@@ -204,7 +227,13 @@ export default function RootLayout({
       <div className="flex items-center justify-between h-16 pl-2 pr-4">
         <div className="flex items-center gap-2">
           <BackButton />
-          <h3 className="text-xl font-semibold">폴더</h3>
+          {isSelectionMode ? (
+            <TrashCanButton
+              target={imageFolderName && categoryName ? "images" : "folders"}
+            />
+          ) : (
+            <h3 className="text-xl font-semibold">{categoryName ?? ""} 폴더</h3>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {isSelectionMode ? (
