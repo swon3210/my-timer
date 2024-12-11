@@ -6,8 +6,7 @@ type FolderItemProps = {
   type: "folder" | "image-folder";
   folderName: string;
   count: number;
-  imageUrl: string;
-  imageAlt: string;
+  topComponent?: React.ReactNode;
   bottomComponent?: React.ReactNode;
 };
 
@@ -15,8 +14,7 @@ const FolderItem = ({
   type,
   folderName,
   count,
-  imageUrl,
-  imageAlt,
+  topComponent,
   bottomComponent,
 }: FolderItemProps) => {
   return (
@@ -26,22 +24,31 @@ const FolderItem = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{ duration: 0.5 }}
-      className="relative overflow-hidden rounded-lg shadow-lg group flex flex-col justify-center items-center h-48 border border-gray-200 p-2 py-5"
+      className="relative overflow-hidden rounded-lg shadow-lg group flex flex-col justify-center items-center border border-gray-200"
     >
-      <Image
-        src={imageUrl}
-        alt={imageAlt}
-        className="object-cover transition-transform duration-300 group-hover:scale-110 mb-2"
-        width={24}
-        height={24}
-      />
-      <h2 className="font-semibold text-lg mb-1 text-center">{folderName}</h2>
-      <p className="text-sm text-muted-foreground flex items-center">
-        <FolderIcon className="w-4 h-4 mr-1" />
-        {count}개의 {type === "folder" ? "폴더" : "이미지"}
-      </p>
-      {bottomComponent != null && <div className="grow" />}
-      {bottomComponent}
+      <div className="flex items-center justify-center w-full h-36">
+        {topComponent ? (
+          topComponent
+        ) : (
+          <Image
+            src="/folders-icon.png"
+            alt="폴더"
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            width={48}
+            height={48}
+          />
+        )}
+      </div>
+      <div className="flex flex-col items-center justify-center w-full h-full p-4">
+        <h2 className="font-semibold text-md mb-1 text-center line-clamp-1">
+          {folderName}
+        </h2>
+        <p className="text-xs text-muted-foreground flex items-center">
+          <FolderIcon className="w-4 h-4 mr-1" />
+          {count}개의 {type === "folder" ? "폴더" : "이미지"}
+        </p>
+        {bottomComponent != null ? bottomComponent : <div className="grow" />}
+      </div>
     </motion.div>
   );
 };

@@ -39,6 +39,7 @@ const useImagesQuery = ({
       return images;
     },
     enabled: categoryName != null && folderName != null,
+    initialData: [],
   });
 };
 

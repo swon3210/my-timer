@@ -1,29 +1,17 @@
 "use client";
 
-import FolderItem from "@/components/FolderItem";
 import LongPressCheckWrapper from "@/components/LongPressChecker";
-import { Button } from "@/components/ui/button";
 import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
-import {
-  categoryNameAtom,
-  folderNameAtom,
-  isSelectionModeAtom,
-  selectedFolderNamesAtom,
-} from "@/lib/atoms";
+import { isSelectionModeAtom, selectedFolderNamesAtom } from "@/lib/atoms";
 import { AnimatePresence } from "framer-motion";
 import { useAtom, useAtomValue } from "jotai";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import ImageFolderItem from "../components/ImageFolderItem";
 
 export default function CategoriesPage({
   params,
 }: {
   params: { categoryName: string };
 }) {
-  const router = useRouter();
-
-  const [, setCategoryName] = useAtom(categoryNameAtom);
-  const [, setFolderName] = useAtom(folderNameAtom);
   const isSelectionMode = useAtomValue(isSelectionModeAtom);
 
   const { data: folderNames } = useImageFolderNamesQuery({
@@ -50,13 +38,6 @@ export default function CategoriesPage({
     }
   };
 
-  const handleFolderSelectButtonClick = (folderName: string) => {
-    setCategoryName(params.categoryName);
-    setFolderName(folderName);
-
-    router.push("/home");
-  };
-
   return (
     <div className="w-full h-full mx-auto p-4">
       <div className="w-full h-full max-w-app-container mx-auto">
@@ -72,29 +53,9 @@ export default function CategoriesPage({
                   handleCheckedChange(folderName, isChecked)
                 }
               >
-                <FolderItem
-                  count={0}
-                  imageUrl="/folder-icon.png"
-                  imageAlt="폴더 아이콘"
-                  type="image-folder"
+                <ImageFolderItem
+                  categoryName={params.categoryName}
                   folderName={folderName}
-                  bottomComponent={
-                    <div className="w-full flex justify-center items-center gap-2 mt-2">
-                      <Button
-                        onClick={() =>
-                          handleFolderSelectButtonClick(folderName)
-                        }
-                      >
-                        선택
-                      </Button>
-                      <Link
-                        key={folderName}
-                        href={`/categories/${params.categoryName}/${folderName}`}
-                      >
-                        <Button variant="secondary">미리보기</Button>
-                      </Link>
-                    </div>
-                  }
                 />
               </LongPressCheckWrapper>
             ))}

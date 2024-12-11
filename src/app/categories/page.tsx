@@ -51,13 +51,7 @@ export default function CategoriesPage() {
                   key={folderName}
                   href={isSelectionMode ? "" : `/categories/${folderName}`}
                 >
-                  <FolderItem
-                    type="folder"
-                    folderName={folderName}
-                    count={0}
-                    imageUrl="/folders-icon.png"
-                    imageAlt="폴더 목록 아이콘"
-                  />
+                  <FolderItem type="folder" folderName={folderName} count={0} />
                 </Link>
               </LongPressCheckWrapper>
             ))}
