@@ -21,6 +21,7 @@ const ImagePreview = ({ imageUrls }: { imageUrls: string[] }) => {
           src={imageUrl}
           alt="이미지 미리보기"
           className="object-cover w-full h-full"
+          loading="lazy"
         />
       ))}
     </div>
