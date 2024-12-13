@@ -20,7 +20,7 @@ const ImagePreview = ({ imageUrls }: { imageUrls: string[] }) => {
           key={imageUrl}
           src={imageUrl}
           alt="이미지 미리보기"
-          className="object-cover w-full h-full"
+          className="object-cover object-top w-full h-full"
           loading="lazy"
         />
       ))}
