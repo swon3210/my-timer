@@ -14,16 +14,14 @@ type ImageFolderItemProps = {
 
 const ImagePreview = ({ imageUrls }: { imageUrls: string[] }) => {
   return (
-    <div className="size-full grid grid-cols-2 grid-rows-2">
-      {imageUrls.slice(0, 4).map((imageUrl) => (
-        <img
-          key={imageUrl}
-          src={imageUrl}
-          alt="이미지 미리보기"
-          className="object-cover object-top w-full h-full"
-          loading="lazy"
-        />
-      ))}
+    <div className="size-full">
+      <img
+        key={imageUrls[0]}
+        src={imageUrls[0]}
+        alt="이미지 미리보기"
+        className="object-cover object-top w-full h-full"
+        loading="lazy"
+      />
     </div>
   );
 };
