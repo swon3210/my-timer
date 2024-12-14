@@ -51,9 +51,9 @@ const ImageFolderItem = ({
 
   return (
     <FolderItem
-      type="folder"
+      type="image-folder"
       folderName={folderName}
-      count={0}
+      count={imageUrls.length}
       topComponent={<ImagePreview imageUrls={imageUrls} />}
       bottomComponent={
         <div className="w-full flex justify-center items-center gap-2 mt-2">
