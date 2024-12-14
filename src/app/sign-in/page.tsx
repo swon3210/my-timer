@@ -155,27 +155,6 @@ export default function SignInPage() {
               </Button>
             </div>
           </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="remember"
-                className="rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <Label
-                htmlFor="remember"
-                className="text-sm text-muted-foreground"
-              >
-                로그인 상태 유지
-              </Label>
-            </div>
-            <a
-              href="#"
-              className="text-sm text-orange-600 hover:text-orange-700 hover:underline"
-            >
-              비밀번호 찾기
-            </a>
-          </div>
         </CardContent>
         <CardFooter className="flex flex-col">
           <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
