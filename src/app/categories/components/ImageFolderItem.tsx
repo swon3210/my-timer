@@ -13,11 +13,17 @@ type ImageFolderItemProps = {
 };
 
 const ImagePreview = ({ imageUrls }: { imageUrls: string[] }) => {
+  const [firstImageUrl] = imageUrls;
+
+  if (!firstImageUrl) {
+    return null;
+  }
+
   return (
     <div className="size-full">
       <img
-        key={imageUrls[0]}
-        src={imageUrls[0]}
+        key={firstImageUrl}
+        src={firstImageUrl}
         alt="이미지 미리보기"
         className="object-cover object-top w-full h-full"
         loading="lazy"
