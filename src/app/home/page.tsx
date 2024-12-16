@@ -78,6 +78,8 @@ export default function Home() {
         );
       } else if (e.key === "ArrowRight") {
         setImageUrlIndex((prev) => (prev + 1) % imageUrls.length);
+      } else if (e.key === "ArrowUp") {
+        setImageUrlIndex(getRandomIndex(imageUrls.length));
       }
     };
 
