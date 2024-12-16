@@ -1,6 +1,7 @@
 "use client";
 
 import BackgroundGallery from "@/components/BackgroundGallery";
+import ImageShuffleButton from "@/components/ImageShuffleButton";
 import Timer from "@/components/Timer";
 import useImagesQuery from "@/domains/images/useImagesQuery";
 import { useSettingsQuery } from "@/domains/users/useSettingsQuery";
@@ -65,6 +66,10 @@ export default function Home() {
     }
   };
 
+  const handleImageShuffleButtonClick = () => {
+    setImageUrlIndex(getRandomIndex(imageUrls.length));
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
@@ -99,7 +104,7 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="relative w-full h-full flex justify-center items-center">
       {selectedImageUrl && (
         <BackgroundGallery
           selectedImageUrl={selectedImageUrl}
@@ -114,6 +119,10 @@ export default function Home() {
           className="relative z-10"
         />
       )}
+      <ImageShuffleButton
+        onClick={handleImageShuffleButtonClick}
+        className="absolute bottom-4 right-4"
+      />
     </div>
   );
 }
