@@ -1,7 +1,6 @@
 import useImagesQuery from "@/domains/images/useImagesQuery";
 import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
 // import { isLocalEnv } from "@/lib/utils";
-import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import {
   forwardRef,
@@ -12,6 +11,7 @@ import {
   useState,
 } from "react";
 import ImageShuffleButton from "./ImageShuffleButton";
+import { cn } from "@/lib/utils";
 
 const prefetchImage = (imageUrl: string) => {
   new Image().src = imageUrl;
@@ -44,6 +44,8 @@ const BackgroundGallery = forwardRef<
   });
 
   const selectedImageUrl = imageUrls[imageUrlIndex] as string | undefined;
+
+  const backgroundImage = `url('${selectedImageUrl?.replaceAll("'", "\\'")}')`;
 
   const handleBackgroundGalleryClick = (
     event: React.MouseEvent<HTMLDivElement>
@@ -115,30 +117,32 @@ const BackgroundGallery = forwardRef<
   }, [imageUrlIndex, imageUrls]);
 
   return (
-    <>
-      {selectedImageUrl && (
-        <div
-          className={clsx("w-full h-full", className)}
-          style={{
-            backgroundImage: `url('${selectedImageUrl.replaceAll(
-              "'",
-              "\\'"
-            )}')`,
-            // backgroundImage: isLocalEnv()
-            //   ? ""
-            //   : `url('${selectedImageUrl.replaceAll("'", "\\'")}')`,
-            backgroundSize: "contain",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-          }}
-          onClick={handleBackgroundGalleryClick}
-        />
-      )}
+    <div className={cn("relative w-full h-full", className)}>
+      <div
+        className="absolute top-0 left-0 w-full h-full"
+        style={{
+          backgroundImage,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          filter: "blur(20px)", // 블러 효과 추가
+          transform: "scale(1.1)", // 블러 경계 처리
+        }}
+      />
+      <div
+        className="absolute top-0 left-0 z-10 w-full h-full"
+        style={{
+          backgroundImage,
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+        onClick={handleBackgroundGalleryClick}
+      />
       <ImageShuffleButton
         onClick={handleImageShuffleButtonClick}
         className="absolute bottom-4 right-4"
       />
-    </>
+    </div>
   );
 });
 
