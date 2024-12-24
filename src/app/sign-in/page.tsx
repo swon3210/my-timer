@@ -17,6 +17,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import axios from "axios";
+import { cn } from "@/lib/utils";
+import { PRIMARY_GRADIENT_CLASSNAMES } from "@/lib/styles";
 
 type SignInFormValues = {
   email: string;
@@ -71,7 +73,10 @@ export default function SignInPage() {
 
   return (
     <form
-      className="min-h-screen bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center p-4"
+      className={cn(
+        "min-h-screen flex items-center justify-center p-4",
+        PRIMARY_GRADIENT_CLASSNAMES
+      )}
       onSubmit={handleFormSubmit}
     >
       <Card className="w-full max-w-lg shadow-xl backdrop-blur-sm">
