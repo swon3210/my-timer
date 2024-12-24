@@ -11,6 +11,7 @@ import useImageFolderNamesQuery, {
   getImageFolderNamesQueryKey,
 } from "@/domains/folders/useImageFolderNamesQuery";
 import { getImagesQueryKey } from "@/domains/images/useImagesQuery";
+import { useUserQuery } from "@/domains/users/useUserQuery";
 import {
   isSelectionModeAtom,
   selectedFolderNamesAtom,
@@ -23,6 +24,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { Check, FolderPlus, Trash, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { getUserStoragePath } from "../api/firebase";
 
 // export const metadata = {
 //   title: "My Timer 사진 폴더 선택",
@@ -64,13 +66,15 @@ const AddFolderButton = () => {
 
 const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
   const { data: imageFolderNames } = useImageFolderNamesQuery({ categoryName });
+  const { data: user } = useUserQuery();
+
   const { addImages } = useFirebase();
   const invalidateQuery = useInvalidateQuery();
 
   const handleImagesUploaded = async (images: File[]) => {
     const folderName = prompt("이미지 폴더 이름을 입력하세요.");
 
-    if (!folderName) {
+    if (!folderName || !user) {
       return;
     }
 
@@ -81,7 +85,10 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       return;
     }
 
-    await addImages(`images/${categoryName}/${folderName}`, images);
+    await addImages(
+      getUserStoragePath(user, `images/${categoryName}/${folderName}`),
+      images
+    );
 
     toast(
       `${folderName} 폴더에 ${images.length}개의 이미지를 업로드하였습니다.`
@@ -102,9 +109,17 @@ const AddImagesToFolderButton = ({
 }) => {
   const invalidateQuery = useInvalidateQuery();
   const { addImages } = useFirebase();
+  const { data: user } = useUserQuery();
 
   const handleImagesUploaded = async (images: File[]) => {
-    await addImages(`images/${categoryName}/${imageFolderName}`, images);
+    if (!user) {
+      return;
+    }
+
+    await addImages(
+      getUserStoragePath(user, `images/${categoryName}/${imageFolderName}`),
+      images
+    );
 
     toast(`${images.length}개의 이미지를 업로드하였습니다.`);
 
@@ -120,7 +135,7 @@ type SelectionModeButtonProps = {
 
 const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
   const [, setIsSelectionMode] = useAtom(isSelectionModeAtom);
-
+  const { data: user } = useUserQuery();
   const { categoryName } = useParams() as {
     categoryName?: string;
   };
@@ -135,6 +150,10 @@ const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
   const hasSelectedFolder = selectedFolderNames.length > 0;
 
   const handleXButtonClick = async () => {
+    if (!user) {
+      return;
+    }
+
     if (target === "images") {
       setSelectedImages([]);
       return;
@@ -149,9 +168,12 @@ const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
 
     setSelectedFolderNames([]);
     await deleteFolders({
-      folderNames: categoryName
-        ? selectedFolderNames.map((name) => `${categoryName}/${name}`)
-        : selectedFolderNames,
+      paths: selectedFolderNames.map((name) =>
+        getUserStoragePath(
+          user,
+          categoryName ? `images/${categoryName}/${name}` : `images/${name}`
+        )
+      ),
     });
 
     toast(`${selectedFolderNames.length}개의 폴더가 삭제되었습니다.`);
@@ -246,7 +268,9 @@ export default function RootLayout({
               target={imageFolderName && categoryName ? "images" : "folders"}
             />
           ) : (
-            <h3 className="text-xl font-semibold">{categoryName ?? ""} 폴더</h3>
+            <h3 className="text-xl font-semibold">
+              {decodeURIComponent(categoryName ?? "")} 폴더
+            </h3>
           )}
         </div>
         <div className="flex items-center gap-2">

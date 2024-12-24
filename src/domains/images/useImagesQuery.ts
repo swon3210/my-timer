@@ -28,9 +28,7 @@ const useImagesQuery = ({
       // TODO : 예외처리
       const response = await axiosInstance.get("/api/folders/images", {
         params: {
-          path: `/images/${decodeURIComponent(
-            categoryName
-          )}/${decodeURIComponent(folderName)}`,
+          path: `images/${categoryName}/${folderName}`,
         },
       });
 

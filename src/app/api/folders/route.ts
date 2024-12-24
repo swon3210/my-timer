@@ -1,26 +1,31 @@
 import { z } from "zod";
 import { addFolder, deleteFolders, getFolderList } from "../firebase";
-import { NextRequest, NextResponse } from "next/server";
-import { withAuth } from "../firebase-admin";
+import { getUserStoragePath } from "../firebase";
+import { NextResponse } from "next/server";
+import { AuthRequest, withAuth } from "../firebase-admin";
 
 const getFoldersRequestParams = z.object({
   path: z.string(),
 });
 
-export const GET = withAuth(async function (request: NextRequest) {
+export const GET = withAuth(async function (request: AuthRequest) {
   const { path } = getFoldersRequestParams.parse(
     Object.fromEntries(new URL(request.url).searchParams)
   );
 
-  const folders = await getFolderList(path);
+  const userStoragePath = getUserStoragePath(request.user, path);
+
+  const folders = await getFolderList(userStoragePath);
 
   return NextResponse.json({ folders });
 });
 
-export const POST = withAuth(async function (request: NextRequest) {
+export const POST = withAuth(async function (request: AuthRequest) {
   const { path } = await request.json();
 
-  await addFolder(path);
+  const userStoragePath = getUserStoragePath(request.user, path);
+
+  await addFolder(userStoragePath);
 
   return NextResponse.json({});
 });
@@ -29,7 +34,7 @@ const deleteFoldersRequestParams = z.object({
   paths: z.array(z.string()),
 });
 
-export const DELETE = withAuth(async function (request: NextRequest) {
+export const DELETE = withAuth(async function (request: AuthRequest) {
   const { paths } = deleteFoldersRequestParams.parse({
     paths: new URL(request.url).searchParams.get("paths")?.split(",") ?? [],
   });

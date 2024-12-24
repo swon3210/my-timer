@@ -33,7 +33,7 @@ const FolderItem = ({
           <Image
             src="/folders-icon.png"
             alt="폴더"
-            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            className="object-cover transition-transform duration-300 group-hover:scale-110 relative top-5"
             width={48}
             height={48}
           />

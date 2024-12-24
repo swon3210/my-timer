@@ -73,10 +73,11 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
       const uploadPromises = optimizedImages.map(async (file, index) => {
         // 파일명 생성 (현재 시간 + 원본 파일명)
         const fileName = imageFiles[index].name;
+
         // storage 참조 생성
         const imageStorageRef = storageRef(
           storage,
-          `${folderPath}/${fileName}`
+          decodeURIComponent(`${folderPath}/${fileName}`)
         );
 
         // 파일 업로드

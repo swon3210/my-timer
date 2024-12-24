@@ -8,3 +8,12 @@ export const appSettingsSchema = z.object({
 });
 
 export type AppSettings = z.infer<typeof appSettingsSchema>;
+
+export const userSchema = z.object({
+  uid: z.string(),
+  email: z.string().email(),
+  displayName: z.string().optional(),
+  imageUrl: z.string().optional(),
+});
+
+export type User = z.infer<typeof userSchema>;

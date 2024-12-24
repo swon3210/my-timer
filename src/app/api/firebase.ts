@@ -8,7 +8,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { getDatabase, ref as dbRef, set, get } from "firebase/database";
-import { AppSettings } from "@/lib/types";
+import { AppSettings, User } from "@/lib/types";
 
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -89,12 +89,12 @@ export async function getImageListFromFolder(path: string) {
   }
 }
 
+// TODO : 클라이언트에서 사용되고 있는 메서드와 통합
 export const addImages = async (folderPath: string, imageFiles: File[]) => {
   try {
-    const storage = getStorage();
     const uploadPromises = imageFiles.map(async (file) => {
       // 파일명 생성 (현재 시간 + 원본 파일명)
-      const fileName = `${Date.now()}_${file.name}`;
+      const fileName = file.name;
 
       // storage 참조 생성
       const imageStorageRef = storageRef(storage, `${folderPath}/${fileName}`);
@@ -158,6 +158,14 @@ export const getAppSettings = async (userId: string) => {
     console.error("Settings 정보를 불러오는데 실패하였습니다 : ", error);
     return null;
   }
+};
+
+export const getUserStoragePath = (user: User, path: string) => {
+  if (user.email === "swon3210@gmail.com") {
+    return path;
+  }
+
+  return `users/${user.email}/${path}`;
 };
 
 export default firebaseApp;

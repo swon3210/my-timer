@@ -1,7 +1,7 @@
 import admin from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import type { DecodedIdToken } from "firebase-admin/auth";
+import { User } from "@/lib/types";
 
 const serviceAccount = {
   type: process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT_TYPE,
@@ -25,7 +25,7 @@ if (!admin.apps.length) {
   });
 }
 
-export type AuthRequest = NextRequest & { user: DecodedIdToken };
+export type AuthRequest = NextRequest & { user: User };
 
 export const hasAuth = async (req: NextRequest) => {
   const sessionCookie = cookies().get("session")?.value;
@@ -43,7 +43,12 @@ export const hasAuth = async (req: NextRequest) => {
       true
     );
 
-    (req as AuthRequest).user = decodedClaims;
+    (req as AuthRequest).user = {
+      uid: decodedClaims.uid,
+      email: decodedClaims.email ?? "",
+      displayName: decodedClaims.name,
+      imageUrl: decodedClaims.picture,
+    };
 
     return {
       success: true,
@@ -57,8 +62,8 @@ export const hasAuth = async (req: NextRequest) => {
   }
 };
 
-export function withAuth(handler: (req: NextRequest) => Promise<NextResponse>) {
-  return async (req: NextRequest) => {
+export function withAuth(handler: (req: AuthRequest) => Promise<NextResponse>) {
+  return async (req: AuthRequest) => {
     const { success, error } = await hasAuth(req);
 
     if (!success) {

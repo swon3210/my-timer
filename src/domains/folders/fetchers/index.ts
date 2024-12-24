@@ -13,7 +13,7 @@ export const getImageFolderNames = async ({
   // TODO : 예외처리
   const response = await axiosInstance.get("/api/folders", {
     params: {
-      path: `/images/${decodeURIComponent(categoryName)}`,
+      path: `images/${categoryName}`,
     },
   });
 
@@ -25,7 +25,7 @@ export const getImageFolderNames = async ({
 export const getFolderNames = async () => {
   const response = await axiosInstance.get("/api/folders", {
     params: {
-      path: `/images`,
+      path: `images`,
     },
   });
 
@@ -34,16 +34,10 @@ export const getFolderNames = async () => {
   return folders;
 };
 
-export const deleteFolders = async ({
-  folderNames,
-}: {
-  folderNames: string[];
-}) => {
+export const deleteFolders = async ({ paths }: { paths: string[] }) => {
   const response = await axiosInstance.delete("/api/folders", {
     params: {
-      paths: folderNames.map((folderName) =>
-        encodeURIComponent(`/images/${decodeURIComponent(folderName)}`)
-      ),
+      paths,
     },
   });
 

@@ -45,7 +45,9 @@ const BackgroundGallery = forwardRef<
 
   const selectedImageUrl = imageUrls[imageUrlIndex] as string | undefined;
 
-  const backgroundImage = `url('${selectedImageUrl?.replaceAll("'", "\\'")}')`;
+  const backgroundImage = selectedImageUrl
+    ? `url('${selectedImageUrl?.replaceAll("'", "\\'")}')`
+    : undefined;
 
   const handleBackgroundGalleryClick = (
     event: React.MouseEvent<HTMLDivElement>
@@ -138,10 +140,12 @@ const BackgroundGallery = forwardRef<
         }}
         onClick={handleBackgroundGalleryClick}
       />
-      <ImageShuffleButton
-        onClick={handleImageShuffleButtonClick}
-        className="absolute bottom-4 right-4"
-      />
+      {backgroundImage && (
+        <ImageShuffleButton
+          onClick={handleImageShuffleButtonClick}
+          className="absolute bottom-4 right-4"
+        />
+      )}
     </div>
   );
 });
