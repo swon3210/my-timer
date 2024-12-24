@@ -1,6 +1,6 @@
 import { Shuffle } from "lucide-react";
-import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type ImageShuffleButtonProps = {
   onClick: () => void;
