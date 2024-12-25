@@ -143,7 +143,7 @@ const BackgroundGallery = forwardRef<
       {backgroundImage && (
         <ImageShuffleButton
           onClick={handleImageShuffleButtonClick}
-          className="absolute bottom-4 right-4"
+          className="absolute bottom-4 right-4 z-20"
         />
       )}
     </div>
