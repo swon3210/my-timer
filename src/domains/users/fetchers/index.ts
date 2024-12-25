@@ -32,3 +32,9 @@ export const getUser = async () => {
 
   return user;
 };
+
+export const signOut = async () => {
+  const response = await axiosInstance.post("/api/auth/sign-out");
+
+  return response.data;
+};
