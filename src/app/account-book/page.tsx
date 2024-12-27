@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ExpenseForm from "../../components/ExpenseForm";
-import ExpenseSummary from "../../components/ExpenseSummary";
+import ExpenseSummary, { Summary } from "../../components/ExpenseSummary";
 import ExpenseList from "../../components/ExpenseList";
 import CategoryManager from "../../components/CategoryManager";
 import BudgetManager from "../../components/BudgetManager";
@@ -101,7 +101,7 @@ export default function Home() {
                     <option value="monthly">월별</option>
                   </select>
                 </div>
-                <ExpenseSummary timeFrame={timeFrame} />
+                <ExpenseSummary timeFrame={timeFrame as keyof Summary} />
               </motion.div>
             </TabsContent>
 

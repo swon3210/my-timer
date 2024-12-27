@@ -10,7 +10,7 @@ interface PeriodData {
   categories: { [key: string]: { income: number; expense: number } };
 }
 
-interface Summary {
+export interface Summary {
   daily: PeriodData;
   weekly: PeriodData;
   monthly: PeriodData;
