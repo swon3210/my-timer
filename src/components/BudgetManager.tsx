@@ -15,12 +15,11 @@ export default function BudgetManager() {
 
   return (
     <motion.div
-      className="space-y-6 bg-white p-6 rounded-lg shadow-md"
+      className="space-y-6 bg-white rounded-lg"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">주간 예산 설정</h2>
       {categories
         .filter((category) => category.type === "expense")
         .map((category) => {
@@ -55,7 +54,7 @@ export default function BudgetManager() {
                 }
                 className="bg-blue-500 hover:bg-blue-600"
               >
-                <Save className="w-4 h-4 mr-2" /> 저장
+                <Save className="w-4 h-4" />
               </Button>
             </motion.div>
           );

@@ -2,12 +2,7 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import {
-  ArrowUpCircle,
-  ArrowDownCircle,
-  TrendingUp,
-  PieChart,
-} from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, TrendingUp } from "lucide-react";
 import { useFinance } from "./FinanceContext";
 
 interface PeriodData {
@@ -95,12 +90,6 @@ export default function ExpenseSummary({
     );
   }, [transactions, categories]);
 
-  const periodLabels = {
-    daily: "일간",
-    weekly: "주간",
-    monthly: "월간",
-  };
-
   if (Object.keys(summary[timeFrame].total).length === 0) {
     return (
       <motion.div
@@ -127,44 +116,38 @@ export default function ExpenseSummary({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">
-        {periodLabels[timeFrame]} 요약
-      </h2>
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-green-100 p-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-green-800 mb-2 flex items-center">
+        <div className="bg-green-100 p-4 rounded-lg">
+          <h3 className="text-md font-semibold text-green-800 mb-2 flex items-center">
             <ArrowUpCircle className="mr-2" /> 총 수입
           </h3>
-          <p className="text-2xl font-bold text-green-600">
-            ₩{totalIncome.toLocaleString()}
+          <p className="text-xl font-bold text-green-600">
+            ₩ {totalIncome.toLocaleString()}
           </p>
         </div>
-        <div className="bg-red-100 p-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-red-800 mb-2 flex items-center">
+        <div className="bg-red-100 p-4 rounded-lg">
+          <h3 className="text-md font-semibold text-red-800 mb-2 flex items-center">
             <ArrowDownCircle className="mr-2" /> 총 지출
           </h3>
-          <p className="text-2xl font-bold text-red-600">
-            ₩{totalExpense.toLocaleString()}
+          <p className="text-xl font-bold text-red-600">
+            ₩ {totalExpense.toLocaleString()}
           </p>
         </div>
-        <div className="bg-blue-100 p-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-blue-800 mb-2 flex items-center">
+        <div className="bg-blue-100 p-4 rounded-lg">
+          <h3 className="text-md font-semibold text-blue-800 mb-2 flex items-center">
             <TrendingUp className="mr-2" /> 잔액
           </h3>
           <p
-            className={`text-2xl font-bold ${
+            className={`text-xl font-bold ${
               totalBalance >= 0 ? "text-blue-600" : "text-red-600"
             }`}
           >
-            ₩{totalBalance.toLocaleString()}
+            ₩ {totalBalance.toLocaleString()}
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <PieChart className="mr-2" /> 카테고리별 요약
-        </h3>
+      <div className="bg-white rounded-lg">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">

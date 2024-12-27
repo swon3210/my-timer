@@ -42,7 +42,7 @@ export default function ExpenseForm() {
   return (
     <motion.form
       onSubmit={handleSubmit}
-      className="space-y-4 bg-white p-6 rounded-lg shadow-md"
+      className="space-y-4 bg-white rounded-lg flex flex-col justify-between"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

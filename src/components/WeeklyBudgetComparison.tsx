@@ -60,12 +60,11 @@ export default function WeeklyBudgetComparison() {
 
   return (
     <motion.div
-      className="space-y-6 bg-white p-6 rounded-lg shadow-md"
+      className="space-y-6 bg-white rounded-lg"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">주간 예산 비교</h2>
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
