@@ -12,20 +12,20 @@ async function compressGif(
   const { quality = 0.8, width = 800, height = 800 } = options;
 
   try {
-    const optimizedBuffer = await sharp(inputBuffer, { animated: true })
-      // .resize(800, 800, {
-      //   // 원하는 크기로 조정
-      //   fit: "inside",
-      //   withoutEnlargement: true,
-      // })
-      // .gif({
-      //   colours: 128, // 색상 수 제한 (파일 크기 감소)
-      //   effort: 7, // 압축 수준 (1-10)
-      //   loop: 0, // 무한 반복
-      // })
-      .toBuffer();
+    return inputBuffer;
+    // const optimizedBuffer = await sharp(inputBuffer, { animated: true })
+    //   .resize({
+    //     width: 500,
+    //     height: 500,
+    //     // 원하는 크기로 조정
+    //     fit: "inside",
+    //   })
+    //   .gif({
+    //     effort: 7, // 압축 수준 (1-10)
+    //   })
+    //   .toBuffer();
 
-    return optimizedBuffer;
+    // return optimizedBuffer;
   } catch (error) {
     console.error("GIF 압축 중 에러 발생:", error);
     throw error;
@@ -43,20 +43,22 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ error: "파일이 없습니다" }, { status: 400 });
     }
 
-    // File을 Buffer로 변환
-    const buffer = Buffer.from(await file.arrayBuffer());
+    // // File을 Buffer로 변환
+    // const buffer = Buffer.from(await file.arrayBuffer());
 
     // GIF 압축
-    const optimizedBuffer = await compressGif(buffer, {
-      quality: quality ? parseInt(quality) : 80,
-    });
+    // const optimizedBuffer = await compressGif(buffer, {
+    //   quality: quality ? parseInt(quality) : 80,
+    // });
 
-    // 압축된 GIF 반환
-    return new NextResponse(optimizedBuffer, {
-      headers: {
-        "Content-Type": "image/gif",
-        "Cache-Control": "public, max-age=31536000",
-      },
+    // File을 ArrayBuffer로 변환 후 Base64로 인코딩
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64 = buffer.toString("base64");
+
+    return NextResponse.json({
+      success: true,
+      data: `data:image/gif;base64,${base64}`,
     });
   } catch (error) {
     console.error("GIF 압축 중 에러:", error);

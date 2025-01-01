@@ -60,7 +60,7 @@ export const optimizeGif = async (file: File, quality: number = 0.8) => {
   formData.append("file", file);
   formData.append("quality", quality.toString());
 
-  const { data } = await axiosInstance.post<Blob>(
+  const { data } = await axiosInstance.post<{ data: string }>(
     "/api/optimize-gif",
     formData,
     {
@@ -70,5 +70,14 @@ export const optimizeGif = async (file: File, quality: number = 0.8) => {
     }
   );
 
-  return new File([data], file.name, { type: "image/gif" });
+  const base64Content = data.data.split(";base64,").pop() || "";
+  const byteString = atob(base64Content);
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new File([ab], file.name, { type: "image/gif" });
 };
