@@ -4,9 +4,6 @@ import "./globals.css";
 import { QueryProvider } from "@/lib/providers";
 import { Toaster } from "sonner";
 import FirebaseProvider from "@/providers/FirebaseProvider";
-import { checkAuth } from "@/domains/users/fetchers";
-import { redirect } from "next/navigation";
-import { cookies, headers } from "next/headers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,18 +26,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = headers().get("x-pathname") || "";
-
-  const isAuthPage = ["/sign-in", "/sign-up"].includes(pathname);
-
-  if (!isAuthPage) {
-    const { success } = await checkAuth(cookies().toString());
-
-    if (!success) {
-      redirect("/sign-in");
-    }
-  }
-
   return (
     <html lang="ko-kr">
       <body

@@ -46,7 +46,7 @@ export default function CategoriesPage({
     setCategoryName(params.categoryName);
     setFolderName(folderName);
 
-    router.push("/home");
+    router.push("/gallery-timer");
   };
 
   return (

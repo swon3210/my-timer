@@ -1,21 +1,5 @@
 import { axiosInstance } from "@/lib/api";
-import {
-  checkAuthResponseSchema,
-  getSettingsResponseSchema,
-  getUserResponseSchema,
-} from "../schemes";
-
-export const checkAuth = async (sessionCookie: string) => {
-  const response = await axiosInstance.get("/api/auth/check", {
-    headers: {
-      Cookie: sessionCookie,
-    },
-  });
-
-  const { success, error } = checkAuthResponseSchema.parse(response.data);
-
-  return { success, error };
-};
+import { getSettingsResponseSchema, getUserResponseSchema } from "../schemes";
 
 export const getSettings = async () => {
   const response = await axiosInstance.get("/api/settings");

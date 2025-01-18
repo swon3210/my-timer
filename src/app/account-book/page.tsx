@@ -19,24 +19,18 @@ import {
 } from "lucide-react";
 import { FinanceProvider } from "@/components/FinanceContext";
 import { cn } from "@/lib/utils";
-import { PRIMARY_GRADIENT_CLASSNAMES } from "@/lib/styles";
 
 export default function Home() {
   const [timeFrame, setTimeFrame] = useState("monthly");
 
   return (
     <FinanceProvider>
-      <div
-        className={cn(
-          "min-h-screen flex flex-col md:p-8",
-          PRIMARY_GRADIENT_CLASSNAMES
-        )}
-      >
+      <div className={cn("flex flex-col")}>
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="grow max-w-4xl mx-auto bg-white md:rounded-md overflow-hidden"
+          className="bg-white md:rounded-md overflow-hidden"
         >
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-6 bg-orange-200">
