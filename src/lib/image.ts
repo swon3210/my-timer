@@ -1,9 +1,15 @@
+import { axiosInstance } from "./api";
+
 export const optimizeImage = async (
   file: File,
   quality: number = 0.8
 ): Promise<Blob> => {
   if (file.size === 350 * 1024) {
     return file;
+  }
+
+  if (file.type === "image/gif") {
+    return optimizeGif(file, quality);
   }
 
   // 이미지 로드
@@ -46,4 +52,25 @@ export const optimizeImage = async (
       quality // 품질 95% 압축
     );
   });
+};
+
+export const optimizeGif = async (file: File, quality: number = 0.8) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("quality", quality.toString());
+
+  const response = await axiosInstance.post(
+    "http://localhost:3001/optimize-gif",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      responseType: "arraybuffer",
+    }
+  );
+
+  // 파일로 변환
+  const blob = new Blob([response.data], { type: "image/gif" });
+  return blob;
 };
