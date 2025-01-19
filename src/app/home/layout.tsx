@@ -21,7 +21,6 @@ export default function RootLayout({
           <Settings size={32} />
         </Link>
       </div>
-
       {children}
     </main>
   );

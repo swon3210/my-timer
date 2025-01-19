@@ -10,7 +10,9 @@ export default function RootLayout({
 }) {
   return (
     <main className="size-full bg-gray-50">
-      <div className="size-full max-w-app-container mx-auto">{children}</div>
+      <div className="size-full max-w-app-container mx-auto flex flex-col">
+        {children}
+      </div>
     </main>
   );
 }

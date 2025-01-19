@@ -25,12 +25,12 @@ export default function Home() {
 
   return (
     <FinanceProvider>
-      <div className={cn("flex flex-col")}>
+      <div className={cn("flex flex-col h-full")}>
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white md:rounded-md overflow-hidden"
+          className="h-full bg-white md:rounded-md overflow-auto"
         >
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-6 bg-orange-200">
