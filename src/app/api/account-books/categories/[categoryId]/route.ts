@@ -1,5 +1,5 @@
 import { database } from "@/app/api/firebase";
-import { AuthRequest, withAuth } from "@/app/api/firebase-admin";
+import { withAuth } from "@/app/api/firebase-admin";
 import { ref, remove, update } from "firebase/database";
 import { NextResponse } from "next/server";
 
