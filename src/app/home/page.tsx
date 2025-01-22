@@ -12,7 +12,9 @@ export default function Home() {
 
   const { platform } = usePlatform();
   const { data: appSettings } = useSettingsQuery();
-  const { data: user, isLoading: isUserLoading } = useUserQuery();
+  const { data: user, isLoading: isUserLoading } = useUserQuery({
+    retry: false,
+  });
 
   useEffect(() => {
     if (user == null && !isUserLoading) {

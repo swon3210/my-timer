@@ -62,15 +62,23 @@ export const hasAuth = async (req: NextRequest) => {
   }
 };
 
-export function withAuth(handler: (req: AuthRequest) => Promise<NextResponse>) {
-  return async (req: AuthRequest) => {
+export function withAuth(
+  handler: (
+    req: AuthRequest,
+    routeInfo?: { params: Record<string, string> }
+  ) => Promise<NextResponse>
+) {
+  return async (
+    req: AuthRequest,
+    routeInfo?: { params: Record<string, string> }
+  ) => {
     const { success, error } = await hasAuth(req);
 
     if (!success) {
       return NextResponse.json({ error }, { status: 401 });
     }
 
-    return handler(req);
+    return handler(req, routeInfo);
   };
 }
 

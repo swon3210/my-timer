@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, CheckCircle } from "lucide-react";
-import { useFinance } from "./FinanceContext";
+import { useFinance } from "../../../../components/FinanceContext";
 
 interface ExpenseMap {
   [key: string]: number;
@@ -45,7 +45,7 @@ export default function WeeklyBudgetComparison() {
 
   const comparisonData = useMemo(() => {
     return categories
-      .filter((category) => category.type === "expense")
+      .filter((category) => category.type === "EXPENSE")
       .map((category) => {
         const budget = budgets.find((b) => b.categoryId === category.id);
         const weeklyExpense = weeklyExpenses[category.id] || 0;

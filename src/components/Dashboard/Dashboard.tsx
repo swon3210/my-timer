@@ -26,7 +26,7 @@ function AppIcon({ app, index }: AppIconProps) {
       transition={{ duration: 0.3, delay: index * 0.05 }}
     >
       <div className={`text-5xl mb-2 ${app.color}`}>{app.icon}</div>
-      <div className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-pre-line">
+      <div className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-pre-line text-center">
         {app.name}
       </div>
     </motion.div>
@@ -41,7 +41,7 @@ const apps = [
     url: "/gallery-timer",
   },
   {
-    name: "가계부",
+    name: "커플\n가계부",
     icon: <Wallet size={36} />,
     color: "text-pink-500",
     url: "/account-book",
@@ -51,7 +51,11 @@ const apps = [
 export default function Dashboard() {
   return (
     <div className="size-full justify-center transition-colors duration-300 flex flex-col items-center gap-12">
-      <img src="/dashboard-bg.png" alt="배경이미지" />
+      <img
+        src="/dashboard-bg.png"
+        alt="배경이미지"
+        className="w-[400px] h-[320px]"
+      />
       <motion.div
         className="flex items-start gap-8"
         initial={{ opacity: 0, y: 20 }}
