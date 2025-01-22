@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,35 +12,49 @@ import {
 } from "@/components/ui/select";
 import { PlusCircle, MinusCircle, Calendar } from "lucide-react";
 import { useFinance } from "./FinanceContext";
+import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
+import { useForm } from "react-hook-form";
+import { AccountItem } from "@/domains/account-book/types";
 
 export default function ExpenseForm() {
-  const { categories, addTransaction } = useFinance();
-  const [amount, setAmount] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState("expense");
-  const [category, setCategory] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const { categories } = useFinance();
+  const { register, handleSubmit, watch, setValue } = useForm<AccountItem>({
+    defaultValues: {
+      type: "EXPENSE",
+      categoryId: undefined,
+      categoryDisplayedName: undefined,
+      amount: 0,
+      description: "",
+      date: new Date(),
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!amount || !description || !category) return;
+  const [type, categoryId, categoryDisplayedName] = watch([
+    "type",
+    "categoryId",
+    "categoryDisplayedName",
+  ]);
 
-    addTransaction({
-      amount: type === "expense" ? -Number(amount) : Number(amount),
-      description,
-      category,
-      date: new Date(date).toISOString(),
-    });
+  console.log({ categoryId, categoryDisplayedName });
 
-    setAmount("");
-    setDescription("");
-    setCategory("");
-    setDate(new Date().toISOString().split("T")[0]);
-  };
+  const { mutate: addTransaction } = useAddAccountItemMutation();
+
+  const handleFormSubmit = handleSubmit(
+    ({ amount, description, categoryId, categoryDisplayedName, date }) => {
+      addTransaction({
+        amount: type === "EXPENSE" ? -Number(amount) : Number(amount),
+        description,
+        categoryId,
+        categoryDisplayedName,
+        date: new Date(date),
+        type: type === "EXPENSE" ? "EXPENSE" : "INCOME",
+      });
+    }
+  );
 
   return (
     <motion.form
-      onSubmit={handleSubmit}
+      onSubmit={handleFormSubmit}
       className="space-y-4 bg-white rounded-lg flex flex-col justify-between"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -50,20 +63,20 @@ export default function ExpenseForm() {
       <div className="flex space-x-2">
         <Button
           type="button"
-          onClick={() => setType("expense")}
-          variant={type === "expense" ? "default" : "outline"}
+          onClick={() => setValue("type", "EXPENSE")}
+          variant={type === "EXPENSE" ? "default" : "outline"}
           className={`w-1/2 ${
-            type === "expense" ? "bg-red-500 hover:bg-red-600" : ""
+            type === "EXPENSE" ? "bg-red-500 hover:bg-red-600" : ""
           }`}
         >
           <MinusCircle className="mr-2 h-4 w-4" /> 지출
         </Button>
         <Button
           type="button"
-          onClick={() => setType("income")}
-          variant={type === "income" ? "default" : "outline"}
+          onClick={() => setValue("type", "INCOME")}
+          variant={type === "INCOME" ? "default" : "outline"}
           className={`w-1/2 ${
-            type === "income" ? "bg-green-500 hover:bg-green-600" : ""
+            type === "INCOME" ? "bg-green-500 hover:bg-green-600" : ""
           }`}
         >
           <PlusCircle className="mr-2 h-4 w-4" /> 수입
@@ -74,8 +87,7 @@ export default function ExpenseForm() {
         <Input
           type="number"
           placeholder="금액"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          {...register("amount")}
           className="w-full pl-8"
         />
         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -86,12 +98,14 @@ export default function ExpenseForm() {
       <Input
         type="text"
         placeholder="설명"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
         className="w-full"
+        {...register("description")}
       />
 
-      <Select value={category} onValueChange={setCategory}>
+      <Select
+        value={categoryId?.toString()}
+        onValueChange={(value) => setValue("categoryId", Number(value))}
+      >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="카테고리 선택" />
         </SelectTrigger>
@@ -107,12 +121,7 @@ export default function ExpenseForm() {
       </Select>
 
       <div className="relative">
-        <Input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="w-full pl-10"
-        />
+        <Input type="date" {...register("date")} className="w-full pl-10" />
         <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
       </div>
 

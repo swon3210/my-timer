@@ -1,4 +1,8 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  QueryOptions,
+  useQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { getUser } from "./fetchers";
 
 export const useUserSuspenseQuery = () => {
@@ -13,12 +17,13 @@ export const useUserSuspenseQuery = () => {
   });
 };
 
-export const useUserQuery = () => {
+export const useUserQuery = (options?: QueryOptions) => {
   const USER_QUERY_KEY = ["user"] as const;
 
   return useQuery({
     queryKey: USER_QUERY_KEY,
     queryFn: getUser,
+    ...options,
   });
 };
 

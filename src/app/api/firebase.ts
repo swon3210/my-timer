@@ -130,7 +130,7 @@ export async function deleteImage(path: string) {
   }
 }
 
-const database = getDatabase(firebaseApp);
+export const database = getDatabase(firebaseApp);
 
 export const saveAppSettings = async (
   userId: string,
