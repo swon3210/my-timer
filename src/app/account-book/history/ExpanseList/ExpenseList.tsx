@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowUpCircle, ArrowDownCircle, Calendar, Tag } from "lucide-react";
-import { useFinance } from "./FinanceContext";
+import { useFinance } from "../../../../components/FinanceContext";
 
 export default function ExpenseList() {
   const { transactions, categories } = useFinance();

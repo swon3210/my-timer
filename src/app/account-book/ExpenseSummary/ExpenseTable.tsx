@@ -1,8 +1,4 @@
-import {
-  AccountItem,
-  EXPENSE_CATEGORY_KR,
-  INCOME_CATEGORY_KR,
-} from "@/domains/account-book/types";
+import { AccountItem } from "@/domains/account-book/types";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 

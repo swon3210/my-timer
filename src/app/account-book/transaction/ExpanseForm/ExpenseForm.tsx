@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PlusCircle, MinusCircle, Calendar } from "lucide-react";
-import { useFinance } from "./FinanceContext";
+import { useFinance } from "../../../../components/FinanceContext";
 import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
 import { useForm } from "react-hook-form";
 import { AccountItem } from "@/domains/account-book/types";

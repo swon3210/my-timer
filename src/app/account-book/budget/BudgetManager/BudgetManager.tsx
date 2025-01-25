@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Save } from "lucide-react";
-import { useFinance } from "./FinanceContext";
+import { useFinance } from "../../../../components/FinanceContext";
 
 export default function BudgetManager() {
   const { categories, budgets, setBudget } = useFinance();
@@ -21,7 +21,7 @@ export default function BudgetManager() {
       transition={{ duration: 0.5 }}
     >
       {categories
-        .filter((category) => category.type === "expense")
+        .filter((category) => category.type === "EXPENSE")
         .map((category) => {
           const budget = budgets.find((b) => b.categoryId === category.id);
           return (
