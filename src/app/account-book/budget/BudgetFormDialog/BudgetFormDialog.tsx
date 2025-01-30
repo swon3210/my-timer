@@ -6,43 +6,22 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useAddBudgetsMutation } from "@/domains/account-book/budgets/useAddBudgetsMutation";
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-
-type BudgetFormValues = {
-  name: string;
-  amount: number;
-  categoryId: string;
-};
+import { BudgetFormValues } from "../types";
 
 type BudgetFormProps = {
-  onSuccess: () => void;
+  defaultValues?: BudgetFormValues;
+  onSubmit: (formValues: BudgetFormValues) => void;
 };
 
-function BudgetForm({ onSuccess }: BudgetFormProps) {
-  const { control, register, handleSubmit, watch } =
-    useForm<BudgetFormValues>();
-  const { mutateAsync: addBudget } = useAddBudgetsMutation();
-
-  const selectedCategoryId = watch("categoryId");
-
-  const handleFormSubmit = handleSubmit(async (data: BudgetFormValues) => {
-    try {
-      await addBudget({
-        name: data.name,
-        categoryId: selectedCategoryId,
-        amount: data.amount,
-      });
-
-      onSuccess();
-    } catch (error) {
-      console.error(error);
-    }
+function BudgetForm({ defaultValues, onSubmit }: BudgetFormProps) {
+  const { control, register, handleSubmit } = useForm<BudgetFormValues>({
+    defaultValues,
   });
+
+  const handleFormSubmit = handleSubmit(onSubmit);
 
   return (
     <form className="flex flex-col space-y-4" onSubmit={handleFormSubmit}>
@@ -53,7 +32,10 @@ function BudgetForm({ onSuccess }: BudgetFormProps) {
       />
       <Input
         type="number"
-        {...register("amount", { required: true, valueAsNumber: true })}
+        {...register("amount", {
+          required: true,
+          valueAsNumber: true,
+        })}
         placeholder="예산 금액"
         className="flex-grow"
       />
@@ -77,14 +59,24 @@ function BudgetForm({ onSuccess }: BudgetFormProps) {
   );
 }
 
-export default function BudgetFormDialogButton() {
-  const [open, setOpen] = useState(false);
+type BudgetFormDialogProps = {
+  isOpen: boolean;
+  close: () => void;
+} & BudgetFormProps;
+
+export default function BudgetFormDialog({
+  isOpen,
+  close,
+  defaultValues,
+  onSubmit,
+}: BudgetFormDialogProps) {
+  const handleBudgetFormSubmit = (formValues: BudgetFormValues) => {
+    onSubmit(formValues);
+    close();
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>예산 추가</Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={close}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>예산 추가</DialogTitle>
@@ -92,7 +84,10 @@ export default function BudgetFormDialogButton() {
             예산을 추가하여 예산을 관리해보세요.
           </DialogDescription>
         </DialogHeader>
-        <BudgetForm onSuccess={() => setOpen(false)} />
+        <BudgetForm
+          defaultValues={defaultValues}
+          onSubmit={handleBudgetFormSubmit}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -5,12 +5,41 @@ import { motion } from "framer-motion";
 import { Pencil } from "lucide-react";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
 import { Budget } from "@/domains/account-book/budgets/types";
+import useBudgetFormDialogOverlay from "./useBudgetFormDialogOverlay";
+import { useUpdateBudgetsMutation } from "@/domains/account-book/budgets/useUpdateBudgetsMutation";
 
-function BudgetItem({ budget }: { budget: Budget }) {
-  const handleBudgetUpdateButtonClick = () => {
-    console.log("update budget");
+function BudgetUpdateButton({ budget }: { budget: Budget }) {
+  const { openBudgetFormDialog } = useBudgetFormDialogOverlay();
+
+  const { mutateAsync: updateBudget } = useUpdateBudgetsMutation();
+
+  const handleClick = async () => {
+    const formValues = await openBudgetFormDialog({
+      defaultValues: {
+        name: budget.name,
+        amount: budget.amount,
+        categoryId: budget.categoryId,
+      },
+    });
+
+    try {
+      await updateBudget({
+        id: budget.id,
+        ...formValues,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
+  return (
+    <Button onClick={handleClick}>
+      <Pencil className="w-4 h-4" />
+    </Button>
+  );
+}
+
+function BudgetItem({ budget }: { budget: Budget }) {
   return (
     <motion.div
       key={budget.id}
@@ -26,12 +55,7 @@ function BudgetItem({ budget }: { budget: Budget }) {
           ₩ {budget.amount.toLocaleString()}
         </span>
       </div>
-      <Button
-        onClick={handleBudgetUpdateButtonClick}
-        className="bg-blue-500 hover:bg-blue-600"
-      >
-        <Pencil className="w-4 h-4" />
-      </Button>
+      <BudgetUpdateButton budget={budget} />
     </motion.div>
   );
 }

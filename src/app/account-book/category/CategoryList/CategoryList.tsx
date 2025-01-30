@@ -1,26 +1,11 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import useAccountItemCategoriesQuery from "@/domains/account-book/useAccountItemCategoriesQuery";
 import { Edit2, Trash2 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { useAddAccountItemCategoryMutation } from "@/domains/account-book/useAddAccountItemCategoryMutation";
-import useAccountItemCategoriesQuery, {
-  getAccountItemCategoriesQueryKey,
-} from "@/domains/account-book/useAccountItemCategoriesQuery";
 import { Category } from "@/domains/account-book/types";
 import useUpdateAccountItemCategoryMutation from "@/domains/account-book/useUpdateAccountItemCategoryMutation";
 import { useSetAccountItemCategories } from "@/domains/account-book/useAccountItemCategoriesQuery";
 import { useDeleteAccountItemCategoryMutation } from "@/domains/account-book/useDeleteAccountItemCategoryMutation";
-import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const CategoryItem = ({ category }: { category: Category }) => {
   const { mutateAsync: deleteCategory } =
@@ -129,80 +114,31 @@ const CategoryItem = ({ category }: { category: Category }) => {
   );
 };
 
-type CategoryFormValues = {
-  name: string;
-  type: "INCOME" | "EXPENSE";
-};
-
-export default function CategoryManager() {
-  const queryClient = useQueryClient();
-
+export default function CategoryList() {
   const { data: categories } = useAccountItemCategoriesQuery();
 
-  const { mutateAsync: addCategory } = useAddAccountItemCategoryMutation();
-  const { register, handleSubmit, setValue, watch } =
-    useForm<CategoryFormValues>({
-      defaultValues: {
-        name: "",
-        type: "INCOME",
-      },
-    });
-
-  const type = watch("type");
-
-  const handleTypeChange = (value: string) => {
-    setValue("type", value as "INCOME" | "EXPENSE");
-  };
-
-  const handleFormSubmit = async (data: CategoryFormValues) => {
-    try {
-      await addCategory({
-        displayedName: data.name,
-        type: data.type,
-      });
-
-      setValue("name", "");
-
-      queryClient.invalidateQueries({
-        queryKey: getAccountItemCategoriesQueryKey(),
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const expenseCategories = categories?.filter(
+    (category) => category.type === "EXPENSE"
+  );
+  const incomeCategories = categories?.filter(
+    (category) => category.type === "INCOME"
+  );
 
   return (
-    <motion.form
-      className="space-y-6 bg-white rounded-lg"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      onSubmit={handleSubmit(handleFormSubmit)}
-    >
-      <div className="flex space-x-2">
-        <Input
-          {...register("name", { required: true })}
-          placeholder="새 카테고리 이름"
-          className="flex-grow"
-        />
-        <Select value={type} onValueChange={handleTypeChange}>
-          <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder="유형" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="INCOME">수입</SelectItem>
-            <SelectItem value="EXPENSE">지출</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button type="submit" className="bg-green-500 hover:bg-green-600">
-          추가
-        </Button>
-      </div>
+    <div className="flex flex-col space-y-12">
       <div className="space-y-2">
-        {categories?.map((category) => (
+        <h2 className="text-lg font-semibold">수입</h2>
+        {incomeCategories?.map((category) => (
           <CategoryItem key={category.id} category={category} />
         ))}
       </div>
-    </motion.form>
+
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold">지출</h2>
+        {expenseCategories?.map((category) => (
+          <CategoryItem key={category.id} category={category} />
+        ))}
+      </div>
+    </div>
   );
 }
