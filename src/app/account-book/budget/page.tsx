@@ -16,9 +16,9 @@ function BudgetAddButton() {
 
     try {
       await addBudget({
-        name: formValues.name,
-        categoryId: formValues.categoryId,
         amount: formValues.amount,
+        categoryId: formValues.categoryId,
+        type: formValues.type,
       });
     } catch (error) {
       console.error(error);

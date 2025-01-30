@@ -8,8 +8,9 @@ import { Budget } from "@/domains/account-book/budgets/types";
 const getBudgetsResponseSchema = z.record(
   z.string(),
   z.object({
-    name: z.string(),
     amount: z.number(),
+    categoryId: z.string(),
+    type: z.enum(["INCOME", "EXPENSE"]),
   })
 );
 
@@ -43,12 +44,12 @@ export const GET = withAuth(async (req: AuthRequest) => {
 // POST: 새 예산 추가
 export const POST = withAuth(async (req: AuthRequest) => {
   try {
-    const { name, amount, categoryId } = await req.json();
+    const { amount, categoryId, type } = await req.json();
 
     const newBudget: Omit<Budget, "id"> = {
-      name,
       amount,
       categoryId,
+      type,
     };
 
     const budgetRef = ref(database, `account-book-budgets/${req.user.uid}`);
