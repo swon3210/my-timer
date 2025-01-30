@@ -7,7 +7,7 @@ import { PlusCircle, MinusCircle, Calendar } from "lucide-react";
 import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
 import { Controller, useForm } from "react-hook-form";
 import { TransactionType } from "@/domains/account-book/types";
-import CategorySelector from "./CategorySelector";
+import CategorySelector from "../../../../_components/CategorySelector";
 import useAccountItemCategoriesQuery from "@/domains/account-book/useAccountItemCategoriesQuery";
 
 type ExpenseFormValues = {

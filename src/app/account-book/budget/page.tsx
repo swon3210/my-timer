@@ -1,19 +1,16 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import BudgetManager from "./BudgetManager/BudgetManager";
+import BudgetList from "./BudgetList";
+import BudgetFormDialogButton from "./BudgetFormDialogButton";
 
 export default function BudgetPage() {
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>예산 관리</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <BudgetManager />
-        </CardContent>
-      </Card>
+    <div className="space-y-8 p-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-bold">예산 관리</h3>
+        <BudgetFormDialogButton />
+      </div>
+      <BudgetList />
     </div>
   );
 }

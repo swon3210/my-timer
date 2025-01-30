@@ -9,7 +9,7 @@ import { TransactionType } from "@/domains/account-book/types";
 import useAccountItemCategoriesQuery from "@/domains/account-book/useAccountItemCategoriesQuery";
 
 type CategorySelectorProps = {
-  type: TransactionType;
+  type: TransactionType | "ALL";
   selectedCategoryId: string | undefined;
   onCategoryChange: (categoryId: string) => void;
 };
@@ -21,9 +21,10 @@ function CategorySelector({
 }: CategorySelectorProps) {
   const { data: categories } = useAccountItemCategoriesQuery();
 
-  const filteredCategories = categories?.filter(
-    (category) => category.type === type
-  );
+  const filteredCategories =
+    type === "ALL"
+      ? categories
+      : categories?.filter((category) => category.type === type);
 
   return (
     <Select

@@ -1,6 +1,6 @@
 "use client";
 
-import CategoryManager from "./CategoryManager/CategoryManager";
+import CategoryManager from "./CategoryManager";
 
 export default function CategoryPage() {
   return (

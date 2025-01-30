@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { withAuth, AuthRequest } from "@/app/api/firebase-admin";
-import { ref, get, set, remove, update, push } from "firebase/database";
+import { ref, get, set, push } from "firebase/database";
 import { database } from "@/app/api/firebase";
 import { Category } from "@/domains/account-book/types";
 import dayjs from "dayjs";

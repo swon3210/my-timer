@@ -40,10 +40,6 @@ export default function AccountBookLayout({
       return "analyze";
     }
 
-    if (pathname.includes("/transaction")) {
-      return "transaction";
-    }
-
     if (pathname.includes("/history")) {
       return "history";
     }
@@ -75,15 +71,6 @@ export default function AccountBookLayout({
                     >
                       <PieChart className="w-5 h-5 mr-2 md:block hidden" />
                       개요
-                    </TabsTrigger>
-                  </Link>
-                  <Link href="/account-book/transaction">
-                    <TabsTrigger
-                      value="transaction"
-                      className="data-[state=active]:bg-white data-[state=active]:text-primary text-gray-600"
-                    >
-                      <Wallet className="w-5 h-5 mr-2 md:block hidden" />
-                      추가
                     </TabsTrigger>
                   </Link>
                   <Link href="/account-book/history">
