@@ -35,9 +35,6 @@ export const getAccountItems = async () => {
   return response.data
     .map((item) => ({
       ...item,
-      date: dayjs(item.date).toDate(),
-      createdAt: dayjs(item.createdAt).toDate(),
-      updatedAt: dayjs(item.updatedAt).toDate(),
     }))
     .sort((a, b) => dayjs(b.date).unix() - dayjs(a.date).unix());
 };
@@ -100,10 +97,18 @@ export const deleteAccountItemCategory = async (categoryId: string) => {
   await axiosInstance.delete(`/api/account-books/categories/${categoryId}`);
 };
 
-export const updateAccountItemCategory = async (category: Category) => {
+export const updateAccountItemCategory = async ({
+  categoryId,
+  displayedName,
+}: {
+  categoryId: string;
+  displayedName: string;
+}) => {
   const response = await axiosInstance.patch<Category>(
-    `/api/account-books/categories/${category.id}`,
-    category
+    `/api/account-books/categories/${categoryId}`,
+    {
+      displayedName,
+    }
   );
   return response.data;
 };

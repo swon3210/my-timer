@@ -1,9 +1,17 @@
 import { ArrowDownCircle, ArrowUpCircle, TrendingUp } from "lucide-react";
+import { AccountItem } from "@/domains/account-book/types";
+type ExpenseTotalProps = {
+  accountItems: AccountItem[];
+};
 
-export default function ExpenseTotal() {
-  const totalIncome = 0;
-  const totalExpense = 0;
-  const totalBalance = 0;
+export default function ExpenseTotal({ accountItems }: ExpenseTotalProps) {
+  const totalIncome = accountItems
+    .filter((item) => item.type === "INCOME")
+    .reduce((acc, item) => acc + item.amount, 0);
+  const totalExpense = accountItems
+    .filter((item) => item.type === "EXPENSE")
+    .reduce((acc, item) => acc + item.amount, 0);
+  const totalBalance = totalIncome + totalExpense;
 
   return (
     <div className="grid grid-cols-3 gap-4">

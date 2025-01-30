@@ -4,7 +4,7 @@ import ExpenseSummary from "./ExpenseSummary";
 
 export default function AccountBookPage() {
   return (
-    <div>
+    <div className="p-6">
       <ExpenseSummary />
     </div>
   );

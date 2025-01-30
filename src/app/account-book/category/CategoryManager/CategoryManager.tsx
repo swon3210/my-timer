@@ -13,12 +13,82 @@ import {
 import { Edit2, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useAddAccountItemCategoryMutation } from "@/domains/account-book/useAddAccountItemCategoryMutation";
-import useAccountItemCategoriesQuery from "@/domains/account-book/useAccountItemCategoriesQuery";
+import useAccountItemCategoriesQuery, {
+  getAccountItemCategoriesQueryKey,
+} from "@/domains/account-book/useAccountItemCategoriesQuery";
 import { Category } from "@/domains/account-book/types";
-import useDeleteAccountItemCategoryMutation from "@/domains/account-book/useDeleteAccountItemCategoryMutation";
+import useUpdateAccountItemCategoryMutation from "@/domains/account-book/useUpdateAccountItemCategoryMutation";
+import { useSetAccountItemCategories } from "@/domains/account-book/useAccountItemCategoriesQuery";
+import { useDeleteAccountItemCategoryMutation } from "@/domains/account-book/useDeleteAccountItemCategoryMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CategoryItem = ({ category }: { category: Category }) => {
-  const { mutate: deleteCategory } = useDeleteAccountItemCategoryMutation();
+  const { mutateAsync: deleteCategory } =
+    useDeleteAccountItemCategoryMutation();
+
+  const { mutateAsync: updateCategory } =
+    useUpdateAccountItemCategoryMutation();
+
+  const { setAccountItemCategories } = useSetAccountItemCategories();
+
+  const handleUpdateCategoryButtonClick = async () => {
+    const categoryDisplayedName = prompt("새 카테고리 이름을 입력하세요");
+
+    if (!categoryDisplayedName) {
+      return;
+    }
+
+    setAccountItemCategories((categories) => {
+      return categories.map((prevCategory) => {
+        if (prevCategory.id === category.id) {
+          return {
+            ...prevCategory,
+            displayedName: categoryDisplayedName,
+          };
+        }
+        return prevCategory;
+      });
+    });
+
+    try {
+      await updateCategory({
+        categoryId: category.id,
+        displayedName: categoryDisplayedName,
+      });
+    } catch (error) {
+      setAccountItemCategories((categories) => {
+        return categories.map((prevCategory) => {
+          if (prevCategory.id === category.id) {
+            return {
+              ...prevCategory,
+              displayedName: category.displayedName,
+            };
+          }
+          return prevCategory;
+        });
+      });
+
+      console.error(error);
+    }
+  };
+
+  const handleDeleteCategoryButtonClick = async () => {
+    try {
+      setAccountItemCategories((categories) => {
+        return categories.filter(
+          (prevCategory) => prevCategory.id !== category.id
+        );
+      });
+
+      await deleteCategory(category.id);
+    } catch (error) {
+      setAccountItemCategories((categories) => {
+        return [...categories, category];
+      });
+
+      console.error(error);
+    }
+  };
 
   return (
     <motion.div
@@ -43,7 +113,7 @@ const CategoryItem = ({ category }: { category: Category }) => {
         type="button"
         variant="outline"
         size="sm"
-        // onClick={() => setEditingCategory(category.id)}
+        onClick={handleUpdateCategoryButtonClick}
       >
         <Edit2 className="w-4 h-4" />
       </Button>
@@ -51,7 +121,7 @@ const CategoryItem = ({ category }: { category: Category }) => {
         type="button"
         variant="destructive"
         size="sm"
-        onClick={() => deleteCategory(category.id)}
+        onClick={handleDeleteCategoryButtonClick}
       >
         <Trash2 className="w-4 h-4" />
       </Button>
@@ -65,10 +135,11 @@ type CategoryFormValues = {
 };
 
 export default function CategoryManager() {
+  const queryClient = useQueryClient();
+
   const { data: categories } = useAccountItemCategoriesQuery();
 
-  const { mutate: addCategory } = useAddAccountItemCategoryMutation();
-
+  const { mutateAsync: addCategory } = useAddAccountItemCategoryMutation();
   const { register, handleSubmit, setValue, watch } =
     useForm<CategoryFormValues>({
       defaultValues: {
@@ -83,13 +154,21 @@ export default function CategoryManager() {
     setValue("type", value as "INCOME" | "EXPENSE");
   };
 
-  const handleFormSubmit = (data: CategoryFormValues) => {
-    addCategory({
-      displayedName: data.name,
-      type: data.type,
-    });
+  const handleFormSubmit = async (data: CategoryFormValues) => {
+    try {
+      await addCategory({
+        displayedName: data.name,
+        type: data.type,
+      });
 
-    setValue("name", "");
+      setValue("name", "");
+
+      queryClient.invalidateQueries({
+        queryKey: getAccountItemCategoriesQueryKey(),
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

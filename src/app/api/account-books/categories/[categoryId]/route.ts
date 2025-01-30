@@ -3,13 +3,13 @@ import { withAuth } from "@/app/api/firebase-admin";
 import { ref, remove, update } from "firebase/database";
 import { NextResponse } from "next/server";
 
-// PUT: 카테고리 수정
-export const PUT = withAuth(async (req, routeInfo) => {
+// PATCH: 카테고리 수정
+export const PATCH = withAuth(async (req, routeInfo) => {
   try {
     const id = routeInfo?.params.categoryId;
-    const { name } = await req.json();
+    const { displayedName } = await req.json();
 
-    if (!id || !name) {
+    if (!id || !displayedName) {
       return NextResponse.json(
         { error: "필수 필드가 누락되었습니다." },
         { status: 400 }
@@ -21,7 +21,7 @@ export const PUT = withAuth(async (req, routeInfo) => {
       `account-book-categories/${req.user.uid}/${id}`
     );
 
-    const updates = { displayedName: name };
+    const updates = { displayedName };
     await update(categoryRef, updates);
 
     return NextResponse.json({ success: true });

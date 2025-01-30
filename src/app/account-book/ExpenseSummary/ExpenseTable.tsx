@@ -52,7 +52,24 @@ function ExpenseTableItem({
   );
 }
 
+const getCumulativeBalances = (accountItems: AccountItem[]) => {
+  return [...accountItems]
+    .reverse()
+    .reduce<number[]>((acc, item) => {
+      if (acc.length === 0) {
+        return [item.amount];
+      }
+
+      const balance = acc[acc.length - 1] + item.amount;
+
+      return [...acc, balance];
+    }, [])
+    .reverse();
+};
+
 export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
+  const cumulativeBalances = getCumulativeBalances(accountItems);
+
   return (
     <div className="bg-white rounded-lg">
       <div className="overflow-x-auto">
@@ -79,7 +96,7 @@ export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
                 accountItem={accountItem}
                 index={index}
                 key={accountItem.id}
-                balance={0}
+                balance={cumulativeBalances[index]}
               />
             ))}
           </tbody>

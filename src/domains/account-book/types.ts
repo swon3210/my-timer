@@ -4,9 +4,9 @@ export interface BaseAccountItem {
   id: string;
   amount: number;
   description?: string;
-  date: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  date: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ExpenseAccountItem extends BaseAccountItem {
@@ -17,7 +17,7 @@ export interface ExpenseAccountItem extends BaseAccountItem {
 
 export interface IncomeAccountItem extends BaseAccountItem {
   type: "INCOME";
-  categoryId: number;
+  categoryId: string;
   categoryDisplayedName: string;
 }
 

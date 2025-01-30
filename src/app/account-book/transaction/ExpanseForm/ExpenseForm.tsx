@@ -3,51 +3,56 @@
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { PlusCircle, MinusCircle, Calendar } from "lucide-react";
-import { useFinance } from "../../../../components/FinanceContext";
 import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
-import { useForm } from "react-hook-form";
-import { AccountItem } from "@/domains/account-book/types";
+import { Controller, useForm } from "react-hook-form";
+import { TransactionType } from "@/domains/account-book/types";
+import CategorySelector from "./CategorySelector";
+import useAccountItemCategoriesQuery from "@/domains/account-book/useAccountItemCategoriesQuery";
+
+type ExpenseFormValues = {
+  type: TransactionType;
+  categoryId: string | undefined;
+  amount: number;
+  description: string;
+  date: string;
+};
 
 export default function ExpenseForm() {
-  const { categories } = useFinance();
-  const { register, handleSubmit, watch, setValue } = useForm<AccountItem>({
-    defaultValues: {
-      type: "EXPENSE",
-      categoryId: undefined,
-      categoryDisplayedName: undefined,
-      amount: 0,
-      description: "",
-      date: new Date(),
-    },
-  });
+  const { data: categories } = useAccountItemCategoriesQuery();
 
-  const [type, categoryId, categoryDisplayedName] = watch([
-    "type",
-    "categoryId",
-    "categoryDisplayedName",
-  ]);
+  const { control, register, handleSubmit, watch, setValue } =
+    useForm<ExpenseFormValues>({
+      defaultValues: {
+        type: "EXPENSE",
+        categoryId: undefined,
+        amount: 0,
+        description: "",
+        date: new Date().toISOString(),
+      },
+    });
 
-  console.log({ categoryId, categoryDisplayedName });
+  const [type] = watch(["type"]);
 
   const { mutate: addTransaction } = useAddAccountItemMutation();
 
   const handleFormSubmit = handleSubmit(
-    ({ amount, description, categoryId, categoryDisplayedName, date }) => {
+    ({ amount, description, categoryId, date }) => {
+      const category = categories?.find(
+        (category) => category.id === categoryId
+      );
+
+      if (!category) {
+        return;
+      }
+
       addTransaction({
         amount: type === "EXPENSE" ? -Number(amount) : Number(amount),
         description,
-        categoryId,
-        categoryDisplayedName,
-        date: new Date(date),
+        categoryId: category.id,
+        date: new Date(date).toISOString(),
         type: type === "EXPENSE" ? "EXPENSE" : "INCOME",
+        categoryDisplayedName: category.displayedName,
       });
     }
   );
@@ -102,23 +107,17 @@ export default function ExpenseForm() {
         {...register("description")}
       />
 
-      <Select
-        value={categoryId?.toString()}
-        onValueChange={(value) => setValue("categoryId", Number(value))}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="카테고리 선택" />
-        </SelectTrigger>
-        <SelectContent>
-          {categories
-            .filter((cat) => cat.type === type)
-            .map((cat) => (
-              <SelectItem key={cat.id} value={cat.id}>
-                {cat.name}
-              </SelectItem>
-            ))}
-        </SelectContent>
-      </Select>
+      <Controller
+        control={control}
+        name="categoryId"
+        render={({ field }) => (
+          <CategorySelector
+            type={type}
+            selectedCategoryId={field.value}
+            onCategoryChange={field.onChange}
+          />
+        )}
+      />
 
       <div className="relative">
         <Input type="date" {...register("date")} className="w-full pl-10" />

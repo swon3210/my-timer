@@ -9,10 +9,6 @@ import ExpenseTable from "./ExpenseTable";
 function ExpenseSummaryContent() {
   const { data: accountItems } = useAccountItemsSuspenseQuery();
 
-  console.log({
-    accountItems,
-  });
-
   if (accountItems.length === 0) {
     return (
       <motion.div
@@ -35,7 +31,7 @@ function ExpenseSummaryContent() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <ExpenseTotal />
+      <ExpenseTotal accountItems={accountItems} />
       <ExpenseTable accountItems={accountItems} />
     </motion.div>
   );
