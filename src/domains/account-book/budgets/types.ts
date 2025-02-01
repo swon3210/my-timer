@@ -5,4 +5,5 @@ export type Budget = {
   amount: number;
   categoryId: string;
   type: TransactionType;
+  date: string;
 };

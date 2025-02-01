@@ -9,20 +9,23 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
-import { MinusCircle, PlusCircle } from "lucide-react";
-import { BudgetFormValues } from "./types";
+import { HandCoins, MinusCircle } from "lucide-react";
+import { OutcomeFormValues } from "./types";
+import { cn } from "@/lib/utils";
 
-type BudgetFormProps = {
-  defaultValues?: BudgetFormValues;
-  onSubmit: (formValues: BudgetFormValues) => void;
+type OutcomeFormProps = {
+  defaultValues?: OutcomeFormValues;
+  onSubmit: (formValues: OutcomeFormValues) => void;
 };
 
-function BudgetForm({ defaultValues, onSubmit }: BudgetFormProps) {
-  const { control, register, handleSubmit, watch } = useForm<BudgetFormValues>({
-    defaultValues: defaultValues ?? {
-      type: "EXPENSE",
-    },
-  });
+function OutcomeForm({ defaultValues, onSubmit }: OutcomeFormProps) {
+  const { control, register, handleSubmit, watch } = useForm<OutcomeFormValues>(
+    {
+      defaultValues: defaultValues ?? {
+        type: "EXPENSE",
+      },
+    }
+  );
 
   const type = watch("type");
 
@@ -39,34 +42,26 @@ function BudgetForm({ defaultValues, onSubmit }: BudgetFormProps) {
               type="button"
               onClick={() => field.onChange("EXPENSE")}
               variant={type === "EXPENSE" ? "default" : "outline"}
-              className={`w-1/2 ${
-                type === "EXPENSE" ? "bg-red-500 hover:bg-red-600" : ""
-              }`}
+              className={cn(
+                "w-1/2",
+                type === "EXPENSE" && "bg-red-400 hover:bg-red-500"
+              )}
             >
-              <MinusCircle className="mr-2 h-4 w-4" /> 지출
+              <MinusCircle className="h-4 w-4" /> 지출
             </Button>
             <Button
               type="button"
-              onClick={() => field.onChange("INCOME")}
-              variant={type === "INCOME" ? "default" : "outline"}
-              className={`w-1/2 ${
-                type === "INCOME" ? "bg-green-500 hover:bg-green-600" : ""
-              }`}
+              onClick={() => field.onChange("FLEX")}
+              variant={type === "FLEX" ? "default" : "outline"}
+              className={cn(
+                "w-1/2",
+                type === "FLEX" && "bg-yellow-400 hover:bg-yellow-500"
+              )}
             >
-              <PlusCircle className="mr-2 h-4 w-4" /> 수입
+              <HandCoins className="h-4 w-4" /> FLEX
             </Button>
           </div>
         )}
-      />
-
-      <Input
-        type="number"
-        {...register("amount", {
-          required: true,
-          valueAsNumber: true,
-        })}
-        placeholder="예산 금액"
-        className="flex-grow"
       />
 
       <Controller
@@ -81,6 +76,16 @@ function BudgetForm({ defaultValues, onSubmit }: BudgetFormProps) {
         )}
       />
 
+      <Input
+        type="number"
+        {...register("amount", {
+          required: true,
+          valueAsNumber: true,
+        })}
+        placeholder="예산 금액"
+        className="flex-grow"
+      />
+
       <Button type="submit" className="bg-green-500 hover:bg-green-600">
         추가
       </Button>
@@ -88,18 +93,18 @@ function BudgetForm({ defaultValues, onSubmit }: BudgetFormProps) {
   );
 }
 
-type BudgetFormDialogProps = {
+type OutcomeFormDialogProps = {
   isOpen: boolean;
   close: () => void;
-} & BudgetFormProps;
+} & OutcomeFormProps;
 
-export default function BudgetFormDialog({
+export default function OutcomeFormDialog({
   isOpen,
   close,
   defaultValues,
   onSubmit,
-}: BudgetFormDialogProps) {
-  const handleBudgetFormSubmit = (formValues: BudgetFormValues) => {
+}: OutcomeFormDialogProps) {
+  const handleOutcomeFormSubmit = (formValues: OutcomeFormValues) => {
     onSubmit(formValues);
     close();
   };
@@ -113,9 +118,9 @@ export default function BudgetFormDialog({
             예산을 추가하여 예산을 관리해보세요.
           </DialogDescription>
         </DialogHeader>
-        <BudgetForm
+        <OutcomeForm
           defaultValues={defaultValues}
-          onSubmit={handleBudgetFormSubmit}
+          onSubmit={handleOutcomeFormSubmit}
         />
       </DialogContent>
     </Dialog>

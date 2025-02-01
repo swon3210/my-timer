@@ -3,12 +3,19 @@
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, MinusCircle, Calendar } from "lucide-react";
+import {
+  PlusCircle,
+  MinusCircle,
+  Calendar,
+  Banknote,
+  HandCoins,
+} from "lucide-react";
 import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
 import { Controller, useForm } from "react-hook-form";
 import { TransactionType } from "@/domains/account-book/types";
 import CategorySelector from "../../../../_components/CategorySelector";
 import useAccountItemCategoriesQuery from "@/domains/account-book/useAccountItemCategoriesQuery";
+import { cn } from "@/lib/utils";
 
 type ExpenseFormValues = {
   type: TransactionType;
@@ -70,21 +77,47 @@ export default function ExpenseForm() {
           type="button"
           onClick={() => setValue("type", "EXPENSE")}
           variant={type === "EXPENSE" ? "default" : "outline"}
-          className={`w-1/2 ${
-            type === "EXPENSE" ? "bg-red-500 hover:bg-red-600" : ""
-          }`}
+          className={cn(
+            "w-1/4",
+            type === "EXPENSE" && "bg-red-400 hover:bg-red-500"
+          )}
         >
-          <MinusCircle className="mr-2 h-4 w-4" /> 지출
+          <MinusCircle className="h-4 w-4" /> 지출
         </Button>
         <Button
           type="button"
           onClick={() => setValue("type", "INCOME")}
           variant={type === "INCOME" ? "default" : "outline"}
-          className={`w-1/2 ${
-            type === "INCOME" ? "bg-green-500 hover:bg-green-600" : ""
-          }`}
+          className={cn(
+            "w-1/4",
+            type === "INCOME" && "bg-green-400 hover:bg-green-500"
+          )}
         >
-          <PlusCircle className="mr-2 h-4 w-4" /> 수입
+          <PlusCircle className="h-4 w-4" /> 수입
+        </Button>
+
+        <Button
+          type="button"
+          onClick={() => setValue("type", "INVESTMENT")}
+          variant={type === "INVESTMENT" ? "default" : "outline"}
+          className={cn(
+            "w-1/4",
+            type === "INVESTMENT" && "bg-blue-400 hover:bg-blue-500"
+          )}
+        >
+          <Banknote className="h-4 w-4" /> 투자
+        </Button>
+
+        <Button
+          type="button"
+          onClick={() => setValue("type", "FLEX")}
+          variant={type === "FLEX" ? "default" : "outline"}
+          className={cn(
+            "w-1/4",
+            type === "FLEX" && "bg-yellow-400 hover:bg-yellow-500"
+          )}
+        >
+          <HandCoins className="h-4 w-4" /> FLEX
         </Button>
       </div>
 

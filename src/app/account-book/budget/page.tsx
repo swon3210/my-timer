@@ -2,31 +2,35 @@
 
 import BudgetList from "./BudgetList";
 import OverlayProvider from "@/providers/OverlayProvider";
-import useBudgetFormDialogOverlay from "./BudgetList/useBudgetFormDialogOverlay";
 import { Button } from "@/components/ui/button";
 import { useAddBudgetsMutation } from "@/domains/account-book/budgets/useAddBudgetsMutation";
-import Navigation from "./_components/Navigation";
+import useIncomeFormDialogOverlay from "./useIncomeFormDialogOverlay";
+import useDateAtom from "./_atom/useDateAtom";
+import MonthManager from "./MonthManager";
 
-function BudgetAddButton() {
-  const { openBudgetFormDialog } = useBudgetFormDialogOverlay();
+function IncomeAddButton() {
+  const { date } = useDateAtom();
+
+  const { openIncomeFormDialog } = useIncomeFormDialogOverlay();
 
   const { mutateAsync: addBudget } = useAddBudgetsMutation();
 
   const handleClick = async () => {
-    const formValues = await openBudgetFormDialog();
+    const formValues = await openIncomeFormDialog();
 
     try {
       await addBudget({
         amount: formValues.amount,
         categoryId: formValues.categoryId,
-        type: formValues.type,
+        type: "INCOME",
+        date: date.toISOString(),
       });
     } catch (error) {
       console.error(error);
     }
   };
 
-  return <Button onClick={handleClick}>예산 추가</Button>;
+  return <Button onClick={handleClick}>월 수입 추가</Button>;
 }
 
 export default function BudgetPage() {
@@ -34,8 +38,8 @@ export default function BudgetPage() {
     <OverlayProvider>
       <div className="space-y-8 p-6">
         <div className="flex justify-between items-center">
-          <Navigation />
-          <BudgetAddButton />
+          <MonthManager />
+          <IncomeAddButton />
         </div>
         <BudgetList />
       </div>

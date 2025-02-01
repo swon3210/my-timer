@@ -85,15 +85,6 @@ const CategoryItem = ({ category }: { category: Category }) => {
       exit={{ opacity: 0, y: -20 }}
     >
       <span className="flex-grow font-medium">{category.displayedName}</span>
-      <span
-        className={`text-sm px-2 py-1 rounded ${
-          category.type === "INCOME"
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-        }`}
-      >
-        {category.type === "INCOME" ? "수입" : "지출"}
-      </span>
       <Button
         type="button"
         variant="outline"
@@ -124,6 +115,14 @@ export default function CategoryList() {
     (category) => category.type === "INCOME"
   );
 
+  const investmentCategories = categories?.filter(
+    (category) => category.type === "INVESTMENT"
+  );
+
+  const flexCategories = categories?.filter(
+    (category) => category.type === "FLEX"
+  );
+
   return (
     <div className="flex flex-col space-y-12">
       <div className="space-y-2">
@@ -136,6 +135,20 @@ export default function CategoryList() {
       <div className="space-y-2">
         <h2 className="text-lg font-semibold">지출</h2>
         {expenseCategories?.map((category) => (
+          <CategoryItem key={category.id} category={category} />
+        ))}
+      </div>
+
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold">투자</h2>
+        {investmentCategories?.map((category) => (
+          <CategoryItem key={category.id} category={category} />
+        ))}
+      </div>
+
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold">FLEX</h2>
+        {flexCategories?.map((category) => (
           <CategoryItem key={category.id} category={category} />
         ))}
       </div>

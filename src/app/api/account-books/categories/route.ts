@@ -10,7 +10,7 @@ const getCategoriesResponseSchema = z.record(
   z.string(),
   z.object({
     displayedName: z.string(),
-    type: z.enum(["INCOME", "EXPENSE"]),
+    type: z.enum(["INCOME", "EXPENSE", "INVESTMENT", "FLEX"]),
     createdAt: z.string(),
     updatedAt: z.string(),
   })

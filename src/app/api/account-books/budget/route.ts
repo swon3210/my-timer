@@ -10,7 +10,7 @@ const getBudgetsResponseSchema = z.record(
   z.object({
     amount: z.number(),
     categoryId: z.string(),
-    type: z.enum(["INCOME", "EXPENSE"]),
+    type: z.enum(["INCOME", "EXPENSE", "INVESTMENT", "FLEX"]),
   })
 );
 

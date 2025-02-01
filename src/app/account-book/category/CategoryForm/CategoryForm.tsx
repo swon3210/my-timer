@@ -13,10 +13,11 @@ import { useForm } from "react-hook-form";
 import { useAddAccountItemCategoryMutation } from "@/domains/account-book/useAddAccountItemCategoryMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAccountItemCategoriesQueryKey } from "@/domains/account-book/useAccountItemCategoriesQuery";
+import { TransactionType } from "@/domains/account-book/types";
 
 type CategoryFormValues = {
   name: string;
-  type: "INCOME" | "EXPENSE";
+  type: TransactionType;
 };
 
 export default function CategoryForm() {
@@ -34,7 +35,7 @@ export default function CategoryForm() {
   const type = watch("type");
 
   const handleTypeChange = (value: string) => {
-    setValue("type", value as "INCOME" | "EXPENSE");
+    setValue("type", value as TransactionType);
   };
 
   const handleFormSubmit = async (data: CategoryFormValues) => {
@@ -72,6 +73,8 @@ export default function CategoryForm() {
           <SelectContent>
             <SelectItem value="INCOME">수입</SelectItem>
             <SelectItem value="EXPENSE">지출</SelectItem>
+            <SelectItem value="INVESTMENT">투자</SelectItem>
+            <SelectItem value="FLEX">FLEX</SelectItem>
           </SelectContent>
         </Select>
         <Button type="submit" className="bg-green-500 hover:bg-green-600">

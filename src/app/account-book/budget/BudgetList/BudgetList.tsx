@@ -9,19 +9,21 @@ import { useUpdateBudgetsMutation } from "@/domains/account-book/budgets/useUpda
 import useAccountItemCategoriesQuery from "@/domains/account-book/useAccountItemCategoriesQuery";
 import { useDeleteBudgetsMutation } from "@/domains/account-book/budgets/useDeleteBudgetsMutation";
 import { useSetBudgetsQuery } from "@/domains/account-book/budgets/useSetBudgetsQuery";
-import useBudgetFormDialogOverlay from "./useBudgetFormDialogOverlay";
+import useOutcomeFormDialogOverlay from "../useOutcomeFormDialogOverlay";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import WeeklyOutcomeAddButton from "./WeeklyOutcomeAddButton";
+import WeekManager from "./WeekManager";
 
 function BudgetUpdateButton({ budget }: { budget: Budget }) {
-  const { openBudgetFormDialog } = useBudgetFormDialogOverlay();
+  const { openOutcomeFormDialog } = useOutcomeFormDialogOverlay();
 
   const { mutateAsync: updateBudget } = useUpdateBudgetsMutation();
   const { setBudgets } = useSetBudgetsQuery();
 
   const handleClick = async () => {
-    const formValues = await openBudgetFormDialog({
+    const formValues = await openOutcomeFormDialog({
       defaultValues: {
         amount: budget.amount,
         categoryId: budget.categoryId,
@@ -39,7 +41,7 @@ function BudgetUpdateButton({ budget }: { budget: Budget }) {
       );
 
       await updateBudget({
-        id: budget.id,
+        ...budget,
         ...formValues,
       });
     } catch (error) {
@@ -121,14 +123,20 @@ export default function BudgetList() {
 
   const { data: budgets } = useBudgetsQuery();
 
-  const incomeBudgets = budgets?.filter((budget) => budget.type === "INCOME");
+  const monthlyIncomeBudgets = budgets?.filter(
+    (budget) => budget.type === "INCOME"
+  );
   const expenseBudgets = budgets?.filter((budget) => budget.type === "EXPENSE");
+  const flexBudgets = budgets?.filter((budget) => budget.type === "FLEX");
 
   const totalIncome =
-    incomeBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
+    monthlyIncomeBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
 
   const totalExpense =
     expenseBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
+
+  const totalFlex =
+    flexBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
 
   const saveAmount = Math.round(
     totalIncome -
@@ -167,21 +175,37 @@ export default function BudgetList() {
 
   return (
     <motion.div className="flex flex-col space-y-12">
-      <div className="flex flex-col space-y-8">
+      <div className="flex flex-col space-y-12">
         <div className="space-y-2">
           <h2 className="text-lg font-semibold">
             예산 ({totalIncome?.toLocaleString()}원)
           </h2>
-          {incomeBudgets?.map((budget) => (
+          {monthlyIncomeBudgets?.map((budget) => (
+            <BudgetItem key={budget.id} budget={budget} />
+          ))}
+        </div>
+
+        <div className="h-[1px] bg-gray-200" />
+
+        <div className="flex justify-between items-center">
+          <WeekManager />
+          <WeeklyOutcomeAddButton />
+        </div>
+
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold">
+            고정 지출 ({totalExpense?.toLocaleString()}원)
+          </h2>
+          {expenseBudgets?.map((budget) => (
             <BudgetItem key={budget.id} budget={budget} />
           ))}
         </div>
 
         <div className="space-y-2">
           <h2 className="text-lg font-semibold">
-            지출 계획 ({totalExpense?.toLocaleString()}원)
+            FLEX 지출 ({totalFlex?.toLocaleString()}원)
           </h2>
-          {expenseBudgets?.map((budget) => (
+          {flexBudgets?.map((budget) => (
             <BudgetItem key={budget.id} budget={budget} />
           ))}
         </div>

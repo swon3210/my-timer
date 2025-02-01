@@ -14,7 +14,7 @@ export default function Navigation() {
         variant="outline"
         className={pathname === "/account-book/budget" ? "bg-gray-200" : ""}
       >
-        <Link href="/account-book/budget">연간 예산 관리</Link>
+        <Link href="/account-book/budget">주간 예산 관리</Link>
       </Button>
       <Button
         asChild
@@ -23,16 +23,7 @@ export default function Navigation() {
           pathname === "/account-book/budget/monthly" ? "bg-gray-200" : ""
         }
       >
-        <Link href="/account-book/budget/monthly">월간 대시보드</Link>
-      </Button>
-      <Button
-        asChild
-        variant="outline"
-        className={
-          pathname === "/account-book/budget/weekly" ? "bg-gray-200" : ""
-        }
-      >
-        <Link href="/account-book/budget/weekly">주간 대시보드</Link>
+        <Link href="/account-book/budget/yearly">연간 예산관리</Link>
       </Button>
     </div>
   );
