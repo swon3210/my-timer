@@ -1,6 +1,6 @@
 import useOverlay from "@/hooks/useOverlay";
-import BudgetFormDialog from "../BudgetFormDialog/BudgetFormDialog";
 import { BudgetFormValues } from "../types";
+import BudgetFormDialog from "../BudgetFormDialog";
 
 const useBudgetFormDialogOverlay = () => {
   const overlay = useOverlay();

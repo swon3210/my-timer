@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
-import { BudgetFormValues } from "../types";
 import { MinusCircle, PlusCircle } from "lucide-react";
+import { BudgetFormValues } from "./types";
 
 type BudgetFormProps = {
   defaultValues?: BudgetFormValues;

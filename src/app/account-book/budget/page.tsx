@@ -5,6 +5,7 @@ import OverlayProvider from "@/providers/OverlayProvider";
 import useBudgetFormDialogOverlay from "./BudgetList/useBudgetFormDialogOverlay";
 import { Button } from "@/components/ui/button";
 import { useAddBudgetsMutation } from "@/domains/account-book/budgets/useAddBudgetsMutation";
+import Navigation from "./_components/Navigation";
 
 function BudgetAddButton() {
   const { openBudgetFormDialog } = useBudgetFormDialogOverlay();
@@ -33,7 +34,7 @@ export default function BudgetPage() {
     <OverlayProvider>
       <div className="space-y-8 p-6">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-bold">예산 관리</h3>
+          <Navigation />
           <BudgetAddButton />
         </div>
         <BudgetList />

@@ -1,4 +1,4 @@
-export type TransactionType = "EXPENSE" | "INCOME";
+export type TransactionType = "EXPENSE" | "INCOME" | "INVESTMENT" | "FLEX";
 
 export interface BaseAccountItem {
   id: string;

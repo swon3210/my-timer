@@ -5,11 +5,14 @@ import { motion } from "framer-motion";
 import { Pencil, Trash } from "lucide-react";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
 import { Budget } from "@/domains/account-book/budgets/types";
-import useBudgetFormDialogOverlay from "./useBudgetFormDialogOverlay";
 import { useUpdateBudgetsMutation } from "@/domains/account-book/budgets/useUpdateBudgetsMutation";
 import useAccountItemCategoriesQuery from "@/domains/account-book/useAccountItemCategoriesQuery";
 import { useDeleteBudgetsMutation } from "@/domains/account-book/budgets/useDeleteBudgetsMutation";
 import { useSetBudgetsQuery } from "@/domains/account-book/budgets/useSetBudgetsQuery";
+import useBudgetFormDialogOverlay from "./useBudgetFormDialogOverlay";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 function BudgetUpdateButton({ budget }: { budget: Budget }) {
   const { openBudgetFormDialog } = useBudgetFormDialogOverlay();
@@ -113,25 +116,138 @@ function BudgetItem({ budget }: { budget: Budget }) {
 }
 
 export default function BudgetList() {
+  const [investmentPercentage, setInvestmentPercentage] = useState<number>();
+  const [flexAmount, setFlexAmount] = useState<number>();
+
   const { data: budgets } = useBudgetsQuery();
 
   const incomeBudgets = budgets?.filter((budget) => budget.type === "INCOME");
   const expenseBudgets = budgets?.filter((budget) => budget.type === "EXPENSE");
 
+  const totalIncome =
+    incomeBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
+
+  const totalExpense =
+    expenseBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
+
+  const saveAmount = Math.round(
+    totalIncome -
+      totalExpense -
+      (flexAmount ?? 0) -
+      (totalIncome * (investmentPercentage ?? 0)) / 100
+  );
+
+  const investmentAmount = Math.round(
+    (totalIncome * (investmentPercentage ?? 0)) / 100
+  );
+
+  const handleInvestmentPercentageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = parseInt(event.target.value);
+
+    if (value > 100) {
+      return;
+    }
+
+    setInvestmentPercentage(Number.isNaN(value) ? undefined : value);
+  };
+
+  const handleFlexAmountChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = parseInt(event.target.value);
+
+    if (value > 100) {
+      return;
+    }
+
+    setFlexAmount(Number.isNaN(value) ? undefined : value);
+  };
+
   return (
     <motion.div className="flex flex-col space-y-12">
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">예산</h2>
-        {incomeBudgets?.map((budget) => (
-          <BudgetItem key={budget.id} budget={budget} />
-        ))}
-      </div>
+      <div className="flex flex-col space-y-8">
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold">
+            예산 ({totalIncome?.toLocaleString()}원)
+          </h2>
+          {incomeBudgets?.map((budget) => (
+            <BudgetItem key={budget.id} budget={budget} />
+          ))}
+        </div>
 
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">지출 계획</h2>
-        {expenseBudgets?.map((budget) => (
-          <BudgetItem key={budget.id} budget={budget} />
-        ))}
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold">
+            지출 계획 ({totalExpense?.toLocaleString()}원)
+          </h2>
+          {expenseBudgets?.map((budget) => (
+            <BudgetItem key={budget.id} budget={budget} />
+          ))}
+        </div>
+
+        <div className="flex flex-col items-end space-y-4">
+          <div className="flex items-center space-x-2">
+            <div className="flex flex-col items-end">
+              <h2 className="text-lg font-semibold whitespace-nowrap">
+                목표 투자 수익률
+              </h2>
+              <p className="text-sm text-gray-500">
+                (투자 수익 / 투자 금액) * 100
+              </p>
+            </div>
+            <Input
+              type="number"
+              placeholder="%"
+              maxLength={3}
+              value={investmentPercentage}
+              onChange={handleInvestmentPercentageChange}
+              className="w-48"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <div className="flex flex-col items-end">
+              <h2 className="text-lg font-semibold whitespace-nowrap">
+                목표 FLEX 비율
+              </h2>
+              <p className="text-sm text-gray-500">
+                FLEX 금액 / (전체 수입 - 전체 지출 - 투자 금액) * 100
+              </p>
+            </div>
+            <Input
+              type="number"
+              placeholder="%"
+              value={flexAmount}
+              max={
+                totalIncome -
+                totalExpense -
+                (totalIncome * (investmentPercentage ?? 0)) / 100
+              }
+              onChange={handleFlexAmountChange}
+              className="w-48"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-end flex-col space-y-4 mr-4">
+          <span className="text-lg font-semibold">
+            예상 저축 금액 : {saveAmount.toLocaleString()}원
+          </span>
+
+          <span className="text-lg font-semibold">
+            예상 투자 수익 : {investmentAmount.toLocaleString()}원
+          </span>
+
+          <span
+            className={cn(
+              "text-lg font-semibold",
+              saveAmount < 0 && "text-red-500"
+            )}
+          >
+            예상 총 저축액 : {saveAmount.toLocaleString()}원
+          </span>
+        </div>
       </div>
     </motion.div>
   );
