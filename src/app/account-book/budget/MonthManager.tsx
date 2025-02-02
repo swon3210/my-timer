@@ -1,16 +1,73 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import dayjs from "dayjs";
 import useDateAtom from "./_atom/useDateAtom";
+import { getWeekOfMonth } from "./_utils";
+
+function getWeeksInMonth(date: dayjs.Dayjs) {
+  const start = date.startOf("month").startOf("week");
+  const end = date.endOf("month").endOf("week");
+  return Math.ceil(end.diff(start, "week", true));
+}
+
+// function getFirstWeekOfMonth(date: Date, direction: "prev" | "next") {
+//   const targetMonth =
+//     direction === "prev"
+//       ? dayjs(date).subtract(1, "month")
+//       : dayjs(date).add(1, "month");
+
+//   const firstDayOfMonth = targetMonth.startOf("month");
+//   const firstWeekStart = firstDayOfMonth.startOf("week");
+
+//   return firstWeekStart.toDate();
+// }
 
 export default function MonthManager() {
   const { date, setDate } = useDateAtom();
 
   const handlePrevMonthIconClick = () => {
-    setDate(dayjs(date).subtract(1, "month").startOf("month").toDate());
+    const weeksInMonth = getWeeksInMonth(
+      dayjs(date).month(dayjs(date).month() - 1)
+    );
+
+    const targetDate = dayjs(date)
+      .subtract(weeksInMonth - 1, "week")
+      .startOf("week")
+      .toDate();
+
+    setDate(targetDate);
+
+    if (getWeekOfMonth(dayjs(targetDate)) !== 1) {
+      setDate(dayjs(targetDate).subtract(1, "week").startOf("week").toDate());
+    } else {
+      setDate(targetDate);
+    }
   };
 
   const handleNextMonthIconClick = () => {
-    setDate(dayjs(date).add(1, "month").startOf("month").toDate());
+    const weeksInMonth = getWeeksInMonth(
+      dayjs(date).month(dayjs(date).month() + 1)
+    );
+
+    const targetDate = dayjs(date)
+      .add(weeksInMonth - 1, "week")
+      .startOf("week")
+      .toDate();
+
+    console.log({
+      weeksInMonth,
+      "getWeekOfMonth(dayjs(targetDate))": getWeekOfMonth(dayjs(targetDate)),
+    });
+
+    if (getWeekOfMonth(dayjs(targetDate)) !== 1) {
+      setDate(
+        dayjs(targetDate)
+          .add(getWeekOfMonth(dayjs(targetDate)) - 1, "week")
+          .startOf("week")
+          .toDate()
+      );
+    } else {
+      setDate(targetDate);
+    }
   };
 
   return (

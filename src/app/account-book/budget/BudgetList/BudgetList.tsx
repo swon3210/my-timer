@@ -15,6 +15,8 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import WeeklyOutcomeAddButton from "./WeeklyOutcomeAddButton";
 import WeekManager from "./WeekManager";
+import useDateAtom from "../_atom/useDateAtom";
+import dayjs from "dayjs";
 
 function BudgetUpdateButton({ budget }: { budget: Budget }) {
   const { openOutcomeFormDialog } = useOutcomeFormDialogOverlay();
@@ -121,13 +123,33 @@ export default function BudgetList() {
   const [investmentPercentage, setInvestmentPercentage] = useState<number>();
   const [flexAmount, setFlexAmount] = useState<number>();
 
+  const { date } = useDateAtom();
+
   const { data: budgets } = useBudgetsQuery();
 
+  console.log({
+    datestring: dayjs(date).format("YYYY-MM-DD"),
+  });
+
   const monthlyIncomeBudgets = budgets?.filter(
-    (budget) => budget.type === "INCOME"
+    (budget) =>
+      budget.type === "INCOME" &&
+      dayjs(budget.date).isSame(dayjs(date), "month")
   );
-  const expenseBudgets = budgets?.filter((budget) => budget.type === "EXPENSE");
-  const flexBudgets = budgets?.filter((budget) => budget.type === "FLEX");
+  const expenseBudgets = budgets?.filter(
+    (budget) =>
+      budget.type === "EXPENSE" &&
+      dayjs(budget.date).isSame(dayjs(date), "year") &&
+      dayjs(budget.date).isSame(dayjs(date), "month") &&
+      dayjs(budget.date).isSame(dayjs(date), "week")
+  );
+  const flexBudgets = budgets?.filter(
+    (budget) =>
+      budget.type === "FLEX" &&
+      dayjs(budget.date).isSame(dayjs(date), "year") &&
+      dayjs(budget.date).isSame(dayjs(date), "month") &&
+      dayjs(budget.date).isSame(dayjs(date), "week")
+  );
 
   const totalIncome =
     monthlyIncomeBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
