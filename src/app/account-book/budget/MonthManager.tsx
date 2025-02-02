@@ -44,27 +44,15 @@ export default function MonthManager() {
   };
 
   const handleNextMonthIconClick = () => {
-    const weeksInMonth = getWeeksInMonth(
-      dayjs(date).month(dayjs(date).month() + 1)
-    );
+    const weeksInMonth = getWeeksInMonth(dayjs(date));
 
     const targetDate = dayjs(date)
       .add(weeksInMonth - 1, "week")
       .startOf("week")
       .toDate();
 
-    console.log({
-      weeksInMonth,
-      "getWeekOfMonth(dayjs(targetDate))": getWeekOfMonth(dayjs(targetDate)),
-    });
-
     if (getWeekOfMonth(dayjs(targetDate)) !== 1) {
-      setDate(
-        dayjs(targetDate)
-          .add(getWeekOfMonth(dayjs(targetDate)) - 1, "week")
-          .startOf("week")
-          .toDate()
-      );
+      setDate(dayjs(targetDate).add(1, "week").startOf("week").toDate());
     } else {
       setDate(targetDate);
     }

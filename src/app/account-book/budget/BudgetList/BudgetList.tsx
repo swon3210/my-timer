@@ -127,10 +127,6 @@ export default function BudgetList() {
 
   const { data: budgets } = useBudgetsQuery();
 
-  console.log({
-    datestring: dayjs(date).format("YYYY-MM-DD"),
-  });
-
   const monthlyIncomeBudgets = budgets?.filter(
     (budget) =>
       budget.type === "INCOME" &&
