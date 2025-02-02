@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useAccountItemsSuspenseQuery } from "@/domains/account-book/useAccountItemsQuery";
+import { useAccountItemsQuery } from "@/domains/account-book/useAccountItemsQuery";
 import { Suspense } from "react";
 import ExpenseTotal from "./ExpenseTotal";
 import ExpenseTable from "./ExpenseTable";
@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 function ExpenseSummaryContent() {
   const { date } = useDateAtom();
 
-  const { data: accountItems } = useAccountItemsSuspenseQuery();
+  const { data: accountItems = [] } = useAccountItemsQuery();
 
   const filteredAccountItems = accountItems.filter((item) =>
     dayjs(item.date).isSame(date, "month")

@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import dayjs from "dayjs";
 import useDateAtom from "./_atom/useDateAtom";
