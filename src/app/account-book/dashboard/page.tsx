@@ -1,13 +1,13 @@
 "use client";
 
 import ExpenseSummary from "./ExpenseSummary";
-import MonthManager from "./MonthManager";
+import DateManager from "./DateManager";
 
 export default function AccountBookPage() {
   return (
-    <div className="p-6 flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pt-8">
       <div className="flex justify-center">
-        <MonthManager />
+        <DateManager />
       </div>
       <ExpenseSummary />
     </div>

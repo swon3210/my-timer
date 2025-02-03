@@ -22,8 +22,8 @@ export default function AccountBookLayout({
   const pathname = usePathname();
 
   const getCurrentTab = () => {
-    if (pathname === "/account-book") {
-      return "overview";
+    if (pathname.includes("/dashboard")) {
+      return "dashboard";
     }
 
     if (pathname.includes("/budget")) {
@@ -58,9 +58,9 @@ export default function AccountBookLayout({
             >
               <Tabs value={getCurrentTab()} className="w-full">
                 <TabsList className="flex items-center space-x-8 w-full bg-orange-200">
-                  <Link href="/account-book">
+                  <Link href="/account-book/dashboard">
                     <TabsTrigger
-                      value="overview"
+                      value="dashboard"
                       className="data-[state=active]:bg-white data-[state=active]:text-primary text-gray-600"
                     >
                       <PieChart className="w-5 h-5 mr-2 md:block hidden" />
@@ -76,15 +76,6 @@ export default function AccountBookLayout({
                       내역
                     </TabsTrigger>
                   </Link>
-                  <Link href="/account-book/category">
-                    <TabsTrigger
-                      value="category"
-                      className="data-[state=active]:bg-white data-[state=active]:text-primary text-gray-600"
-                    >
-                      <Settings className="w-5 h-5 mr-2 md:block hidden" />
-                      카테고리
-                    </TabsTrigger>
-                  </Link>
                   <Link href="/account-book/budget">
                     <TabsTrigger
                       value="budget"
@@ -94,6 +85,16 @@ export default function AccountBookLayout({
                       예산
                     </TabsTrigger>
                   </Link>
+                  <Link href="/account-book/category">
+                    <TabsTrigger
+                      value="category"
+                      className="data-[state=active]:bg-white data-[state=active]:text-primary text-gray-600"
+                    >
+                      <Settings className="w-5 h-5 mr-2 md:block hidden" />
+                      카테고리
+                    </TabsTrigger>
+                  </Link>
+
                   {/* <Link href="/account-book/analyze">
                     <TabsTrigger
                       value="analyze"

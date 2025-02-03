@@ -1,7 +1,7 @@
 "use client";
 
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
-import Navigation from "../_components/Navigation";
+import Navigation from "../../dashboard/Navigation";
 
 export default function MonthlyBudgetPage() {
   const { data: budgets } = useBudgetsQuery();

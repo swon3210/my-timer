@@ -100,7 +100,6 @@ function ExpenseItem({
 
   return (
     <motion.div
-      key={accountItem.id}
       className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between border border-gray-200"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -156,7 +155,7 @@ function ExpenseItem({
 
 function DateDivider({ date }: { date: string }) {
   return (
-    <div className="flex justify-center items-center space-x-4 pt-8">
+    <div className="flex justify-center items-center space-x-4 pt-8 pb-4">
       <div className="w-full h-px bg-gray-200" />
       <p className="text-gray-500 whitespace-nowrap">
         {dayjs(date).format("YYYY년 MM월 DD일")}
@@ -182,6 +181,8 @@ export default function ExpenseList() {
     );
   }
 
+  console.log(accountItems);
+
   return (
     <motion.div
       className="space-y-4"
@@ -192,14 +193,10 @@ export default function ExpenseList() {
       {accountItems.map((accountItem, index) => {
         if (index === 0) {
           return (
-            <>
+            <div key={accountItem.id}>
               <DateDivider date={accountItem.date} />
-              <ExpenseItem
-                key={accountItem.id}
-                accountItem={accountItem}
-                index={index}
-              />
-            </>
+              <ExpenseItem accountItem={accountItem} index={index} />
+            </div>
           );
         }
 
@@ -210,23 +207,17 @@ export default function ExpenseList() {
           )
         ) {
           return (
-            <>
+            <div key={accountItem.id}>
               <DateDivider date={accountItem.date} />
-              <ExpenseItem
-                key={accountItem.id}
-                accountItem={accountItem}
-                index={index}
-              />
-            </>
+              <ExpenseItem accountItem={accountItem} index={index} />
+            </div>
           );
         }
 
         return (
-          <ExpenseItem
-            key={accountItem.id}
-            accountItem={accountItem}
-            index={index}
-          />
+          <div key={accountItem.id}>
+            <ExpenseItem accountItem={accountItem} index={index} />
+          </div>
         );
       })}
     </motion.div>
