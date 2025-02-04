@@ -41,7 +41,9 @@ function ExpenseTableItem({
         {type === "INCOME" ? `${amount} 원` : `-`}
       </td> */}
       <td className={cn("px-6 py-4", type === "EXPENSE" && "text-red-500")}>
-        {type === "EXPENSE" ? `${amount} 원` : `-`}
+        {type === "EXPENSE" && amount !== 0
+          ? `${amount.toLocaleString()} 원`
+          : `-`}
       </td>
       <td className={`px-6 py-4 text-blue-500`}>
         {restBudgetAmount ? `${restBudgetAmount.toLocaleString()} 원` : `-`}
