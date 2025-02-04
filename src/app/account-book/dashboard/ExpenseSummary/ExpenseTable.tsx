@@ -74,6 +74,10 @@ export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
 
   const { data: budgets } = useBudgetsQuery();
 
+  const filteredCategories = categories?.filter((category) => {
+    return category.type === "EXPENSE" || category.type === "FLEX";
+  });
+
   const filteredBudgets =
     budgets?.filter((budget) => {
       return budget.type === "EXPENSE" || budget.type === "FLEX";
@@ -126,24 +130,26 @@ export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
             </tr>
           </thead>
           <tbody>
-            {filteredBudgets?.map((budget, index) => {
-              const categoryExpenseAmount = getTotalCategoryExpenseAmount(
-                budget.categoryId,
+            {filteredCategories?.map((category, index) => {
+              const totalCategoryExpenseAmount = getTotalCategoryExpenseAmount(
+                category.id,
                 filteredAccountItems
               );
 
-              const restBudgetAmount = budget.amount + categoryExpenseAmount;
+              const budgetAmount =
+                filteredBudgets.find(
+                  (budget) => budget.categoryId === category.id
+                )?.amount ?? 0;
+
+              const restBudgetAmount =
+                budgetAmount + totalCategoryExpenseAmount;
 
               return (
                 <ExpenseTableItem
-                  key={budget.id}
-                  type={budget.type}
-                  categoryDisplayedName={
-                    categories?.find(
-                      (category) => category.id === budget.categoryId
-                    )?.displayedName ?? ""
-                  }
-                  amount={categoryExpenseAmount}
+                  key={category.id}
+                  type={category.type}
+                  categoryDisplayedName={category.displayedName}
+                  amount={totalCategoryExpenseAmount}
                   restBudgetAmount={restBudgetAmount}
                   index={index}
                 />

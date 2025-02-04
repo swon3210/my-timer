@@ -63,7 +63,8 @@ export default function ExpenseTotal({ accountItems }: ExpenseTotalProps) {
     <div className="grid grid-cols-3 gap-4">
       <div className="bg-green-100 p-4 rounded-lg">
         <h3 className="text-md font-semibold text-green-800 mb-2 flex items-center">
-          <ArrowUpCircle className="mr-2" /> 총 예산
+          <ArrowUpCircle className="mr-2" />{" "}
+          {subTab === "weekly" || subTab === "yearly" ? "총 예산" : "총 수입"}
         </h3>
         <p className="text-xl font-bold text-green-600">
           ₩ {totalBudget.toLocaleString()}
