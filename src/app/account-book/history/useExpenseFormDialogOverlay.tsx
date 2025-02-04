@@ -7,7 +7,7 @@ const useExpenseFormDialogOverlay = () => {
 
   const openExpenseFormDialog = (
     params: {
-      defaultValues?: ExpenseFormValues;
+      defaultValues?: Partial<ExpenseFormValues>;
     } | void
   ) =>
     new Promise<ExpenseFormValues>((resolve) => {

@@ -33,7 +33,7 @@ export default function HistoryPage() {
       description: formValues.description,
       categoryId: category.id,
       date: new Date(formValues.date).toISOString(),
-      type: formValues.type === "EXPENSE" ? "EXPENSE" : "INCOME",
+      type: formValues.type,
       categoryDisplayedName: category.displayedName,
     });
 

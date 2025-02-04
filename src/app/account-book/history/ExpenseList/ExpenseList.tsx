@@ -8,6 +8,7 @@ import {
   Tag,
   Trash2,
   Pencil,
+  PlusCircle,
 } from "lucide-react";
 import {
   useAccountItemsQuery,
@@ -20,6 +21,7 @@ import useDeleteAccountItemMutation from "@/domains/account-book/useDeleteAccoun
 import { Button } from "@/components/ui/button";
 import useUpdateAccountItemMutation from "@/domains/account-book/useUpdateAccountItemMutation";
 import useExpenseFormDialogOverlay from "../useExpenseFormDialogOverlay";
+import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
 
 function ExpenseItem({
   accountItem,
@@ -65,6 +67,7 @@ function ExpenseItem({
         defaultValues: {
           ...accountItem,
           description: accountItem.description ?? "",
+          date: dayjs(accountItem.date).format("YYYY-MM-DD"),
         },
       });
 
@@ -154,11 +157,55 @@ function ExpenseItem({
 }
 
 function DateDivider({ date }: { date: string }) {
+  const { openExpenseFormDialog } = useExpenseFormDialogOverlay();
+  const { mutateAsync: addTransaction } = useAddAccountItemMutation();
+  const { data: categories } = useAccountItemCategoriesQuery();
+
+  const handlePlusButtonClick = async () => {
+    try {
+      const formValues = await openExpenseFormDialog({
+        defaultValues: {
+          type: "EXPENSE",
+          date: dayjs(date).format("YYYY-MM-DD"),
+        },
+      });
+
+      const category = categories?.find(
+        (category) => category.id === formValues.categoryId
+      );
+
+      if (!category) {
+        return;
+      }
+
+      await addTransaction({
+        amount:
+          formValues.type === "EXPENSE"
+            ? -Number(formValues.amount)
+            : Number(formValues.amount),
+        description: formValues.description,
+        categoryId: category.id,
+        date: new Date(formValues.date).toISOString(),
+        type: formValues.type,
+        categoryDisplayedName: category.displayedName,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center space-x-4 pt-8 pb-4">
       <div className="w-full h-px bg-gray-200" />
-      <p className="text-gray-500 whitespace-nowrap">
+      <p className="flex items-center gap-2 text-gray-500 whitespace-nowrap">
         {dayjs(date).format("YYYY년 MM월 DD일")}
+        <Button
+          variant="ghost"
+          className="px-3"
+          onClick={handlePlusButtonClick}
+        >
+          <PlusCircle className="w-4 h-4" />
+        </Button>
       </p>
       <div className="w-full h-px bg-gray-200" />
     </div>
@@ -180,8 +227,6 @@ export default function ExpenseList() {
       </motion.div>
     );
   }
-
-  console.log(accountItems);
 
   return (
     <motion.div

@@ -15,14 +15,14 @@ export default function ExpenseForm({
   defaultValues,
 }: {
   onSubmit: (formValues: ExpenseFormValues) => void;
-  defaultValues?: ExpenseFormValues;
+  defaultValues?: Partial<ExpenseFormValues>;
 }) {
   const { control, register, handleSubmit, watch, setValue, getValues } =
     useForm<ExpenseFormValues>({
       defaultValues: defaultValues ?? {
         type: "EXPENSE",
         categoryId: undefined,
-        amount: 0,
+        amount: undefined,
         description: "",
         date: dayjs().format("YYYY-MM-DD"),
       },

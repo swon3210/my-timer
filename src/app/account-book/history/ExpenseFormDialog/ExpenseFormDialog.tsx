@@ -11,7 +11,7 @@ export default function ExpenseFormDialog({
   isOpen: boolean;
   close: () => void;
   onSubmit: (formValues: ExpenseFormValues) => void;
-  defaultValues?: ExpenseFormValues;
+  defaultValues?: Partial<ExpenseFormValues>;
 }) {
   return (
     <Dialog open={isOpen} onOpenChange={close}>
