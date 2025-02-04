@@ -140,8 +140,7 @@ function ExpenseItem({
             accountItem.amount > 0 ? "text-green-500" : "text-red-500"
           }`}
         >
-          {accountItem.amount > 0 ? "+" : "-"}₩
-          {Math.abs(accountItem.amount).toLocaleString()}
+          ₩{Math.abs(accountItem.amount).toLocaleString()}
         </p>
         <div className="flex items-center space-x-2">
           <Button onClick={handleEditButtonClick} variant="ghost">
