@@ -44,7 +44,7 @@ const apps = [
     name: "커플\n가계부",
     icon: <Wallet size={36} />,
     color: "text-pink-500",
-    url: "/account-book",
+    url: "/account-book/dashboard",
   },
 ];
 

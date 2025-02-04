@@ -5,6 +5,7 @@ import useDateAtom from "../_atom/useDateAtom";
 import useSubTab from "../useSubTab";
 import dayjs from "dayjs";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
+import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
 
 type ExpenseTableProps = {
   accountItems: AccountItem[];
@@ -14,11 +15,13 @@ function ExpenseTableItem({
   type,
   categoryDisplayedName,
   amount,
+  restBudgetAmount,
   index,
 }: {
   type: TransactionType;
   categoryDisplayedName: string;
   amount: number;
+  restBudgetAmount?: number;
   index: number;
 }) {
   return (
@@ -34,13 +37,15 @@ function ExpenseTableItem({
       >
         {categoryDisplayedName}
       </td>
-      <td className={cn("px-6 py-4", type === "INCOME" && "text-green-500")}>
+      {/* <td className={cn("px-6 py-4", type === "INCOME" && "text-green-500")}>
         {type === "INCOME" ? `${amount} 원` : `-`}
-      </td>
+      </td> */}
       <td className={cn("px-6 py-4", type === "EXPENSE" && "text-red-500")}>
         {type === "EXPENSE" ? `${amount} 원` : `-`}
       </td>
-      {/* <td className={`px-6 py-4 text-blue-500`}>{`${balance} 원`}</td> */}
+      <td className={`px-6 py-4 text-blue-500`}>
+        {restBudgetAmount ? `${restBudgetAmount.toLocaleString()} 원` : `-`}
+      </td>
     </motion.tr>
   );
 }
@@ -67,6 +72,13 @@ export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
 
   const { data: categories } = useAccountItemCategoriesQuery();
 
+  const { data: budgets } = useBudgetsQuery();
+
+  const filteredBudgets =
+    budgets?.filter((budget) => {
+      return budget.type === "EXPENSE" || budget.type === "FLEX";
+    }) ?? [];
+
   const filteredAccountItems = accountItems.filter((item) => {
     if (subTab === "weekly") {
       return dayjs(item.date).isSame(date, "week");
@@ -79,7 +91,7 @@ export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
     return dayjs(item.date).isSame(date, "year");
   });
 
-  const getTotalCategoryAmount = (
+  const getTotalCategoryExpenseAmount = (
     categoryId: string,
     accountItems: AccountItem[]
   ) => {
@@ -91,7 +103,6 @@ export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
       return acc;
     }, 0);
   };
-
   // const cumulativeBalances = getCumulativeBalances(filteredAccountItems);
 
   return (
@@ -103,31 +114,41 @@ export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
               <th scope="col" className="px-6 py-3">
                 카테고리
               </th>
-              <th scope="col" className="px-6 py-3">
+              {/* <th scope="col" className="px-6 py-3">
                 수입
-              </th>
+              </th> */}
               <th scope="col" className="px-6 py-3">
                 지출
               </th>
-              {/* <th scope="col" className="px-6 py-3">
-                잔액
-              </th> */}
+              <th scope="col" className="px-6 py-3">
+                남은 예산
+              </th>
             </tr>
           </thead>
           <tbody>
-            {categories?.map((category, index) => (
-              <ExpenseTableItem
-                type={category.type}
-                categoryDisplayedName={category.displayedName}
-                amount={getTotalCategoryAmount(
-                  category.id,
-                  filteredAccountItems
-                )}
-                index={index}
-                key={category.id}
-                // balance={cumulativeBalances[index]}
-              />
-            ))}
+            {filteredBudgets?.map((budget, index) => {
+              const categoryExpenseAmount = getTotalCategoryExpenseAmount(
+                budget.categoryId,
+                filteredAccountItems
+              );
+
+              const restBudgetAmount = budget.amount + categoryExpenseAmount;
+
+              return (
+                <ExpenseTableItem
+                  key={budget.id}
+                  type={budget.type}
+                  categoryDisplayedName={
+                    categories?.find(
+                      (category) => category.id === budget.categoryId
+                    )?.displayedName ?? ""
+                  }
+                  amount={categoryExpenseAmount}
+                  restBudgetAmount={restBudgetAmount}
+                  index={index}
+                />
+              );
+            })}
           </tbody>
         </table>
       </div>

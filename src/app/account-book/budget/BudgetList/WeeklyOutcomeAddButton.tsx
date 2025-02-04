@@ -22,5 +22,5 @@ export default function WeeklyOutcomeAddButton() {
     }
   };
 
-  return <Button onClick={handleClick}>지출 추가</Button>;
+  return <Button onClick={handleClick}>지출 예산 추가</Button>;
 }
