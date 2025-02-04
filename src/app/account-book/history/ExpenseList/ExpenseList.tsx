@@ -157,7 +157,8 @@ function ExpenseItem({
 }
 
 function DateDivider({ date }: { date: string }) {
-  const { openExpenseFormDialog } = useExpenseFormDialogOverlay();
+  const { openExpenseFormDialog, closeExpenseFormDialog } =
+    useExpenseFormDialogOverlay();
   const { mutateAsync: addTransaction } = useAddAccountItemMutation();
   const { data: categories } = useAccountItemCategoriesQuery();
 
@@ -189,6 +190,8 @@ function DateDivider({ date }: { date: string }) {
         type: formValues.type,
         categoryDisplayedName: category.displayedName,
       });
+
+      closeExpenseFormDialog();
     } catch (error) {
       console.error(error);
     }

@@ -66,6 +66,10 @@ function BudgetDeleteButton({ budget }: { budget: Budget }) {
   const { setBudgets } = useSetBudgetsQuery();
 
   const handleClick = async () => {
+    if (!confirm("정말로 삭제하시겠습니까?")) {
+      return;
+    }
+
     try {
       setBudgets((budgets) =>
         budgets.filter((prevBudget) => prevBudget.id !== budget.id)
