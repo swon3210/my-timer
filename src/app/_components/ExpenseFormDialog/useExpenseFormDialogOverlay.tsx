@@ -1,6 +1,7 @@
 import useOverlay from "@/hooks/useOverlay";
-import ExpenseFormDialog from "./ExpenseFormDialog";
+import ExpenseFormDialog from "../../_components/ExpenseFormDialog";
 import { ExpenseFormValues } from "./types";
+import { TransactionType } from "@/domains/account-book/types";
 
 const useExpenseFormDialogOverlay = () => {
   const overlay = useOverlay();
@@ -8,6 +9,8 @@ const useExpenseFormDialogOverlay = () => {
   const openExpenseFormDialog = (
     params: {
       defaultValues?: Partial<ExpenseFormValues>;
+      selectableTransactionTypes?: TransactionType[];
+      title?: string;
     } | void
   ) =>
     new Promise<ExpenseFormValues>((resolve) => {
@@ -17,6 +20,8 @@ const useExpenseFormDialogOverlay = () => {
           close={close}
           onSubmit={resolve}
           defaultValues={params?.defaultValues}
+          selectableTransactionTypes={params?.selectableTransactionTypes}
+          title={params?.title}
         />
       ));
     });

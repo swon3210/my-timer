@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import dayjs from "dayjs";
-import useDateAtom from "./_atom/useDateAtom";
-import { getWeekOfMonth } from "./_utils";
+import useDateAtom from "../_atom/useDateAtom";
+import { getWeekOfMonth } from "../_utils";
 
 function getWeeksInMonth(date: dayjs.Dayjs) {
   const start = date.startOf("month").startOf("week");

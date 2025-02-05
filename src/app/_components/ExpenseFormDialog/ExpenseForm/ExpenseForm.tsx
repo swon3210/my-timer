@@ -3,19 +3,22 @@
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, MinusCircle, Calendar, HandCoins } from "lucide-react";
+import { MinusCircle, Calendar, HandCoins, PlusCircle } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
-import CategorySelector from "../../../../_components/CategorySelector";
+import CategorySelector from "../../CategorySelector";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import { ExpenseFormValues } from "../../types";
+import { ExpenseFormValues } from "../types";
+import { TransactionType } from "@/domains/account-book/types";
 
 export default function ExpenseForm({
   onSubmit,
   defaultValues,
+  selectableTransactionTypes = ["EXPENSE", "INCOME", "FLEX"],
 }: {
   onSubmit: (formValues: ExpenseFormValues) => void;
   defaultValues?: Partial<ExpenseFormValues>;
+  selectableTransactionTypes?: TransactionType[];
 }) {
   const { control, register, handleSubmit, watch, setValue, getValues } =
     useForm<ExpenseFormValues>({
@@ -43,39 +46,45 @@ export default function ExpenseForm({
       transition={{ duration: 0.5 }}
     >
       <div className="flex space-x-2">
-        <Button
-          type="button"
-          onClick={() => setValue("type", "EXPENSE")}
-          variant={type === "EXPENSE" ? "default" : "outline"}
-          className={cn(
-            "w-1/3",
-            type === "EXPENSE" && "bg-red-400 hover:bg-red-500"
-          )}
-        >
-          <MinusCircle className="h-4 w-4" /> 지출
-        </Button>
-        <Button
-          type="button"
-          onClick={() => setValue("type", "INCOME")}
-          variant={type === "INCOME" ? "default" : "outline"}
-          className={cn(
-            "w-1/3",
-            type === "INCOME" && "bg-green-400 hover:bg-green-500"
-          )}
-        >
-          <PlusCircle className="h-4 w-4" /> 수입
-        </Button>
-        <Button
-          type="button"
-          onClick={() => setValue("type", "FLEX")}
-          variant={type === "FLEX" ? "default" : "outline"}
-          className={cn(
-            "w-1/3",
-            type === "FLEX" && "bg-yellow-400 hover:bg-yellow-500"
-          )}
-        >
-          <HandCoins className="h-4 w-4" /> FLEX
-        </Button>
+        {selectableTransactionTypes.includes("EXPENSE") && (
+          <Button
+            type="button"
+            onClick={() => setValue("type", "EXPENSE")}
+            variant={type === "EXPENSE" ? "default" : "outline"}
+            className={cn(
+              "basis-1/3 grow",
+              type === "EXPENSE" && "bg-red-400 hover:bg-red-500"
+            )}
+          >
+            <MinusCircle className="h-4 w-4" /> 지출
+          </Button>
+        )}
+        {selectableTransactionTypes.includes("INCOME") && (
+          <Button
+            type="button"
+            onClick={() => setValue("type", "INCOME")}
+            variant={type === "INCOME" ? "default" : "outline"}
+            className={cn(
+              "basis-1/3 grow",
+              type === "INCOME" && "bg-green-400 hover:bg-green-500"
+            )}
+          >
+            <PlusCircle className="h-4 w-4" /> 수입
+          </Button>
+        )}
+        {selectableTransactionTypes.includes("FLEX") && (
+          <Button
+            type="button"
+            onClick={() => setValue("type", "FLEX")}
+            variant={type === "FLEX" ? "default" : "outline"}
+            className={cn(
+              "basis-1/3 grow",
+              type === "FLEX" && "bg-yellow-400 hover:bg-yellow-500"
+            )}
+          >
+            <HandCoins className="h-4 w-4" /> FLEX
+          </Button>
+        )}
       </div>
 
       <div className="relative">

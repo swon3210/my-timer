@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import ExpenseList from "./ExpenseList";
-import useExpenseFormDialogOverlay from "./useExpenseFormDialogOverlay";
 import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
+import useExpenseFormDialogOverlay from "@/app/_components/ExpenseFormDialog/useExpenseFormDialogOverlay";
 
 export default function HistoryPage() {
   const { openExpenseFormDialog, closeExpenseFormDialog } =
@@ -15,7 +15,9 @@ export default function HistoryPage() {
   const { mutate: addTransaction } = useAddAccountItemMutation();
 
   const handleAddExpenseButtonClick = async () => {
-    const formValues = await openExpenseFormDialog();
+    const formValues = await openExpenseFormDialog({
+      selectableTransactionTypes: ["EXPENSE", "INCOME", "FLEX"],
+    });
 
     const category = categories?.find(
       (category) => category.id === formValues.categoryId

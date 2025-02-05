@@ -121,18 +121,10 @@ function BudgetItem({ budget }: { budget: Budget }) {
 }
 
 export default function BudgetList() {
-  // const [investmentPercentage, setInvestmentPercentage] = useState<number>();
-  // const [flexAmount, setFlexAmount] = useState<number>();
-
   const { date } = useDateAtom();
 
   const { data: budgets } = useBudgetsQuery();
 
-  const monthlyIncomeBudgets = budgets?.filter(
-    (budget) =>
-      budget.type === "INCOME" &&
-      dayjs(budget.date).isSame(dayjs(date), "month")
-  );
   const expenseBudgets = budgets?.filter(
     (budget) =>
       budget.type === "EXPENSE" &&
@@ -147,9 +139,6 @@ export default function BudgetList() {
       dayjs(budget.date).isSame(dayjs(date), "month") &&
       dayjs(budget.date).isSame(dayjs(date), "week")
   );
-
-  const totalIncome =
-    monthlyIncomeBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
 
   const totalExpense =
     expenseBudgets?.reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
@@ -194,42 +183,30 @@ export default function BudgetList() {
 
   return (
     <motion.div className="flex flex-col space-y-12">
-      <div className="flex flex-col space-y-12">
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">
-            예산 ({totalIncome?.toLocaleString()}원)
-          </h2>
-          {monthlyIncomeBudgets?.map((budget) => (
-            <BudgetItem key={budget.id} budget={budget} />
-          ))}
-        </div>
+      <div className="flex justify-between items-center">
+        <WeekManager />
+        <WeeklyOutcomeAddButton />
+      </div>
 
-        <div className="h-[1px] bg-gray-200" />
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold">
+          고정 지출 ({totalExpense?.toLocaleString()}원)
+        </h2>
+        {expenseBudgets?.map((budget) => (
+          <BudgetItem key={budget.id} budget={budget} />
+        ))}
+      </div>
 
-        <div className="flex justify-between items-center">
-          <WeekManager />
-          <WeeklyOutcomeAddButton />
-        </div>
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold">
+          FLEX 지출 ({totalFlex?.toLocaleString()}원)
+        </h2>
+        {flexBudgets?.map((budget) => (
+          <BudgetItem key={budget.id} budget={budget} />
+        ))}
+      </div>
 
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">
-            고정 지출 ({totalExpense?.toLocaleString()}원)
-          </h2>
-          {expenseBudgets?.map((budget) => (
-            <BudgetItem key={budget.id} budget={budget} />
-          ))}
-        </div>
-
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">
-            FLEX 지출 ({totalFlex?.toLocaleString()}원)
-          </h2>
-          {flexBudgets?.map((budget) => (
-            <BudgetItem key={budget.id} budget={budget} />
-          ))}
-        </div>
-
-        {/* <div className="flex flex-col items-end space-y-4">
+      {/* <div className="flex flex-col items-end space-y-4">
           <div className="flex items-center space-x-2">
             <div className="flex flex-col items-end">
               <h2 className="text-lg font-semibold whitespace-nowrap">
@@ -291,7 +268,6 @@ export default function BudgetList() {
             예상 총 저축액 : {saveAmount.toLocaleString()}원
           </span>
         </div> */}
-      </div>
     </motion.div>
   );
 }
