@@ -1,4 +1,4 @@
-import { TransactionType } from "@/domains/account-book/types";
+import { Frequency, TransactionType } from "@/domains/account-book/types";
 
 export type ExpenseFormValues = {
   type: Exclude<TransactionType, "INVESTMENT">;
@@ -6,4 +6,5 @@ export type ExpenseFormValues = {
   amount: number;
   description: string;
   date: string;
+  frequency: Frequency | undefined;
 };

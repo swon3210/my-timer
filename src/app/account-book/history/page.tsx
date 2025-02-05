@@ -37,6 +37,7 @@ export default function HistoryPage() {
       date: new Date(formValues.date).toISOString(),
       type: formValues.type,
       categoryDisplayedName: category.displayedName,
+      frequency: formValues.frequency,
     });
 
     closeExpenseFormDialog();

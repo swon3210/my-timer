@@ -187,6 +187,7 @@ function DateDivider({ date }: { date: string }) {
         date: new Date(formValues.date).toISOString(),
         type: formValues.type,
         categoryDisplayedName: category.displayedName,
+        frequency: formValues.frequency,
       });
 
       closeExpenseFormDialog();

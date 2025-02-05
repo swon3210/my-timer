@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { ExpenseFormValues } from "../types";
 import { TransactionType } from "@/domains/account-book/types";
+import FrequencySelector from "./FrequencySelector";
 
 export default function ExpenseForm({
   onSubmit,
@@ -28,6 +29,7 @@ export default function ExpenseForm({
         amount: undefined,
         description: "",
         date: dayjs().format("YYYY-MM-DD"),
+        frequency: undefined,
       },
     });
 
@@ -93,6 +95,7 @@ export default function ExpenseForm({
           placeholder="금액"
           {...register("amount", {
             valueAsNumber: true,
+            required: true,
           })}
           className="w-full pl-8"
         />
@@ -100,13 +103,6 @@ export default function ExpenseForm({
           ₩
         </span>
       </div>
-
-      <Input
-        type="text"
-        placeholder="설명"
-        className="w-full"
-        {...register("description")}
-      />
 
       <Controller
         control={control}
@@ -116,6 +112,24 @@ export default function ExpenseForm({
             type={type}
             selectedCategoryId={field.value}
             onCategoryChange={field.onChange}
+          />
+        )}
+      />
+
+      <Input
+        type="text"
+        placeholder="설명 (Optional)"
+        className="w-full"
+        {...register("description")}
+      />
+
+      <Controller
+        control={control}
+        name="frequency"
+        render={({ field }) => (
+          <FrequencySelector
+            selectedFrequency={field.value}
+            onFrequencyChange={field.onChange}
           />
         )}
       />

@@ -1,5 +1,7 @@
 export type TransactionType = "EXPENSE" | "INCOME" | "INVESTMENT" | "FLEX";
 
+export type Frequency = "MONTHLY" | "WEEKLY" | "YEARLY";
+
 export interface BaseAccountItem {
   id: string;
   amount: number;
@@ -9,6 +11,7 @@ export interface BaseAccountItem {
   updatedAt: string;
   categoryId: string;
   categoryDisplayedName: string;
+  frequency?: Frequency;
 }
 
 export interface ExpenseAccountItem extends BaseAccountItem {
