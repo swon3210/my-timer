@@ -1,62 +1,59 @@
 "use client";
 
-import { useMemo } from "react";
+// import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { AlertTriangle, CheckCircle } from "lucide-react";
-import { useFinance } from "../../../../components/FinanceContext";
+// import { AlertTriangle, CheckCircle } from "lucide-react";
 
-interface ExpenseMap {
-  [key: string]: number;
-}
+// interface ExpenseMap {
+//   [key: string]: number;
+// }
 
 export default function WeeklyBudgetComparison() {
-  const { transactions, categories, budgets } = useFinance();
+  // const weeklyExpenses = useMemo(() => {
+  //   const now = new Date();
+  //   const startOfWeek = new Date(
+  //     now.getFullYear(),
+  //     now.getMonth(),
+  //     now.getDate() - now.getDay()
+  //   );
+  //   const endOfWeek = new Date(
+  //     now.getFullYear(),
+  //     now.getMonth(),
+  //     now.getDate() + (6 - now.getDay())
+  //   );
 
-  const weeklyExpenses = useMemo(() => {
-    const now = new Date();
-    const startOfWeek = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - now.getDay()
-    );
-    const endOfWeek = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + (6 - now.getDay())
-    );
+  //   return transactions
+  //     .filter((t) => {
+  //       const transactionDate = new Date(t.date);
+  //       return (
+  //         transactionDate >= startOfWeek &&
+  //         transactionDate <= endOfWeek &&
+  //         t.amount < 0
+  //       );
+  //     })
+  //     .reduce<ExpenseMap>((acc, t) => {
+  //       if (!acc[t.category]) {
+  //         acc[t.category] = 0;
+  //       }
+  //       acc[t.category] += Math.abs(t.amount);
+  //       return acc;
+  //     }, {});
+  // }, [transactions]);
 
-    return transactions
-      .filter((t) => {
-        const transactionDate = new Date(t.date);
-        return (
-          transactionDate >= startOfWeek &&
-          transactionDate <= endOfWeek &&
-          t.amount < 0
-        );
-      })
-      .reduce<ExpenseMap>((acc, t) => {
-        if (!acc[t.category]) {
-          acc[t.category] = 0;
-        }
-        acc[t.category] += Math.abs(t.amount);
-        return acc;
-      }, {});
-  }, [transactions]);
-
-  const comparisonData = useMemo(() => {
-    return categories
-      .filter((category) => category.type === "EXPENSE")
-      .map((category) => {
-        const budget = budgets.find((b) => b.categoryId === category.id);
-        const weeklyExpense = weeklyExpenses[category.id] || 0;
-        return {
-          category: category.name,
-          budgetAmount: budget ? budget.amount : 0,
-          actualAmount: weeklyExpense,
-          difference: (budget ? budget.amount : 0) - weeklyExpense,
-        };
-      });
-  }, [categories, budgets, weeklyExpenses]);
+  // const comparisonData = useMemo(() => {
+  //   return categories
+  //     .filter((category) => category.type === "EXPENSE")
+  //     .map((category) => {
+  //       const budget = budgets.find((b) => b.categoryId === category.id);
+  //       const weeklyExpense = weeklyExpenses[category.id] || 0;
+  //       return {
+  //         category: category.name,
+  //         budgetAmount: budget ? budget.amount : 0,
+  //         actualAmount: weeklyExpense,
+  //         difference: (budget ? budget.amount : 0) - weeklyExpense,
+  //       };
+  //     });
+  // }, [categories, budgets, weeklyExpenses]);
 
   return (
     <motion.div
@@ -86,8 +83,8 @@ export default function WeeklyBudgetComparison() {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {comparisonData.map((item, index) => (
+          {/* <tbody>
+            {[comparisonData].map((item, index) => (
               <motion.tr
                 key={item.category}
                 className="bg-white border-b"
@@ -123,7 +120,7 @@ export default function WeeklyBudgetComparison() {
                 </td>
               </motion.tr>
             ))}
-          </tbody>
+          </tbody> */}
         </table>
       </div>
     </motion.div>
