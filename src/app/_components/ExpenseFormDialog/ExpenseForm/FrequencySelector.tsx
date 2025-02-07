@@ -30,8 +30,8 @@ function FrequencySelector({
         <SelectValue placeholder="주기 (Optional)" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="MONTHLY">월 마다</SelectItem>
         <SelectItem value="WEEKLY">주 마다</SelectItem>
+        <SelectItem value="MONTHLY">월 마다</SelectItem>
         <SelectItem value="YEARLY">년 마다</SelectItem>
       </SelectContent>
     </Select>

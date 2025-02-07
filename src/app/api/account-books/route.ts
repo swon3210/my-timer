@@ -15,6 +15,7 @@ const getAccountBookItemsResponseSchema = z.record(
     createdAt: z.string(),
     updatedAt: z.string(),
     categoryDisplayedName: z.string(),
+    frequency: z.string().optional(),
   })
 );
 
