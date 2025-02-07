@@ -2,7 +2,7 @@
 
 import BackgroundGallery, {
   BackgroundGalleryHandle,
-} from "@/components/BackgroundGallery";
+} from "@/app/gallery-timer/BackgroundGallery";
 import Timer from "@/components/Timer";
 import { useSettingsQuery } from "@/domains/users/useSettingsQuery";
 import usePlatform from "@/lib/hooks";

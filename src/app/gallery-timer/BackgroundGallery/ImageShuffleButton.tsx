@@ -12,7 +12,11 @@ export default function ImageShuffleButton({
   className,
 }: ImageShuffleButtonProps) {
   return (
-    <Button onClick={onClick} className={cn("size-10 p-2", className)}>
+    <Button
+      variant="ghost"
+      onClick={onClick}
+      className={cn("size-10 p-2", className)}
+    >
       <Shuffle size={24} />
     </Button>
   );

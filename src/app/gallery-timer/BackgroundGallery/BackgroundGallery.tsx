@@ -12,6 +12,7 @@ import {
 } from "react";
 import ImageShuffleButton from "./ImageShuffleButton";
 import { cn } from "@/lib/utils";
+import FolderSwitchButtons from "./FolderSwitchButtons";
 
 const prefetchImage = (imageUrl: string) => {
   new Image().src = imageUrl;
@@ -141,10 +142,13 @@ const BackgroundGallery = forwardRef<
         onClick={handleBackgroundGalleryClick}
       />
       {backgroundImage && (
-        <ImageShuffleButton
-          onClick={handleImageShuffleButtonClick}
-          className="absolute bottom-4 right-4 z-20"
-        />
+        <>
+          <ImageShuffleButton
+            onClick={handleImageShuffleButtonClick}
+            className="absolute bottom-4 right-4 z-20"
+          />
+          <FolderSwitchButtons className="absolute bottom-4 right-16 z-20" />
+        </>
       )}
     </div>
   );
