@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import { Button } from "@/components/ui/button";
 import { Folders, Settings } from "lucide-react";
 import Link from "next/link";
 
@@ -15,15 +16,19 @@ export default function RootLayout({
   return (
     <main className="w-full h-full max-w-app-container mx-auto">
       <div className="fixed z-10 top-0 left-0 p-4">
-        <BackButton />
+        <BackButton className="size-10 mr-2" />
       </div>
-      <div className="fixed z-10 top-0 right-0 p-4 flex flex-col gap-4">
-        <Link href="/categories">
-          <Folders size={32} />
-        </Link>
-        <Link href="/gallery-timer/settings">
-          <Settings size={32} />
-        </Link>
+      <div className="fixed z-10 top-0 right-0 p-4 flex items-center gap-1">
+        <Button variant="ghost" size="icon" className="size-10 p-2" asChild>
+          <Link href="/categories">
+            <Folders />
+          </Link>
+        </Button>
+        <Button variant="ghost" size="icon" className="size-10 p-2" asChild>
+          <Link href="/gallery-timer/settings">
+            <Settings />
+          </Link>
+        </Button>
       </div>
 
       {children}

@@ -3,7 +3,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
 const BackButton = ({ className }: { className?: string }) => {
   const router = useRouter();
@@ -13,8 +13,13 @@ const BackButton = ({ className }: { className?: string }) => {
   };
 
   return (
-    <Button variant="ghost" size="icon" className="mr-2" onClick={handleClick}>
-      <ArrowLeft className={clsx("h-6 w-6", className)} />
+    <Button
+      variant="ghost"
+      size="icon"
+      className={cn("size-10 p-2", className)}
+      onClick={handleClick}
+    >
+      <ArrowLeft />
     </Button>
   );
 };
