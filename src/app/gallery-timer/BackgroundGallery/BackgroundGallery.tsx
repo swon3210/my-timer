@@ -13,6 +13,8 @@ import {
 import ImageShuffleButton from "./ImageShuffleButton";
 import { cn } from "@/lib/utils";
 import FolderSwitchButtons from "./FolderSwitchButtons";
+import ImageIndexIndicator from "./ImageIndexIndicator";
+import NavigateToFolderButton from "./NavigateToFolderButton";
 // import FullPageCarousel from "./FullPageCarousel";
 
 const prefetchImage = (imageUrl: string) => {
@@ -150,6 +152,15 @@ const BackgroundGallery = forwardRef<
         className="absolute bottom-4 right-4 z-20"
       />
       <FolderSwitchButtons className="absolute bottom-4 right-16 z-20" />
+      {imageUrls.length > 0 && (
+        <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2">
+          <NavigateToFolderButton />
+          <ImageIndexIndicator
+            currentIndex={imageUrlIndex}
+            totalImages={imageUrls.length}
+          />
+        </div>
+      )}
     </div>
   );
 });
