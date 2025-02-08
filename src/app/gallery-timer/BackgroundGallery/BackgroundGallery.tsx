@@ -8,7 +8,6 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
-  useState,
 } from "react";
 import ImageShuffleButton from "./ImageShuffleButton";
 import { cn } from "@/lib/utils";
@@ -16,6 +15,7 @@ import FolderSwitchButtons from "./FolderSwitchButtons";
 import ImageIndexIndicator from "./ImageIndexIndicator";
 import NavigateToFolderButton from "./NavigateToFolderButton";
 import NavigateToCategoryButton from "./NavigateToCategoryButton";
+import { useImageUrlIndexAtom } from "./_atom/useImageUrlIndexAtom";
 // import FullPageCarousel from "./FullPageCarousel";
 
 const prefetchImage = (imageUrl: string) => {
@@ -41,7 +41,7 @@ const BackgroundGallery = forwardRef<
   const categoryName = useAtomValue(categoryNameAtom);
   const folderName = useAtomValue(folderNameAtom);
   const nextImageUrlIndexRef = useRef<number>();
-  const [imageUrlIndex, setImageUrlIndex] = useState(0);
+  const { imageUrlIndex, setImageUrlIndex } = useImageUrlIndexAtom();
 
   const { data: imageUrls = [] } = useImagesQuery({
     categoryName,
@@ -71,6 +71,10 @@ const BackgroundGallery = forwardRef<
 
   const handleImageShuffleButtonClick = () => {
     setImageUrlIndex(getRandomIndex(imageUrls.length));
+  };
+
+  const handleFolderSwitch = () => {
+    setImageUrlIndex(0);
   };
 
   const chageImage = useCallback(() => {
@@ -112,10 +116,6 @@ const BackgroundGallery = forwardRef<
   }, [imageUrls]);
 
   useEffect(() => {
-    setImageUrlIndex(getRandomIndex(imageUrls.length));
-  }, [imageUrls]);
-
-  useEffect(() => {
     const prevIndex = (imageUrlIndex - 1 + imageUrls.length) % imageUrls.length;
     const nextIndex = (imageUrlIndex + 1) % imageUrls.length;
 
@@ -152,7 +152,10 @@ const BackgroundGallery = forwardRef<
         onClick={handleImageShuffleButtonClick}
         className="absolute bottom-4 right-4 z-20"
       />
-      <FolderSwitchButtons className="absolute bottom-4 right-16 z-20" />
+      <FolderSwitchButtons
+        className="absolute bottom-4 right-16 z-20"
+        onFolderSwitch={handleFolderSwitch}
+      />
 
       <div className="absolute bottom-4 left-4 z-20 flex items-center gap-3">
         <div className="flex items-center gap-1">

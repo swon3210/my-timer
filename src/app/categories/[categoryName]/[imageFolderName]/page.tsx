@@ -3,11 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import useImagesQuery from "@/domains/images/useImagesQuery";
-import {
-  categoryNameAtom,
-  folderNameAtom,
-  gridLayoutColumnNumberAtom,
-} from "@/lib/atoms";
+import { gridLayoutColumnNumberAtom } from "@/lib/atoms";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
@@ -26,9 +22,6 @@ export default function CategoriesPage({
 }) {
   const router = useRouter();
 
-  const [, setCategoryName] = useAtom(categoryNameAtom);
-  const [, setFolderName] = useAtom(folderNameAtom);
-
   const [gridLayoutColumnNumber, setGridLayoutColumnNumber] = useAtom(
     gridLayoutColumnNumberAtom
   );
@@ -42,15 +35,12 @@ export default function CategoriesPage({
     setGridLayoutColumnNumber(value);
   };
 
-  const handleFolderSelectButtonClick = (folderName: string) => {
-    setCategoryName(params.categoryName);
-    setFolderName(folderName);
-
-    router.push("/gallery-timer");
+  const handleImageClick = (index: number) => {
+    router.push(`/gallery-timer#image-url-index=${index}`);
   };
 
   return (
-    <div className="w-full h-full mx-auto px-4 py-12">
+    <div className="w-full h-full mx-auto p-4">
       <div className="flex flex-col items-center">
         <div className="flex flex-wrap justify-center gap-4 mb-4">
           {gridOptions.map((option) => (
@@ -67,12 +57,6 @@ export default function CategoriesPage({
             </Button>
           ))}
         </div>
-        <Button
-          onClick={() => handleFolderSelectButtonClick(params.imageFolderName)}
-          className="mb-4 w-full max-w-sm"
-        >
-          선택하기
-        </Button>
       </div>
       <div className="w-full h-full max-w-app-container mx-auto">
         <div
@@ -84,8 +68,12 @@ export default function CategoriesPage({
           }}
         >
           <AnimatePresence>
-            {imageUrls.map((imageUrl) => (
-              <button key={imageUrl} type="button">
+            {imageUrls.map((imageUrl, index) => (
+              <button
+                key={imageUrl}
+                type="button"
+                onClick={() => handleImageClick(index)}
+              >
                 <motion.div
                   key={imageUrl}
                   layout

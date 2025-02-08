@@ -6,10 +6,14 @@ import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
 import { cn } from "@/lib/utils";
 
 type FolderSwitchButtonsProps = {
+  onFolderSwitch: (direction: "prev" | "next") => void;
   className?: string;
 };
 
-const FolderSwitchButtons = ({ className }: FolderSwitchButtonsProps) => {
+const FolderSwitchButtons = ({
+  onFolderSwitch,
+  className,
+}: FolderSwitchButtonsProps) => {
   const categoryName = useAtomValue(categoryNameAtom);
   const [folderName, setFolderName] = useAtom(folderNameAtom);
 
@@ -27,6 +31,8 @@ const FolderSwitchButtons = ({ className }: FolderSwitchButtonsProps) => {
     setFolderName(
       folderNames[newIndex < 0 ? folderNames.length - 1 : newIndex]
     );
+
+    onFolderSwitch(direction);
   };
 
   return (
