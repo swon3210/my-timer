@@ -36,7 +36,7 @@ export default function CategoriesPage({
   };
 
   const handleImageClick = (index: number) => {
-    router.push(`/gallery-timer#image-url-index=${index}`);
+    router.push(`/gallery-timer?image-url-index=${index}`);
   };
 
   return (

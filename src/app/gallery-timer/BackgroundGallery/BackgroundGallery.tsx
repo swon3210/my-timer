@@ -8,6 +8,7 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from "react";
 import ImageShuffleButton from "./ImageShuffleButton";
 import { cn } from "@/lib/utils";
@@ -15,8 +16,7 @@ import FolderSwitchButtons from "./FolderSwitchButtons";
 import ImageIndexIndicator from "./ImageIndexIndicator";
 import NavigateToFolderButton from "./NavigateToFolderButton";
 import NavigateToCategoryButton from "./NavigateToCategoryButton";
-import { useImageUrlIndexAtom } from "./_atom/useImageUrlIndexAtom";
-// import FullPageCarousel from "./FullPageCarousel";
+import { useSearchParams } from "next/navigation";
 
 const prefetchImage = (imageUrl: string) => {
   new Image().src = imageUrl;
@@ -38,10 +38,16 @@ const BackgroundGallery = forwardRef<
   BackgroundGalleryHandle,
   BackgroundGalleryProps
 >(({ className }, ref) => {
+  const searchParams = useSearchParams();
+
   const categoryName = useAtomValue(categoryNameAtom);
   const folderName = useAtomValue(folderNameAtom);
   const nextImageUrlIndexRef = useRef<number>();
-  const { imageUrlIndex, setImageUrlIndex } = useImageUrlIndexAtom();
+
+  const [imageUrlIndex, setImageUrlIndex] = useState(() => {
+    const imageUrlIndexParams = searchParams.get("image-url-index");
+    return imageUrlIndexParams ? parseInt(imageUrlIndexParams) : 0;
+  });
 
   const { data: imageUrls = [] } = useImagesQuery({
     categoryName,
