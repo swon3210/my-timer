@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import FolderSwitchButtons from "./FolderSwitchButtons";
 import ImageIndexIndicator from "./ImageIndexIndicator";
 import NavigateToFolderButton from "./NavigateToFolderButton";
+import NavigateToCategoryButton from "./NavigateToCategoryButton";
 // import FullPageCarousel from "./FullPageCarousel";
 
 const prefetchImage = (imageUrl: string) => {
@@ -153,8 +154,11 @@ const BackgroundGallery = forwardRef<
       />
       <FolderSwitchButtons className="absolute bottom-4 right-16 z-20" />
       {imageUrls.length > 0 && (
-        <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2">
-          <NavigateToFolderButton />
+        <div className="absolute bottom-4 left-4 z-20 flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <NavigateToCategoryButton />
+            <NavigateToFolderButton />
+          </div>
           <ImageIndexIndicator
             currentIndex={imageUrlIndex}
             totalImages={imageUrls.length}
