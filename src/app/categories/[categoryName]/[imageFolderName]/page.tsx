@@ -69,7 +69,7 @@ export default function CategoriesPage({
       </div>
       <div className="w-full h-full max-w-app-container mx-auto">
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 auto-rows-[minmax(100px,_auto)]"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2 auto-rows-[minmax(100px,_auto)]"
           style={{
             gridTemplateColumns: gridLayoutColumnNumber
               ? `repeat(${gridLayoutColumnNumber}, minmax(0, 1fr))`
