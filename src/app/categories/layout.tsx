@@ -269,7 +269,7 @@ export default function RootLayout({
             />
           ) : (
             <h3 className="text-xl font-semibold">
-              {decodeURIComponent(categoryName ?? "")} 폴더
+              {decodeURIComponent(categoryName ?? "")}
             </h3>
           )}
         </div>
