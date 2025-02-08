@@ -163,18 +163,18 @@ const BackgroundGallery = forwardRef<
         onFolderSwitch={handleFolderSwitch}
       />
 
-      <div className="absolute bottom-4 left-4 z-20 flex items-center gap-3">
-        <div className="flex items-center gap-1">
-          <NavigateToCategoryButton />
-          <NavigateToFolderButton />
-        </div>
-        {imageUrls.length > 0 && (
+      {imageUrls.length > 0 && (
+        <div className="absolute bottom-4 left-4 z-20 flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <NavigateToCategoryButton />
+            <NavigateToFolderButton />
+          </div>
           <ImageIndexIndicator
             currentIndex={imageUrlIndex}
             totalImages={imageUrls.length}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 });

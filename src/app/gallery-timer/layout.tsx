@@ -1,6 +1,6 @@
 import BackButton from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
-import { Folders, Settings } from "lucide-react";
+import { FolderSearch, Settings } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
@@ -21,7 +21,7 @@ export default function RootLayout({
       <div className="fixed z-10 top-0 right-0 p-4 flex items-center gap-1">
         <Button variant="ghost" size="icon" className="size-10 p-2" asChild>
           <Link href="/categories">
-            <Folders />
+            <FolderSearch />
           </Link>
         </Button>
         <Button variant="ghost" size="icon" className="size-10 p-2" asChild>
