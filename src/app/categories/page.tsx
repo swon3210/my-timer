@@ -3,15 +3,31 @@
 import FolderItem from "@/components/FolderItem";
 import LongPressCheckWrapper from "@/components/LongPressChecker";
 import useFolderNamesQuery from "@/domains/folders/useFolderNamesQuery";
+import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
 import { isSelectionModeAtom, selectedFolderNamesAtom } from "@/lib/atoms";
 import { AnimatePresence } from "framer-motion";
 import { useAtom, useAtomValue } from "jotai";
 import Link from "next/link";
 
+function CategoryFolderItem({ categoryName }: { categoryName: string }) {
+  const { data: imageFolderNames = [] } = useImageFolderNamesQuery({
+    categoryName,
+  });
+
+  return (
+    <FolderItem
+      type="folder"
+      folderName={categoryName}
+      count={imageFolderNames.length}
+    />
+  );
+}
+
 export default function CategoriesPage() {
   const isSelectionMode = useAtomValue(isSelectionModeAtom);
 
   const { data: categoryNames = [] } = useFolderNamesQuery();
+
   const [selectedFolderNames, setSelectedFolderNames] = useAtom(
     selectedFolderNamesAtom
   );
@@ -51,7 +67,7 @@ export default function CategoriesPage() {
                   key={folderName}
                   href={isSelectionMode ? "" : `/categories/${folderName}`}
                 >
-                  <FolderItem type="folder" folderName={folderName} count={0} />
+                  <CategoryFolderItem categoryName={folderName} />
                 </Link>
               </LongPressCheckWrapper>
             ))}
