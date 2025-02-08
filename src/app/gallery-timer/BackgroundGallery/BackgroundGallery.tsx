@@ -1,7 +1,7 @@
 import useImagesQuery from "@/domains/images/useImagesQuery";
 import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
 // import { isLocalEnv } from "@/lib/utils";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   forwardRef,
   useCallback,
@@ -17,6 +17,7 @@ import ImageIndexIndicator from "./ImageIndexIndicator";
 import NavigateToFolderButton from "./NavigateToFolderButton";
 import NavigateToCategoryButton from "./NavigateToCategoryButton";
 import { useSearchParams } from "next/navigation";
+import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
 
 const prefetchImage = (imageUrl: string) => {
   new Image().src = imageUrl;
@@ -41,7 +42,12 @@ const BackgroundGallery = forwardRef<
   const searchParams = useSearchParams();
 
   const categoryName = useAtomValue(categoryNameAtom);
-  const folderName = useAtomValue(folderNameAtom);
+  const [folderName, setFolderName] = useAtom(folderNameAtom);
+
+  const { data: imageFolderNames = [] } = useImageFolderNamesQuery({
+    categoryName,
+  });
+
   const nextImageUrlIndexRef = useRef<number>();
 
   const [imageUrlIndex, setImageUrlIndex] = useState(() => {
@@ -60,6 +66,69 @@ const BackgroundGallery = forwardRef<
     ? `url('${selectedImageUrl?.replaceAll("'", "\\'")}')`
     : undefined;
 
+  const setPrevImageUrlIndex = useCallback(() => {
+    const currentFolderIndex = imageFolderNames.findIndex(
+      (imageFolderName) => imageFolderName === folderName
+    );
+
+    const targetFolderIndex =
+      currentFolderIndex === 0
+        ? imageFolderNames.length - 1
+        : currentFolderIndex - 1;
+
+    const targetFolderName = imageFolderNames[targetFolderIndex];
+
+    if (
+      imageUrlIndex === 0 &&
+      confirm(`${targetFolderName} 폴더로 이동하시겠습니까? `)
+    ) {
+      setFolderName(targetFolderName);
+      setImageUrlIndex(0);
+
+      return;
+    }
+
+    setImageUrlIndex((imageUrlIndex - 1 + imageUrls.length) % imageUrls.length);
+  }, [
+    folderName,
+    imageFolderNames,
+    imageUrlIndex,
+    imageUrls.length,
+    setFolderName,
+    setImageUrlIndex,
+  ]);
+
+  const setNextImageUrlIndex = useCallback(() => {
+    const currentFolderIndex = imageFolderNames.findIndex(
+      (imageFolderName) => imageFolderName === folderName
+    );
+
+    const targetFolderIndex =
+      currentFolderIndex === imageFolderNames.length - 1
+        ? 0
+        : currentFolderIndex + 1;
+
+    const targetFolderName = imageFolderNames[targetFolderIndex];
+
+    if (
+      imageUrlIndex === imageUrls.length - 1 &&
+      confirm(`${targetFolderName} 폴더로 이동하시겠습니까? `)
+    ) {
+      setFolderName(targetFolderName);
+      setImageUrlIndex(0);
+
+      return;
+    }
+
+    return setImageUrlIndex((imageUrlIndex + 1) % imageUrls.length);
+  }, [
+    folderName,
+    imageFolderNames,
+    imageUrlIndex,
+    imageUrls.length,
+    setFolderName,
+  ]);
+
   const handleBackgroundGalleryClick = (
     event: React.MouseEvent<HTMLDivElement>
   ) => {
@@ -67,11 +136,9 @@ const BackgroundGallery = forwardRef<
     const { clientX } = event;
 
     if (clientX < window.innerWidth / 2) {
-      setImageUrlIndex(
-        (prev) => (prev - 1 + imageUrls.length) % imageUrls.length
-      );
+      setPrevImageUrlIndex();
     } else {
-      setImageUrlIndex((prev) => (prev + 1) % imageUrls.length);
+      setNextImageUrlIndex();
     }
   };
 
@@ -105,21 +172,20 @@ const BackgroundGallery = forwardRef<
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
-        setImageUrlIndex(
-          (prev) => (prev - 1 + imageUrls.length) % imageUrls.length
-        );
+        setPrevImageUrlIndex();
       } else if (e.key === "ArrowRight") {
-        setImageUrlIndex((prev) => (prev + 1) % imageUrls.length);
+        setNextImageUrlIndex();
       } else if (e.key === "ArrowUp") {
         setImageUrlIndex(getRandomIndex(imageUrls.length));
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [imageUrls]);
+  }, [imageUrls.length, setPrevImageUrlIndex, setNextImageUrlIndex]);
 
   useEffect(() => {
     const prevIndex = (imageUrlIndex - 1 + imageUrls.length) % imageUrls.length;
