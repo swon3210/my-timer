@@ -83,6 +83,7 @@ export async function getImageListFromFolder(path: string) {
     const imageUrls = await Promise.all(
       res.items.map((itemRef) => getDownloadURL(itemRef))
     );
+
     return imageUrls;
   } catch (error) {
     console.error("Error fetching image list:", error);

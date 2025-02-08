@@ -3,7 +3,11 @@
 
 import { Button } from "@/components/ui/button";
 import useImagesQuery from "@/domains/images/useImagesQuery";
-import { gridLayoutColumnNumberAtom } from "@/lib/atoms";
+import {
+  categoryNameAtom,
+  folderNameAtom,
+  gridLayoutColumnNumberAtom,
+} from "@/lib/atoms";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
@@ -20,6 +24,9 @@ export default function CategoriesPage({
 }: {
   params: { categoryName: string; imageFolderName: string };
 }) {
+  const [, setCategoryName] = useAtom(categoryNameAtom);
+  const [, setFolderName] = useAtom(folderNameAtom);
+
   const router = useRouter();
 
   const [gridLayoutColumnNumber, setGridLayoutColumnNumber] = useAtom(
@@ -36,6 +43,8 @@ export default function CategoriesPage({
   };
 
   const handleImageClick = (index: number) => {
+    setCategoryName(params.categoryName);
+    setFolderName(params.imageFolderName);
     router.push(`/gallery-timer?image-url-index=${index}`);
   };
 
