@@ -13,6 +13,7 @@ import {
 import ImageShuffleButton from "./ImageShuffleButton";
 import { cn } from "@/lib/utils";
 import FolderSwitchButtons from "./FolderSwitchButtons";
+// import FullPageCarousel from "./FullPageCarousel";
 
 const prefetchImage = (imageUrl: string) => {
   new Image().src = imageUrl;
@@ -121,6 +122,9 @@ const BackgroundGallery = forwardRef<
 
   return (
     <div className={cn("relative w-full h-full", className)}>
+      {/* <div>
+        <FullPageCarousel />
+      </div> */}
       <div
         className="absolute top-0 left-0 w-full h-full"
         style={{
@@ -141,15 +145,11 @@ const BackgroundGallery = forwardRef<
         }}
         onClick={handleBackgroundGalleryClick}
       />
-      {backgroundImage && (
-        <>
-          <ImageShuffleButton
-            onClick={handleImageShuffleButtonClick}
-            className="absolute bottom-4 right-4 z-20"
-          />
-          <FolderSwitchButtons className="absolute bottom-4 right-16 z-20" />
-        </>
-      )}
+      <ImageShuffleButton
+        onClick={handleImageShuffleButtonClick}
+        className="absolute bottom-4 right-4 z-20"
+      />
+      <FolderSwitchButtons className="absolute bottom-4 right-16 z-20" />
     </div>
   );
 });
