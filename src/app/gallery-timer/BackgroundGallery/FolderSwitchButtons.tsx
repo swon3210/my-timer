@@ -28,9 +28,14 @@ const FolderSwitchButtons = ({
 
     const currentIndex = folderNames.indexOf(folderName);
     const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
-    setFolderName(
-      folderNames[newIndex < 0 ? folderNames.length - 1 : newIndex]
-    );
+
+    if (newIndex < 0) {
+      setFolderName(folderNames[folderNames.length - 1]);
+    } else if (newIndex >= folderNames.length) {
+      setFolderName(folderNames[0]);
+    } else {
+      setFolderName(folderNames[newIndex]);
+    }
 
     onFolderSwitch(direction);
   };
