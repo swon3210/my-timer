@@ -40,14 +40,14 @@ const FolderSwitchButtons = ({
       <Button
         variant="ghost"
         onClick={() => handleFolderSwitch("prev")}
-        className="size-10 p-2"
+        className="size-10"
       >
         <ArrowLeft />
       </Button>
       <Button
         variant="ghost"
         onClick={() => handleFolderSwitch("next")}
-        className="size-10 p-2"
+        className="size-10"
       >
         <ArrowRight />
       </Button>

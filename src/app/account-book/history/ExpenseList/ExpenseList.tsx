@@ -217,8 +217,6 @@ function DateDivider({ date }: { date: string }) {
 export default function ExpenseList() {
   const { data: accountItems } = useAccountItemsQuery();
 
-  console.log(accountItems);
-
   if (!accountItems || accountItems.length === 0) {
     return (
       <motion.div

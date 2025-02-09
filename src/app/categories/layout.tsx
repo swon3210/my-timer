@@ -1,7 +1,11 @@
 "use client";
 
+import { useAtom, useAtomValue } from "jotai";
+import { Check, FolderPlus, Trash, Upload, X } from "lucide-react";
+import { useParams } from "next/navigation";
+import { toast } from "sonner";
+
 import BackButton from "@/components/BackButton";
-import ImageUploadButton from "@/components/ImageUploadButton";
 import { Button } from "@/components/ui/button";
 import useDeleteFoldersMutation from "@/domains/folders/useDeleteFoldersMutation";
 import useFolderNamesQuery, {
@@ -19,12 +23,11 @@ import {
 } from "@/lib/atoms";
 import { useAddFolderMutation } from "@/lib/mutations";
 import { useInvalidateQuery } from "@/lib/queries";
-import { useFirebase } from "@/providers/FirebaseProvider";
-import { useAtom, useAtomValue } from "jotai";
-import { Check, FolderPlus, Trash, X } from "lucide-react";
-import { useParams } from "next/navigation";
-import { toast } from "sonner";
+import { useFirebase } from "@/app/providers/FirebaseProvider";
+
 import { getUserStoragePath } from "../api/firebase";
+
+import useImageUploadDialogOverlay from "./useImageUploadDialogOverlay";
 
 // export const metadata = {
 //   title: "My Timer 사진 폴더 선택",
@@ -71,8 +74,16 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
   const { addImages } = useFirebase();
   const invalidateQuery = useInvalidateQuery();
 
-  const handleImagesUploaded = async (images: File[]) => {
-    const folderName = prompt("이미지 폴더 이름을 입력하세요.");
+  const { openImageUploadDialog } = useImageUploadDialogOverlay();
+
+  const handleImagesUploaded = async (
+    localFolderName: string,
+    images: File[]
+  ) => {
+    const folderName = prompt(
+      "이미지 폴더 이름을 입력하세요.",
+      localFolderName
+    );
 
     if (!folderName || !user) {
       return;
@@ -97,7 +108,17 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
     void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
   };
 
-  return <ImageUploadButton onImagesUploaded={handleImagesUploaded} />;
+  return (
+    <Button
+      variant="outline"
+      onClick={() =>
+        openImageUploadDialog({ onImagesUploaded: handleImagesUploaded })
+      }
+      className="size-10"
+    >
+      <Upload />
+    </Button>
+  );
 };
 
 const AddImagesToFolderButton = ({
@@ -111,7 +132,9 @@ const AddImagesToFolderButton = ({
   const { addImages } = useFirebase();
   const { data: user } = useUserQuery();
 
-  const handleImagesUploaded = async (images: File[]) => {
+  const { openImageUploadDialog } = useImageUploadDialogOverlay();
+
+  const handleImagesUploaded = async (_: string, images: File[]) => {
     if (!user) {
       return;
     }
@@ -126,7 +149,17 @@ const AddImagesToFolderButton = ({
     void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
   };
 
-  return <ImageUploadButton onImagesUploaded={handleImagesUploaded} />;
+  return (
+    <Button
+      variant="outline"
+      onClick={() =>
+        openImageUploadDialog({ onImagesUploaded: handleImagesUploaded })
+      }
+      className="size-10"
+    >
+      <Upload />
+    </Button>
+  );
 };
 
 type SelectionModeButtonProps = {
@@ -191,7 +224,7 @@ const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
     <Button
       variant={hasSelectedFolder ? "destructive" : "outline"}
       size="icon"
-      className="w-auto p-2"
+      className="w-auto h-10 px-2"
       onClick={handleXButtonClick}
     >
       <div className="flex items-center gap-1">
@@ -222,8 +255,13 @@ const XButton = ({ target }: SelectionModeButtonProps) => {
   };
 
   return (
-    <Button variant="outline" size="icon" onClick={handleXButtonClick}>
-      <X className="w-4 h-4 text-gray-700" />
+    <Button
+      variant="outline"
+      size="icon"
+      className="size-10"
+      onClick={handleXButtonClick}
+    >
+      <X />
     </Button>
   );
 };
@@ -239,9 +277,10 @@ const SelectionModeButton = () => {
     <Button
       variant="outline"
       size="icon"
+      className="size-10"
       onClick={handleSelectionModeButtonClick}
     >
-      <Check className="w-4 h-4 text-gray-700" />
+      <Check />
     </Button>
   );
 };

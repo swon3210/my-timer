@@ -16,7 +16,7 @@ const BackButton = ({ className }: { className?: string }) => {
     <Button
       variant="ghost"
       size="icon"
-      className={cn("size-10 p-2", className)}
+      className={cn("size-10", className)}
       onClick={handleClick}
     >
       <ArrowLeft />

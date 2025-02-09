@@ -19,12 +19,12 @@ export default function RootLayout({
         <BackButton className="size-10 mr-2" />
       </div>
       <div className="fixed z-10 top-0 right-0 p-4 flex items-center gap-1">
-        <Button variant="ghost" size="icon" className="size-10 p-2" asChild>
+        <Button variant="ghost" size="icon" className="size-10" asChild>
           <Link href="/categories">
             <FolderSearch />
           </Link>
         </Button>
-        <Button variant="ghost" size="icon" className="size-10 p-2" asChild>
+        <Button variant="ghost" size="icon" className="size-10" asChild>
           <Link href="/gallery-timer/settings">
             <Settings />
           </Link>

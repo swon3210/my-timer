@@ -3,7 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers";
 import { Toaster } from "sonner";
-import FirebaseProvider from "@/providers/FirebaseProvider";
+import FirebaseProvider from "@/app/providers/FirebaseProvider";
+import OverlayProvider from "./providers/OverlayProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,7 +34,9 @@ export default async function RootLayout({
       >
         <QueryProvider>
           <Toaster />
-          <FirebaseProvider>{children}</FirebaseProvider>
+          <FirebaseProvider>
+            <OverlayProvider>{children}</OverlayProvider>
+          </FirebaseProvider>
         </QueryProvider>
       </body>
     </html>

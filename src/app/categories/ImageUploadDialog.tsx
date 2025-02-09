@@ -2,33 +2,55 @@
 
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { X, Upload, Image as ImageIcon, Plus } from "lucide-react";
+import { X, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 type ImageUploadModalOverlayProps = {
-  onImagesUploaded: (files: File[]) => void;
+  isOpen: boolean;
+  close: () => void;
+  onImagesUploaded: (folderName: string, files: File[]) => void;
 };
 
-const ImageUploadButton = ({
+const ImageUploadDialog = ({
+  isOpen,
+  close,
   onImagesUploaded,
 }: ImageUploadModalOverlayProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [uploadedFilesInfo, setUploadedFilesInfo] = useState<
+    {
+      firstFileSrc: string;
+      folderPath: string;
+      filesCount: number;
+    }[]
+  >([]);
+
   const [files, setFiles] = useState<File[]>([]);
 
   const handleDrop = (acceptedFiles: File[]) => {
+    const [file] = acceptedFiles;
+
+    const path = (file as File & { path: string }).path;
+    const folderName = path.split("/")[1];
+
     setFiles(acceptedFiles);
-    onImagesUploaded(acceptedFiles);
+    onImagesUploaded(folderName, acceptedFiles);
 
     setTimeout(() => {
       setFiles([]);
-      setIsOpen(false);
+      setUploadedFilesInfo([
+        ...uploadedFilesInfo,
+        {
+          firstFileSrc: URL.createObjectURL(file),
+          folderPath: path,
+          filesCount: acceptedFiles.length,
+        },
+      ]);
     }, 1000);
   };
 
@@ -45,13 +67,13 @@ const ImageUploadButton = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={close}>
+      {/* <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <Plus className="w-4 h-4 text-gray-700" />
         </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      </DialogTrigger> */}
+      <DialogContent className="rounded-lg w-[calc(100%-1rem)]">
         <DialogHeader>
           <DialogTitle>이미지 업로드</DialogTitle>
         </DialogHeader>
@@ -96,16 +118,26 @@ const ImageUploadButton = ({
               </div>
             )}
           </div>
-          {files.length > 0 && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <ImageIcon className="h-4 w-4" />
-              <span>{files[0].name}</span>
+          {uploadedFilesInfo.map(({ firstFileSrc, folderPath, filesCount }) => (
+            <div
+              key={folderPath}
+              className="flex items-center gap-2 text-sm text-gray-600"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={firstFileSrc}
+                alt={`${folderPath} 폴더의 첫 번째 이미지`}
+                className="w-8 h-8 rounded-lg object-cover"
+              />
+              <span>
+                업로드 됨 : {folderPath} 포함 {filesCount}개
+              </span>
             </div>
-          )}
+          ))}
         </div>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ImageUploadButton;
+export default ImageUploadDialog;

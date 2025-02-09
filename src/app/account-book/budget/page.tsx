@@ -1,7 +1,7 @@
 "use client";
 
 import BudgetList from "./BudgetList";
-import OverlayProvider from "@/providers/OverlayProvider";
+import OverlayProvider from "@/app/providers/OverlayProvider";
 import IncomeList from "./IncomeList";
 
 export default function BudgetPage() {
