@@ -222,15 +222,15 @@ const BackgroundGallery = forwardRef<
       />
       <ImageShuffleButton
         onClick={handleImageShuffleButtonClick}
-        className="absolute bottom-4 right-4 z-20"
+        className="absolute bottom-2 right-2 z-20"
       />
       <FolderSwitchButtons
-        className="absolute bottom-4 right-16 z-20"
+        className="absolute bottom-2 right-14 z-20"
         onFolderSwitch={handleFolderSwitch}
       />
 
       {imageUrls.length > 0 && (
-        <div className="absolute bottom-4 left-4 z-20 flex items-center gap-3">
+        <div className="absolute bottom-2 left-2 z-20 flex items-center gap-3">
           <div className="flex items-center gap-1">
             <NavigateToCategoryButton />
             <NavigateToFolderButton />

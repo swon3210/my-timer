@@ -61,8 +61,13 @@ const AddFolderButton = () => {
   };
 
   return (
-    <Button variant="outline" size="icon" onClick={handleClick}>
-      <FolderPlus className="w-4 h-4 text-gray-700" />
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={handleClick}
+      className="size-10"
+    >
+      <FolderPlus />
     </Button>
   );
 };

@@ -15,10 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <main className="w-full h-full max-w-app-container mx-auto">
-      <div className="fixed z-10 top-0 left-0 p-4">
+      <div className="fixed z-10 top-0 left-0 p-2">
         <BackButton className="size-10 mr-2" />
       </div>
-      <div className="fixed z-10 top-0 right-0 p-4 flex items-center gap-1">
+      <div className="fixed z-10 top-0 right-0 p-2 flex items-center gap-1">
         <Button variant="ghost" size="icon" className="size-10" asChild>
           <Link href="/categories">
             <FolderSearch />
