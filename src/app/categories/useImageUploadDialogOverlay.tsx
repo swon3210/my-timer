@@ -1,5 +1,5 @@
 import { useOverlay } from "@toss/use-overlay";
-import ImageUploadDialog from "./ImageUploadDialog";
+import ImageUploadDialog, { ImageGroup } from "./ImageUploadDialog";
 
 const useImageUploadDialogOverlay = () => {
   const overlay = useOverlay();
@@ -7,7 +7,7 @@ const useImageUploadDialogOverlay = () => {
   const openImageUploadDialog = ({
     onImagesUploaded,
   }: {
-    onImagesUploaded: (folderName: string, files: File[]) => void;
+    onImagesUploaded: (imageGroups: ImageGroup[]) => void;
   }) => {
     return overlay.open(({ close, isOpen }) => (
       <ImageUploadDialog

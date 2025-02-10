@@ -28,11 +28,7 @@ import { useFirebase } from "@/app/providers/FirebaseProvider";
 import { getUserStoragePath } from "../api/firebase";
 
 import useImageUploadDialogOverlay from "./useImageUploadDialogOverlay";
-
-// export const metadata = {
-//   title: "My Timer 사진 폴더 선택",
-//   description: "사진 폴더를 선택하는 페이지",
-// };
+import { ImageGroup } from "./ImageUploadDialog";
 
 const AddFolderButton = () => {
   const { data: folderNames } = useFolderNamesQuery();
@@ -81,33 +77,52 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
 
   const { openImageUploadDialog } = useImageUploadDialogOverlay();
 
-  const handleImagesUploaded = async (
-    localFolderName: string,
-    images: File[]
-  ) => {
-    const folderName = prompt(
-      "이미지 폴더 이름을 입력하세요.",
-      localFolderName
+  const handleImagesUploaded = async (imageGroups: ImageGroup[]) => {
+    if (imageGroups.length === 0 || !user) {
+      return;
+    }
+
+    const imageGroupFolderNames = imageGroups.map(
+      (imageGroup) => imageGroup.folderName
     );
 
-    if (!folderName || !user) {
-      return;
-    }
-
-    const hasFolderName = imageFolderNames.includes(folderName.trim());
+    const hasFolderName = imageGroupFolderNames.some((imageGroupFolderName) => {
+      return imageFolderNames.includes(imageGroupFolderName.trim());
+    });
 
     if (hasFolderName) {
-      alert("이미 존재하는 폴더입니다.");
+      alert("중복된 폴더 명이 있습니다.");
       return;
     }
 
-    await addImages(
-      getUserStoragePath(user, `images/${categoryName}/${folderName}`),
-      images
+    const folderNameInputs = imageGroups.map((imageGroup, index) =>
+      prompt(
+        imageGroups.length === 1
+          ? "이미지 폴더 이름을 입력하세요."
+          : `${index + 1}번째 폴더 이름을 입력하세요.`,
+        imageGroup.folderName
+      )
+    );
+
+    await Promise.all(
+      imageGroups.map((imageGroup, index) =>
+        addImages(
+          getUserStoragePath(
+            user,
+            `images/${categoryName}/${folderNameInputs[index]}`
+          ),
+          imageGroup.files
+        )
+      )
     );
 
     toast(
-      `${folderName} 폴더에 ${images.length}개의 이미지를 업로드하였습니다.`
+      imageGroups.length === 1
+        ? `${imageGroups[0].folderName} 폴더에 ${imageGroups[0].files.length}개의 이미지를 업로드하였습니다.`
+        : `${imageGroups.length}개의 폴더에 ${imageGroups.reduce(
+            (acc, imageGroup) => acc + imageGroup.files.length,
+            0
+          )}개의 이미지를 업로드하였습니다.`
     );
 
     void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
@@ -139,17 +154,22 @@ const AddImagesToFolderButton = ({
 
   const { openImageUploadDialog } = useImageUploadDialogOverlay();
 
-  const handleImagesUploaded = async (_: string, images: File[]) => {
+  const handleImagesUploaded = async (imageGroups: ImageGroup[]) => {
     if (!user) {
       return;
     }
 
     await addImages(
       getUserStoragePath(user, `images/${categoryName}/${imageFolderName}`),
-      images
+      imageGroups.flatMap((imageGroup) => imageGroup.files)
     );
 
-    toast(`${images.length}개의 이미지를 업로드하였습니다.`);
+    toast(
+      `${imageGroups.reduce(
+        (acc, imageGroup) => acc + imageGroup.files.length,
+        0
+      )}개의 이미지를 업로드하였습니다.`
+    );
 
     void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
   };

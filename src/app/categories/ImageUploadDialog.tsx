@@ -11,10 +11,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+export type ImageGroup = {
+  folderName: string;
+  files: File[];
+};
+
 type ImageUploadModalOverlayProps = {
   isOpen: boolean;
   close: () => void;
-  onImagesUploaded: (folderName: string, files: File[]) => void;
+  onImagesUploaded: (imageGroups: ImageGroup[]) => void;
+};
+
+const getFolderNameFromPath = (path: string) => {
+  return path.split("/")[1];
 };
 
 const ImageUploadDialog = ({
@@ -33,23 +42,37 @@ const ImageUploadDialog = ({
   const [files, setFiles] = useState<File[]>([]);
 
   const handleDrop = (acceptedFiles: File[]) => {
-    const [file] = acceptedFiles;
+    const folderNames = Array.from(
+      new Set(
+        acceptedFiles.map((file) => {
+          const path = (file as File & { path: string }).path;
+          return getFolderNameFromPath(path);
+        })
+      )
+    );
 
-    const path = (file as File & { path: string }).path;
-    const folderName = path.split("/")[1];
+    const imageGroups: ImageGroup[] = folderNames.map((folderName) => ({
+      folderName,
+      files: acceptedFiles.filter((file) => {
+        const path = (file as File & { path: string }).path;
+        return getFolderNameFromPath(path) === folderName;
+      }),
+    }));
 
     setFiles(acceptedFiles);
-    onImagesUploaded(folderName, acceptedFiles);
+
+    onImagesUploaded(imageGroups);
 
     setTimeout(() => {
       setFiles([]);
+
       setUploadedFilesInfo([
         ...uploadedFilesInfo,
-        {
-          firstFileSrc: URL.createObjectURL(file),
-          folderPath: path,
-          filesCount: acceptedFiles.length,
-        },
+        ...imageGroups.map((imageGroup) => ({
+          firstFileSrc: URL.createObjectURL(imageGroup.files[0]),
+          folderPath: imageGroup.folderName,
+          filesCount: imageGroup.files.length,
+        })),
       ]);
     }, 1000);
   };
@@ -68,16 +91,11 @@ const ImageUploadDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={close}>
-      {/* <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Plus className="w-4 h-4 text-gray-700" />
-        </Button>
-      </DialogTrigger> */}
-      <DialogContent className="rounded-lg w-[calc(100%-1rem)]">
+      <DialogContent className="rounded-lg w-[calc(100%-1rem)] gap-4">
         <DialogHeader>
           <DialogTitle>이미지 업로드</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4">
           <div
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
@@ -118,22 +136,26 @@ const ImageUploadDialog = ({
               </div>
             )}
           </div>
-          {uploadedFilesInfo.map(({ firstFileSrc, folderPath, filesCount }) => (
-            <div
-              key={folderPath}
-              className="flex items-center gap-2 text-sm text-gray-600"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={firstFileSrc}
-                alt={`${folderPath} 폴더의 첫 번째 이미지`}
-                className="w-8 h-8 rounded-lg object-cover"
-              />
-              <span>
-                업로드 됨 : {folderPath} 포함 {filesCount}개
-              </span>
-            </div>
-          ))}
+          <div className="flex max-h-32 flex-col gap-2 grow overflow-y-auto">
+            {uploadedFilesInfo
+              .reverse()
+              .map(({ firstFileSrc, folderPath, filesCount }) => (
+                <div
+                  key={folderPath}
+                  className="flex items-center gap-2 text-sm text-gray-600"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={firstFileSrc}
+                    alt={`${folderPath} 폴더의 첫 번째 이미지`}
+                    className="w-8 h-8 rounded-lg object-cover"
+                  />
+                  <span>
+                    업로드 됨 : {folderPath} 포함 {filesCount}개
+                  </span>
+                </div>
+              ))}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
