@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+import NextPWA from "next-pwa";
+
+const withPWA = NextPWA({
+  dest: "public",
+  register: true, // 서비스 워커 자동 등록
+  skipWaiting: true, // 업데이트 시 즉시 새로운 서비스 워커 적용
+  disable: process.env.NODE_ENV === "development", // 개발 환경에서는 비활성화
+});
+
+const nextConfig = withPWA({
   images: {
     domains: ["firebasestorage.googleapis.com"],
   },
@@ -12,6 +22,6 @@ const nextConfig = {
       },
     ];
   },
-};
+});
 
 export default nextConfig;
