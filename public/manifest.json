@@ -1,6 +1,6 @@
 {
   "name": "Jin Song",
-  "short_name": "Jin and Song",
+  "short_name": "Jin Song",
   "description": "This is a Next.js 14 PWA app.",
   "start_url": "/",
   "display": "standalone",
