@@ -1,14 +1,7 @@
 "use client";
 
-import { Eye, Music, Timer, Music4 } from "lucide-react";
+import { Eye, Timer } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -128,7 +121,7 @@ export default function SettingsForm() {
         })}
       />
 
-      <Separator />
+      {/* <Separator />
 
       <SettingItem
         icon={<Music className="h-6 w-6 text-primary" />}
@@ -182,7 +175,7 @@ export default function SettingsForm() {
         />
       </SettingItem>
 
-      <Separator />
+      <Separator /> /*}
 
       {/* <SettingItem
           icon={<Lock className="h-6 w-6 text-primary" />}

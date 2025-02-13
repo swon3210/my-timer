@@ -3,11 +3,6 @@ import { Button } from "@/components/ui/button";
 import { FolderSearch, Settings } from "lucide-react";
 import Link from "next/link";
 
-export const metadata = {
-  title: "My Timer",
-  description: "나의 어플리케이션",
-};
-
 export default function RootLayout({
   children,
 }: {

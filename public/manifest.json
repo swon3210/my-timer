@@ -1,6 +1,6 @@
 {
-  "name": "My PWA App",
-  "short_name": "PWA App",
+  "name": "Jin Song",
+  "short_name": "Jin and Song",
   "description": "This is a Next.js 14 PWA app.",
   "start_url": "/",
   "display": "standalone",
