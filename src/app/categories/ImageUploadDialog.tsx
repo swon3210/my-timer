@@ -137,24 +137,16 @@ const ImageUploadDialog = ({
             )}
           </div>
           <div className="flex max-h-32 flex-col gap-2 grow overflow-y-auto">
-            {uploadedFilesInfo
-              .reverse()
-              .map(({ firstFileSrc, folderPath, filesCount }) => (
-                <div
-                  key={folderPath}
-                  className="flex items-center gap-2 text-sm text-gray-600"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={firstFileSrc}
-                    alt={`${folderPath} 폴더의 첫 번째 이미지`}
-                    className="w-8 h-8 rounded-lg object-cover"
-                  />
-                  <span>
-                    업로드 됨 : {folderPath} 포함 {filesCount}개
-                  </span>
-                </div>
-              ))}
+            {uploadedFilesInfo.reverse().map(({ folderPath, filesCount }) => (
+              <div
+                key={folderPath}
+                className="flex items-center gap-2 text-sm text-gray-600"
+              >
+                <span>
+                  업로드 됨 : {folderPath} 포함 {filesCount}개
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </DialogContent>

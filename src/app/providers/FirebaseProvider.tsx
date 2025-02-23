@@ -65,14 +65,10 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
       return [];
     }
 
-    const optimizedImages = await Promise.all(
-      imageFiles.map((image) => optimizeImage(image, 0.8))
-    );
-
     try {
-      const uploadPromises = optimizedImages.map(async (file, index) => {
+      const uploadPromises = imageFiles.map(async (imageFile) => {
         // 파일명 생성 (현재 시간 + 원본 파일명)
-        const fileName = imageFiles[index].name;
+        const fileName = imageFile.name;
 
         // storage 참조 생성
         const imageStorageRef = storageRef(
@@ -80,8 +76,10 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
           decodeURIComponent(`${folderPath}/${fileName}`)
         );
 
+        const optimizedImage = await optimizeImage(imageFile, 0.8);
+
         // 파일 업로드
-        const snapshot = await uploadBytes(imageStorageRef, file);
+        const snapshot = await uploadBytes(imageStorageRef, optimizedImage);
 
         // 업로드된 파일의 다운로드 URL 가져오기
         const downloadURL = await getDownloadURL(snapshot.ref);
