@@ -86,12 +86,18 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       (imageGroup) => imageGroup.folderName
     );
 
-    const hasFolderName = imageGroupFolderNames.some((imageGroupFolderName) => {
-      return imageFolderNames.includes(imageGroupFolderName.trim());
-    });
+    const hasFolderNames = imageGroupFolderNames.filter(
+      (imageGroupFolderName) => {
+        return imageFolderNames.includes(imageGroupFolderName.trim());
+      }
+    );
 
-    if (hasFolderName) {
-      alert("중복된 폴더 명이 있습니다.");
+    if (hasFolderNames.length > 0) {
+      alert(
+        `${hasFolderNames.join(
+          ", "
+        )} 폴더 명이 이미 존재합니다. 다른 이름을 입력해주세요.`
+      );
       return;
     }
 
