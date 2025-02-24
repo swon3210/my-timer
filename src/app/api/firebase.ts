@@ -101,14 +101,10 @@ export const addImages = async (folderPath: string, imageFiles: File[]) => {
       const imageStorageRef = storageRef(storage, `${folderPath}/${fileName}`);
 
       // 파일 업로드
-      const snapshot = await uploadBytes(imageStorageRef, file);
-
-      // 업로드된 파일의 다운로드 URL 가져오기
-      const downloadURL = await getDownloadURL(snapshot.ref);
+      await uploadBytes(imageStorageRef, file);
 
       return {
         fileName,
-        downloadURL,
       };
     });
 

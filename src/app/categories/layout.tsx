@@ -115,7 +115,7 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
         addImages(
           getUserStoragePath(
             user,
-            `images/${categoryName}/${folderNameInputs[index]}`
+            `images/${categoryName}/${folderNameInputs[index]?.trim()}`
           ),
           imageGroup.files
         )
@@ -166,7 +166,10 @@ const AddImagesToFolderButton = ({
     }
 
     await addImages(
-      getUserStoragePath(user, `images/${categoryName}/${imageFolderName}`),
+      getUserStoragePath(
+        user,
+        `images/${categoryName}/${imageFolderName.trim()}`
+      ),
       imageGroups.flatMap((imageGroup) => imageGroup.files)
     );
 
