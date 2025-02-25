@@ -55,9 +55,10 @@ const BackgroundGallery = forwardRef<
     return imageUrlIndexParams ? parseInt(imageUrlIndexParams) : 0;
   });
 
+  // TODO : decodeURIComponent 제거
   const { data: imageUrls = [] } = useImagesQuery({
-    categoryName,
-    folderName,
+    categoryName: decodeURIComponent(categoryName ?? ""),
+    folderName: decodeURIComponent(folderName ?? ""),
   });
 
   const selectedImageUrl = imageUrls[imageUrlIndex] as string | undefined;
@@ -220,6 +221,20 @@ const BackgroundGallery = forwardRef<
         }}
         onClick={handleBackgroundGalleryClick}
       />
+
+      {imageUrls.length > 0 && (
+        <div className="absolute bottom-2 left-2 z-20 flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <NavigateToCategoryButton />
+            <NavigateToFolderButton selectedImageIndex={imageUrlIndex} />
+          </div>
+          <ImageIndexIndicator
+            currentIndex={imageUrlIndex}
+            totalImages={imageUrls.length}
+          />
+        </div>
+      )}
+
       <ImageShuffleButton
         onClick={handleImageShuffleButtonClick}
         className="absolute bottom-2 right-2 z-20"
@@ -228,19 +243,6 @@ const BackgroundGallery = forwardRef<
         className="absolute bottom-2 right-14 z-20"
         onFolderSwitch={handleFolderSwitch}
       />
-
-      {imageUrls.length > 0 && (
-        <div className="absolute bottom-2 left-2 z-20 flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            <NavigateToCategoryButton />
-            <NavigateToFolderButton />
-          </div>
-          <ImageIndexIndicator
-            currentIndex={imageUrlIndex}
-            totalImages={imageUrls.length}
-          />
-        </div>
-      )}
     </div>
   );
 });

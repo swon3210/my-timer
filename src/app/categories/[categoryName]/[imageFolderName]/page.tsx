@@ -33,9 +33,10 @@ export default function CategoriesPage({
     gridLayoutColumnNumberAtom
   );
 
+  // TODO : decodeURIComponent 제거
   const { data: imageUrls = [] } = useImagesQuery({
-    categoryName: params.categoryName,
-    folderName: params.imageFolderName,
+    categoryName: decodeURIComponent(params.categoryName),
+    folderName: decodeURIComponent(params.imageFolderName),
   });
 
   const handleGridLayoutColumnNumberButtonClick = (value: number) => {
@@ -82,6 +83,8 @@ export default function CategoriesPage({
                 key={imageUrl}
                 type="button"
                 onClick={() => handleImageClick(index)}
+                id={index.toString()}
+                className="scroll-mt-20"
               >
                 <motion.div
                   key={imageUrl}

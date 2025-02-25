@@ -8,8 +8,10 @@ import { ImagesIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function NavigateToFolderButton({
+  selectedImageIndex,
   className,
 }: {
+  selectedImageIndex: number;
   className?: string;
 }) {
   const categoryName = useAtomValue(categoryNameAtom);
@@ -17,7 +19,9 @@ export default function NavigateToFolderButton({
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/categories/${categoryName}/${folderName}`);
+    router.push(
+      `/categories/${categoryName}/${folderName}#${selectedImageIndex}`
+    );
   };
 
   return (

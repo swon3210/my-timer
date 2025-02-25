@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { categoryNameAtom } from "@/lib/atoms";
+import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
 import { cn } from "@/lib/utils";
 import { useAtomValue } from "jotai";
 import { FoldersIcon } from "lucide-react";
@@ -13,10 +13,11 @@ export default function NavigateToCategoryButton({
   className?: string;
 }) {
   const categoryName = useAtomValue(categoryNameAtom);
+  const folderName = useAtomValue(folderNameAtom);
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/categories/${categoryName}`);
+    router.push(`/categories/${categoryName}#${folderName}`);
   };
 
   return (

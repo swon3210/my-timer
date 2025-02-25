@@ -53,10 +53,12 @@ export default function CategoriesPage({
                   handleCheckedChange(folderName, isChecked)
                 }
               >
-                <ImageFolderItem
-                  categoryName={params.categoryName}
-                  folderName={folderName}
-                />
+                <div id={folderName} className="scroll-mt-20">
+                  <ImageFolderItem
+                    categoryName={params.categoryName}
+                    folderName={folderName}
+                  />
+                </div>
               </LongPressCheckWrapper>
             ))}
           </AnimatePresence>
