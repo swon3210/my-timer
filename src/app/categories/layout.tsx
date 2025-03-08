@@ -141,6 +141,10 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
     );
 
     void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
+
+    setTimeout(() => {
+      setImagesUploadProgress(0);
+    }, 1000);
   };
 
   return (
@@ -168,7 +172,7 @@ const AddImagesToFolderButton = ({
   const { data: user } = useUserQuery();
 
   const { openImageUploadDialog } = useImageUploadDialogOverlay();
-
+  const setImagesUploadProgress = useSetImagesUploadProgress();
   const handleImagesUploaded = async (imageGroups: ImageGroup[]) => {
     if (!user) {
       return;
@@ -182,12 +186,18 @@ const AddImagesToFolderButton = ({
       imageGroups.flatMap((imageGroup) => imageGroup.files)
     );
 
+    setImagesUploadProgress(100);
+
     toast(
       `${imageGroups.reduce(
         (acc, imageGroup) => acc + imageGroup.files.length,
         0
       )}개의 이미지를 업로드하였습니다.`
     );
+
+    setTimeout(() => {
+      setImagesUploadProgress(0);
+    }, 1000);
 
     void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
   };
