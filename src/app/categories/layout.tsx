@@ -28,7 +28,7 @@ import { useFirebase } from "@/app/providers/FirebaseProvider";
 import { getUserStoragePath } from "../api/firebase";
 
 import useImageUploadDialogOverlay from "./useImageUploadDialogOverlay";
-import { ImageGroup } from "./ImageUploadDialog";
+import { ImageGroup, useSetImagesUploadProgress } from "./ImageUploadDialog";
 
 const AddFolderButton = () => {
   const { data: folderNames } = useFolderNamesQuery();
@@ -77,6 +77,8 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
 
   const { openImageUploadDialog } = useImageUploadDialogOverlay();
 
+  const setImagesUploadProgress = useSetImagesUploadProgress();
+
   const handleImagesUploaded = async (imageGroups: ImageGroup[]) => {
     if (imageGroups.length === 0 || !user) {
       return;
@@ -110,6 +112,8 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       )
     );
 
+    let uploadedImagesFolderCount = 0;
+
     await Promise.all(
       imageGroups.map((imageGroup, index) =>
         addImages(
@@ -118,7 +122,12 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
             `images/${categoryName}/${folderNameInputs[index]?.trim()}`
           ),
           imageGroup.files
-        )
+        ).then(() => {
+          uploadedImagesFolderCount += 1;
+          setImagesUploadProgress(
+            (uploadedImagesFolderCount / imageGroups.length) * 100
+          );
+        })
       )
     );
 
