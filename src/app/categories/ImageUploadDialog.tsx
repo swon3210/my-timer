@@ -167,13 +167,10 @@ const ImageUploadDialog = ({
         {uploadedFilesInfo.length > 0 && (
           <div className="flex items-center gap-2">
             {imagesUploadProgress < 100 ? (
-              <Spinner className="h-4 w-4" />
+              <Spinner />
             ) : (
               <CheckCircle className="h-4 w-4 text-primary" />
             )}
-            {/* <span className="text-sm text-primary">
-              {imagesUploadProgress < 100 ? "Uploading" : "Completed"}
-            </span> */}
             <Progress value={imagesUploadProgress} />
           </div>
         )}
