@@ -25,7 +25,7 @@ type ImageUploadModalOverlayProps = {
   onImagesUploaded: (imageGroups: ImageGroup[]) => void;
 };
 
-const imagesUploadProgressAtom = atom(0);
+const imagesUploadProgressAtom = atom<undefined | number>(undefined);
 
 export const useSetImagesUploadProgress = () => {
   return useSetAtom(imagesUploadProgressAtom);
@@ -166,7 +166,7 @@ const ImageUploadDialog = ({
         </div>
         {uploadedFilesInfo.length > 0 && (
           <div className="flex items-center gap-2">
-            {imagesUploadProgress < 100 ? (
+            {imagesUploadProgress != null && imagesUploadProgress < 100 ? (
               <Spinner />
             ) : (
               <CheckCircle className="h-4 w-4 text-primary" />

@@ -112,6 +112,8 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       )
     );
 
+    setImagesUploadProgress(0);
+
     let uploadedImagesFolderCount = 0;
 
     await Promise.all(
@@ -143,7 +145,7 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
     void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
 
     setTimeout(() => {
-      setImagesUploadProgress(0);
+      setImagesUploadProgress(undefined);
     }, 1000);
   };
 
@@ -178,6 +180,8 @@ const AddImagesToFolderButton = ({
       return;
     }
 
+    setImagesUploadProgress(0);
+
     await addImages(
       getUserStoragePath(
         user,
@@ -196,7 +200,7 @@ const AddImagesToFolderButton = ({
     );
 
     setTimeout(() => {
-      setImagesUploadProgress(0);
+      setImagesUploadProgress(undefined);
     }, 1000);
 
     void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
