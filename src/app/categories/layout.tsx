@@ -363,6 +363,10 @@ export default function RootLayout({
             <TrashCanButton
               target={imageFolderName && categoryName ? "images" : "folders"}
             />
+          ) : imageFolderName ? (
+            <h3 className="text-xl font-semibold">
+              {decodeURIComponent(imageFolderName)}
+            </h3>
           ) : (
             <h3 className="text-xl font-semibold">
               {decodeURIComponent(categoryName ?? "")}
