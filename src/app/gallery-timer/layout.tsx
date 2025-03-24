@@ -3,7 +3,7 @@
 import BackButton from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
 import { folderNameAtom } from "@/lib/atoms";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { FolderSearch, Settings } from "lucide-react";
 import Link from "next/link";
 
