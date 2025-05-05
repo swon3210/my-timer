@@ -2,7 +2,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { TimerIcon, Wallet } from "lucide-react";
+import { BookMarked, TimerIcon, Wallet } from "lucide-react";
 import Link from "next/link";
 
 interface AppIconProps {
@@ -45,6 +45,12 @@ const apps = [
     icon: <Wallet size={36} />,
     color: "text-pink-500",
     url: "/account-book/dashboard",
+  },
+  {
+    name: "출퇴근\n기록부",
+    icon: <BookMarked size={36} />,
+    color: "text-blue-500",
+    url: "/account-book/board",
   },
 ];
 
