@@ -35,13 +35,13 @@ function AppIcon({ app, index }: AppIconProps) {
 
 const apps = [
   {
-    name: "갤러리\n타이머",
+    name: "갤러리",
     icon: <TimerIcon size={36} />,
     color: "text-purple-500",
     url: "/gallery-timer",
   },
   {
-    name: "커플\n가계부",
+    name: "가계부",
     icon: <Wallet size={36} />,
     color: "text-pink-500",
     url: "/account-book/dashboard",
