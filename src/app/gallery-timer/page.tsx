@@ -28,7 +28,7 @@ export default function GalleryTimerPage() {
     <div className="relative w-full h-full flex justify-center items-center">
       <BackgroundGallery
         ref={backgroundGalleryHandleRef}
-        className={clsx("fixed top-0 left-0 z-0")}
+        className={clsx("w-full h-full")}
       />
       {appSettings.shouldExposeTimer && (
         <Timer

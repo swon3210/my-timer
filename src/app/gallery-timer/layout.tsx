@@ -15,7 +15,7 @@ export default function RootLayout({
   const folderName = useAtomValue(folderNameAtom);
 
   return (
-    <main className="w-full h-full max-w-app-container mx-auto">
+    <main className="w-full h-full mx-auto">
       <div className="fixed z-10 top-0 left-0 p-2 flex items-center">
         <BackButton className="size-10 mr-2" />
         <span className="text-sm">

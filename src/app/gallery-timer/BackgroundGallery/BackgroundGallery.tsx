@@ -18,6 +18,7 @@ import NavigateToFolderButton from "./NavigateToFolderButton";
 import NavigateToCategoryButton from "./NavigateToCategoryButton";
 import { useSearchParams } from "next/navigation";
 import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
+import FullPageCarousel from "./FullPageCarousel";
 
 const prefetchImage = (imageUrl: string) => {
   new Image().src = imageUrl;
@@ -61,11 +62,7 @@ const BackgroundGallery = forwardRef<
     folderName: decodeURIComponent(folderName ?? ""),
   });
 
-  const selectedImageUrl = imageUrls[imageUrlIndex] as string | undefined;
-
-  const backgroundImage = selectedImageUrl
-    ? `url('${selectedImageUrl?.replaceAll("'", "\\'")}')`
-    : undefined;
+  // const selectedImageUrl = imageUrls[imageUrlIndex] as string | undefined;
 
   const setPrevImageUrlIndex = useCallback(() => {
     const currentFolderIndex = imageFolderNames.findIndex(
@@ -198,10 +195,11 @@ const BackgroundGallery = forwardRef<
 
   return (
     <div className={cn("relative w-full h-full", className)}>
-      {/* <div>
-        <FullPageCarousel />
-      </div> */}
-      <div
+      <FullPageCarousel
+        imageUrls={imageUrls}
+        onImageClick={handleBackgroundGalleryClick}
+      />
+      {/* <div
         className="absolute top-0 left-0 w-full h-full"
         style={{
           backgroundImage,
@@ -220,8 +218,7 @@ const BackgroundGallery = forwardRef<
           backgroundPosition: "center",
         }}
         onClick={handleBackgroundGalleryClick}
-      />
-
+      /> */}
       {imageUrls.length > 0 && (
         <div className="absolute bottom-2 left-2 z-20 flex items-center gap-3">
           <div className="flex items-center gap-1">
@@ -234,7 +231,6 @@ const BackgroundGallery = forwardRef<
           />
         </div>
       )}
-
       <ImageShuffleButton
         onClick={handleImageShuffleButtonClick}
         className="absolute bottom-2 right-2 z-20"
