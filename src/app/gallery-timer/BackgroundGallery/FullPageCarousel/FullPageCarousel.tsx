@@ -1,7 +1,7 @@
 "use client";
 
 import CarouselSlide from "./CarouselSlides";
-import { CarouselControls } from "./CarouselContent";
+// import { CarouselControls } from "./CarouselContent";
 import { useEffect, useRef } from "react";
 
 const getSlides = (imageUrls: string[]) => {
@@ -73,7 +73,7 @@ export default function FullPageCarousel({
           className="snap-center flex-none w-full h-full"
         />
       ))}
-      <CarouselControls onPrevClick={() => {}} onNextClick={() => {}} />
+      {/* <CarouselControls onPrevClick={() => {}} onNextClick={() => {}} /> */}
     </div>
   );
 }
