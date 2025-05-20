@@ -195,10 +195,13 @@ const BackgroundGallery = forwardRef<
 
   return (
     <div className={cn("relative w-full h-full", className)}>
-      <FullPageCarousel
-        imageUrls={imageUrls}
-        onImageClick={handleBackgroundGalleryClick}
-      />
+      {imageUrls.length > 0 && (
+        <FullPageCarousel
+          imageUrls={imageUrls}
+          onImageClick={handleBackgroundGalleryClick}
+          onImageSlide={setImageUrlIndex}
+        />
+      )}
       {/* <div
         className="absolute top-0 left-0 w-full h-full"
         style={{
