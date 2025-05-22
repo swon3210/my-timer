@@ -19,10 +19,6 @@ import { useSearchParams } from "next/navigation";
 import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
 import FullPageCarousel from "./FullPageCarousel";
 
-const prefetchImage = (imageUrl: string) => {
-  new Image().src = imageUrl;
-};
-
 const getRandomIndex = (max: number) => {
   return Math.floor(Math.random() * max);
 };
@@ -159,7 +155,6 @@ const BackgroundGallery = forwardRef<
     }
 
     nextImageUrlIndexRef.current = getRandomIndex(imageUrls.length);
-    prefetchImage(imageUrls[nextImageUrlIndexRef.current]);
   }, [imageUrls]);
 
   useImperativeHandle(ref, () => ({
@@ -183,14 +178,6 @@ const BackgroundGallery = forwardRef<
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [imageUrls.length, setPrevImageUrlIndex, setNextImageUrlIndex]);
-
-  useEffect(() => {
-    const prevIndex = (imageUrlIndex - 1 + imageUrls.length) % imageUrls.length;
-    const nextIndex = (imageUrlIndex + 1) % imageUrls.length;
-
-    prefetchImage(imageUrls[prevIndex]);
-    prefetchImage(imageUrls[nextIndex]);
-  }, [imageUrlIndex, imageUrls]);
 
   return (
     <div className={cn("relative w-full h-full", className)}>
