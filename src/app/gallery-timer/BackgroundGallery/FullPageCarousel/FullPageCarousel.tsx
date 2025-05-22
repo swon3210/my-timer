@@ -1,7 +1,6 @@
 "use client";
 
 import CarouselSlide from "./CarouselSlides";
-// import { CarouselControls } from "./CarouselContent";
 import { useEffect, useRef } from "react";
 
 const getSlides = (imageUrls: string[]) => {
@@ -11,10 +10,12 @@ const getSlides = (imageUrls: string[]) => {
 };
 
 export default function FullPageCarousel({
+  imageIndex,
   imageUrls,
   onImageClick,
   onImageSlide,
 }: {
+  imageIndex: number;
   imageUrls: string[];
   onImageClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   onImageSlide: (index: number) => void;
@@ -40,7 +41,7 @@ export default function FullPageCarousel({
       },
       {
         root: containerRef.current,
-        threshold: 0.5,
+        threshold: 1,
       }
     );
 
@@ -54,6 +55,13 @@ export default function FullPageCarousel({
       });
     };
   }, [onImageSlide]);
+
+  useEffect(() => {
+    const currentSlide = slideRefs.current[imageIndex];
+    if (currentSlide) {
+      currentSlide.scrollIntoView();
+    }
+  }, [imageIndex]);
 
   return (
     <div

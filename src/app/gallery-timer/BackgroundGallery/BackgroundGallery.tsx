@@ -1,6 +1,5 @@
 import useImagesQuery from "@/domains/images/useImagesQuery";
 import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
-// import { isLocalEnv } from "@/lib/utils";
 import { useAtom, useAtomValue } from "jotai";
 import {
   forwardRef,
@@ -197,31 +196,12 @@ const BackgroundGallery = forwardRef<
     <div className={cn("relative w-full h-full", className)}>
       {imageUrls.length > 0 && (
         <FullPageCarousel
+          imageIndex={imageUrlIndex}
           imageUrls={imageUrls}
           onImageClick={handleBackgroundGalleryClick}
           onImageSlide={setImageUrlIndex}
         />
       )}
-      {/* <div
-        className="absolute top-0 left-0 w-full h-full"
-        style={{
-          backgroundImage,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          filter: "blur(20px)", // 블러 효과 추가
-          transform: "scale(1.1)", // 블러 경계 처리
-        }}
-      />
-      <div
-        className="absolute top-0 left-0 z-10 w-full h-full"
-        style={{
-          backgroundImage,
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
-        onClick={handleBackgroundGalleryClick}
-      /> */}
       {imageUrls.length > 0 && (
         <div className="absolute bottom-2 left-2 z-20 flex items-center gap-3">
           <div className="flex items-center gap-1">
