@@ -1,7 +1,8 @@
 "use client";
 
+import { combineRefs } from "@/lib/combineRef";
 import CarouselSlide from "./CarouselSlides";
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 
 const getSlides = (imageUrls: string[]) => {
   return imageUrls.map(
@@ -9,18 +10,18 @@ const getSlides = (imageUrls: string[]) => {
   );
 };
 
-export default function FullPageCarousel({
-  imageIndex,
-  imageUrls,
-  onImageClick,
-  onImageSlide,
-}: {
-  imageIndex: number;
-  imageUrls: string[];
-  onImageClick: (event: React.MouseEvent<HTMLDivElement>) => void;
-  onImageSlide: (index: number) => void;
-}) {
+const FullPageCarousel = forwardRef<
+  HTMLDivElement,
+  {
+    imageIndex: number;
+    imageUrls: string[];
+    onImageClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onImageSlide: (index: number) => void;
+  }
+>(({ imageIndex, imageUrls, onImageClick, onImageSlide }, forwardRef) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const combinedRef = combineRefs(containerRef, forwardRef);
+
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const slides = getSlides(imageUrls);
@@ -65,7 +66,7 @@ export default function FullPageCarousel({
 
   return (
     <div
-      ref={containerRef}
+      ref={combinedRef}
       className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hidden"
     >
       {slides.map((backgroundImage, index) => (
@@ -84,4 +85,8 @@ export default function FullPageCarousel({
       {/* <CarouselControls onPrevClick={() => {}} onNextClick={() => {}} /> */}
     </div>
   );
-}
+});
+
+FullPageCarousel.displayName = "FullPageCarousel";
+
+export default FullPageCarousel;

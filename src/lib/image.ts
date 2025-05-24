@@ -1,15 +1,12 @@
 import { axiosInstance } from "./api";
 
-export const optimizeImage = async (
-  file: File,
-  quality: number = 0.8
-): Promise<Blob> => {
+export const optimizeImage = async (file: File): Promise<Blob> => {
   if (file.size === 350 * 1024) {
     return file;
   }
 
   if (file.type === "image/gif") {
-    return optimizeGif(file, quality);
+    return optimizeGif(file, 0.8);
   }
 
   // 이미지 로드
@@ -29,16 +26,33 @@ export const optimizeImage = async (
     throw new Error("Canvas context를 생성할 수 없습니다.");
   }
 
-  // 원본 크기 유지
-  canvas.width = image.width;
-  canvas.height = image.height;
+  // 이미지 크기 계산
+  let newWidth = image.width;
+  let newHeight = image.height;
+  const MAX_SIZE = 1980;
 
-  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+  if (image.width > image.height) {
+    if (image.width > MAX_SIZE) {
+      newWidth = MAX_SIZE;
+      newHeight = (image.height * MAX_SIZE) / image.width;
+    }
+  } else {
+    if (image.height > MAX_SIZE) {
+      newHeight = MAX_SIZE;
+      newWidth = (image.width * MAX_SIZE) / image.height;
+    }
+  }
+
+  // 새로운 크기로 캔버스 설정
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+
+  ctx.drawImage(image, 0, 0, newWidth, newHeight);
 
   // 메모리 해제
   URL.revokeObjectURL(imageUrl);
 
-  // 품질 조정하여 Blob으로 변환
+  // Blob으로 변환
   return new Promise((resolve) => {
     canvas.toBlob(
       (blob) => {
@@ -49,7 +63,7 @@ export const optimizeImage = async (
         }
       },
       "image/webp",
-      quality // 품질 95% 압축
+      1
     );
   });
 };

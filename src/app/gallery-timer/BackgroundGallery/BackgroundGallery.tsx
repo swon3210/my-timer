@@ -18,6 +18,7 @@ import NavigateToCategoryButton from "./NavigateToCategoryButton";
 import { useSearchParams } from "next/navigation";
 import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
 import FullPageCarousel from "./FullPageCarousel";
+import Z_INDEX from "@/app/_constants/z-index";
 
 const getRandomIndex = (max: number) => {
   return Math.floor(Math.random() * max);
@@ -164,10 +165,13 @@ const BackgroundGallery = forwardRef<
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
+        e.preventDefault();
         setPrevImageUrlIndex();
       } else if (e.key === "ArrowRight") {
+        e.preventDefault();
         setNextImageUrlIndex();
       } else if (e.key === "ArrowUp") {
+        e.preventDefault();
         setImageUrlIndex(getRandomIndex(imageUrls.length));
       }
     };
@@ -180,7 +184,13 @@ const BackgroundGallery = forwardRef<
   }, [imageUrls.length, setPrevImageUrlIndex, setNextImageUrlIndex]);
 
   return (
-    <div className={cn("relative w-full h-full", className)}>
+    <div
+      className={cn(
+        "relative w-full h-full",
+        Z_INDEX.BACKGROUND_GALLERY,
+        className
+      )}
+    >
       {imageUrls.length > 0 && (
         <FullPageCarousel
           imageIndex={imageUrlIndex}
@@ -190,7 +200,7 @@ const BackgroundGallery = forwardRef<
         />
       )}
       {imageUrls.length > 0 && (
-        <div className="absolute bottom-2 left-2 z-20 flex items-center gap-3">
+        <div className="absolute bottom-2 left-2 z-10 flex items-center gap-3">
           <div className="flex items-center gap-1">
             <NavigateToCategoryButton />
             <NavigateToFolderButton selectedImageIndex={imageUrlIndex} />
@@ -203,10 +213,10 @@ const BackgroundGallery = forwardRef<
       )}
       <ImageShuffleButton
         onClick={handleImageShuffleButtonClick}
-        className="absolute bottom-2 right-2 z-20"
+        className="absolute bottom-2 right-2 z-10"
       />
       <FolderSwitchButtons
-        className="absolute bottom-2 right-14 z-20"
+        className="absolute bottom-2 right-14 z-10"
         onFolderSwitch={handleFolderSwitch}
       />
     </div>

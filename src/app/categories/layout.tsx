@@ -23,7 +23,7 @@ import {
 } from "@/lib/atoms";
 import { useAddFolderMutation } from "@/lib/mutations";
 import { useInvalidateQuery } from "@/lib/queries";
-import { useFirebase } from "@/app/providers/FirebaseProvider";
+import { useFirebase } from "@/app/_providers/FirebaseProvider";
 
 import { getUserStoragePath } from "../api/firebase";
 
