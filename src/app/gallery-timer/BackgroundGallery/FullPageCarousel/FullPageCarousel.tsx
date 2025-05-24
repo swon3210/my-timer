@@ -4,10 +4,12 @@ import { combineRefs } from "@/lib/combineRef";
 import CarouselSlide from "./CarouselSlides";
 import { forwardRef, useEffect, useRef } from "react";
 
-const getSlides = (imageUrls: string[]) => {
-  return imageUrls.map(
-    (imageUrl) => `url('${imageUrl?.replaceAll("'", "\\'")}')`
-  );
+const IMAGE_PER_PAGE = 10;
+
+const getSlides = (imageUrls: string[], imageIndex: number) => {
+  return imageUrls
+    .slice(0, imageIndex + IMAGE_PER_PAGE)
+    .map((imageUrl) => `url('${imageUrl?.replaceAll("'", "\\'")}')`);
 };
 
 const FullPageCarousel = forwardRef<
@@ -24,7 +26,7 @@ const FullPageCarousel = forwardRef<
 
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const slides = getSlides(imageUrls);
+  const slides = getSlides(imageUrls, imageIndex);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
