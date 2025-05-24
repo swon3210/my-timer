@@ -76,7 +76,7 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
           decodeURIComponent(`${folderPath}/${fileName}`)
         );
 
-        const optimizedImage = await optimizeImage(imageFile, 0.8);
+        const optimizedImage = await optimizeImage(imageFile);
 
         // 파일 업로드
         const snapshot = await uploadBytes(imageStorageRef, optimizedImage);
