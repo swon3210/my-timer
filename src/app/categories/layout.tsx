@@ -384,7 +384,7 @@ const ItemCount = ({
 
   return (
     <>
-      <h3 className="text-lg font-semibold text-gray-500">
+      <h3 className="text-sm md:text-lg font-semibold text-gray-500">
         ({imageFolderNames.length}개 폴더)
       </h3>
       {imageFolderName && (
@@ -435,11 +435,11 @@ export default function RootLayout({
               target={imageFolderName && categoryName ? "images" : "folders"}
             />
           ) : imageFolderName ? (
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-sm md:text-lg font-semibold">
               {decodeURIComponent(imageFolderName)}
             </h3>
           ) : (
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-sm md:text-lg font-semibold">
               {decodeURIComponent(categoryName ?? "")}
             </h3>
           )}
