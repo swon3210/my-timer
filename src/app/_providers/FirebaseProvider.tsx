@@ -76,13 +76,17 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
           decodeURIComponent(`${folderPath}/${fileName}`)
         );
 
-        const optimizedImage = await optimizeImage(imageFile, 0.8);
+        let optimizedImage = await optimizeImage(imageFile);
 
         // 파일 업로드
         const snapshot = await uploadBytes(imageStorageRef, optimizedImage);
 
         // 업로드된 파일의 다운로드 URL 가져오기
         const downloadURL = await getDownloadURL(snapshot.ref);
+
+        // 메모리 해제를 위해 참조 제거
+        imageFile = null as unknown as File;
+        optimizedImage = null as unknown as Blob;
 
         return {
           fileName,
@@ -92,6 +96,10 @@ const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
 
       // 모든 이미지 업로드 완료 대기
       const results = await Promise.all(uploadPromises);
+
+      // 전체 이미지 파일 배열 참조 제거
+      imageFiles = null as unknown as File[];
+
       return results;
     } catch (error) {
       console.error("이미지 업로드 중 오류 발생:", error);

@@ -3,8 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers";
 import { Toaster } from "sonner";
-import FirebaseProvider from "@/app/providers/FirebaseProvider";
-import OverlayProvider from "./providers/OverlayProvider";
+import FirebaseProvider from "@/app/_providers/FirebaseProvider";
+import OverlayProvider from "./_providers/OverlayProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

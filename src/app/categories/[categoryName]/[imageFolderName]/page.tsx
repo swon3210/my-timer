@@ -11,6 +11,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
+import Intersection from "@/app/_components/Intersection";
+import { useState } from "react";
 
 const gridOptions = [
   { value: 1, label: "1x1" },
@@ -19,11 +21,13 @@ const gridOptions = [
   { value: 4, label: "4x4" },
 ];
 
-export default function CategoriesPage({
+export default function ImageFolderPage({
   params,
 }: {
   params: { categoryName: string; imageFolderName: string };
 }) {
+  const [imageSliceIndex, setImageSliceIndex] = useState(1);
+
   const [, setCategoryName] = useAtom(categoryNameAtom);
   const [, setFolderName] = useAtom(folderNameAtom);
 
@@ -38,6 +42,8 @@ export default function CategoriesPage({
     categoryName: decodeURIComponent(params.categoryName),
     folderName: decodeURIComponent(params.imageFolderName),
   });
+
+  const slicedImageUrls = imageUrls.slice(0, imageSliceIndex * 10);
 
   const handleGridLayoutColumnNumberButtonClick = (value: number) => {
     setGridLayoutColumnNumber(value);
@@ -78,7 +84,7 @@ export default function CategoriesPage({
           }}
         >
           <AnimatePresence>
-            {imageUrls.map((imageUrl, index) => (
+            {slicedImageUrls.map((imageUrl, index) => (
               <button
                 key={imageUrl}
                 type="button"
@@ -104,6 +110,14 @@ export default function CategoriesPage({
                 </motion.div>
               </button>
             ))}
+            {slicedImageUrls.length > 0 && (
+              <Intersection
+                onIntersect={() => {
+                  setImageSliceIndex(imageSliceIndex + 1);
+                }}
+                className="h-10"
+              />
+            )}
           </AnimatePresence>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { BarChart, List, PieChart, Settings } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import OverlayProvider from "@/app/providers/OverlayProvider";
+import OverlayProvider from "@/app/_providers/OverlayProvider";
 
 // export const metadata = {
 //   title: "가계부",
