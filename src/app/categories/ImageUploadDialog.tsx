@@ -50,8 +50,6 @@ const ImageUploadDialog = ({
     }[]
   >([]);
 
-  const [files, setFiles] = useState<File[]>([]);
-
   const handleDrop = (acceptedFiles: File[]) => {
     const folderNames = Array.from(
       new Set(
@@ -69,8 +67,6 @@ const ImageUploadDialog = ({
         return getFolderNameFromPath(path) === folderName;
       }),
     }));
-
-    setFiles(acceptedFiles);
 
     onImagesUploaded(imageGroups);
 
@@ -92,13 +88,12 @@ const ImageUploadDialog = ({
     multiple: true,
   });
 
-  const removeFile = () => {
-    setFiles([]);
+  const removeFileUploadedInfo = () => {
     setUploadedFilesInfo([]);
   };
 
   const handleClose = () => {
-    removeFile();
+    removeFileUploadedInfo();
     close();
   };
 
@@ -118,11 +113,11 @@ const ImageUploadDialog = ({
             }`}
           >
             <input {...getInputProps()} />
-            {files.length > 0 ? (
+            {uploadedFilesInfo.length > 0 ? (
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={URL.createObjectURL(files[0])}
+                  src={uploadedFilesInfo[0].firstFileSrc}
                   alt="Uploaded preview"
                   className="max-h-48 mx-auto rounded-lg object-cover"
                 />
@@ -132,7 +127,7 @@ const ImageUploadDialog = ({
                   className="absolute top-0 right-0 -mt-2 -mr-2"
                   onClick={(e) => {
                     e.stopPropagation();
-                    removeFile();
+                    removeFileUploadedInfo();
                   }}
                 >
                   <X className="h-4 w-4" />

@@ -14,7 +14,9 @@ import useFolderNamesQuery, {
 import useImageFolderNamesQuery, {
   getImageFolderNamesQueryKey,
 } from "@/domains/folders/useImageFolderNamesQuery";
-import { getImagesQueryKey } from "@/domains/images/useImagesQuery";
+import useImagesQuery, {
+  getImagesQueryKey,
+} from "@/domains/images/useImagesQuery";
 import { useUserQuery } from "@/domains/users/useUserQuery";
 import {
   isSelectionModeAtom,
@@ -29,6 +31,9 @@ import { getUserStoragePath } from "../api/firebase";
 
 import useImageUploadDialogOverlay from "./useImageUploadDialogOverlay";
 import { ImageGroup, useSetImagesUploadProgress } from "./ImageUploadDialog";
+import { cn } from "@/lib/utils";
+import Z_INDEX from "../_constants/z-index";
+import { useEffect, useState } from "react";
 
 const AddFolderButton = () => {
   const { data: folderNames } = useFolderNamesQuery();
@@ -116,22 +121,21 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
 
     let uploadedImagesFolderCount = 0;
 
-    await Promise.all(
-      imageGroups.map((imageGroup, index) =>
-        addImages(
-          getUserStoragePath(
-            user,
-            `images/${categoryName}/${folderNameInputs[index]?.trim()}`
-          ),
-          imageGroup.files
-        ).then(() => {
-          uploadedImagesFolderCount += 1;
-          setImagesUploadProgress(
-            (uploadedImagesFolderCount / imageGroups.length) * 100
-          );
-        })
-      )
-    );
+    for (let index = 0; index < imageGroups.length; index++) {
+      const imageGroup = imageGroups[index];
+      await addImages(
+        getUserStoragePath(
+          user,
+          `images/${categoryName}/${folderNameInputs[index]?.trim()}`
+        ),
+        imageGroup.files
+      );
+
+      uploadedImagesFolderCount += 1;
+      setImagesUploadProgress(
+        (uploadedImagesFolderCount / imageGroups.length) * 100
+      );
+    }
 
     toast(
       imageGroups.length === 1
@@ -342,6 +346,57 @@ const SelectionModeButton = () => {
   );
 };
 
+const ImageCount = ({
+  categoryName,
+  imageFolderName,
+}: {
+  categoryName: string;
+  imageFolderName: string;
+}) => {
+  const { data: images = [] } = useImagesQuery({
+    categoryName,
+    folderName: imageFolderName,
+  });
+
+  return (
+    <h3 className="text-lg font-semibold text-gray-500">
+      ({images.length}개 이미지)
+    </h3>
+  );
+};
+
+const ItemCount = ({
+  isSelectionMode,
+  categoryName,
+  imageFolderName,
+}: {
+  isSelectionMode: boolean;
+  categoryName: string;
+  imageFolderName?: string;
+}) => {
+  const { data: imageFolderNames = [] } = useImageFolderNamesQuery({
+    categoryName,
+  });
+
+  if (isSelectionMode) {
+    return null;
+  }
+
+  return (
+    <>
+      <h3 className="text-lg font-semibold text-gray-500">
+        ({imageFolderNames.length}개 폴더)
+      </h3>
+      {imageFolderName && (
+        <ImageCount
+          categoryName={categoryName}
+          imageFolderName={imageFolderName}
+        />
+      )}
+    </>
+  );
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -349,14 +404,30 @@ export default function RootLayout({
 }) {
   const isSelectionMode = useAtomValue(isSelectionModeAtom);
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
   const { categoryName, imageFolderName } = useParams() as {
     categoryName?: string;
     imageFolderName?: string;
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <main className="w-full max-w-app-container mx-auto min-h-full">
-      <div className="flex items-center justify-between h-16 pl-2 pr-4">
+      <div
+        className={cn(
+          "sticky top-0 flex items-center justify-between h-16 pl-2 pr-4 bg-white transition-all duration-300",
+          isScrolled && "shadow-md",
+          Z_INDEX.HEADER
+        )}
+      >
         <div className="flex items-center gap-2">
           <BackButton />
           {isSelectionMode ? (
@@ -371,6 +442,13 @@ export default function RootLayout({
             <h3 className="text-xl font-semibold">
               {decodeURIComponent(categoryName ?? "")}
             </h3>
+          )}
+          {categoryName && (
+            <ItemCount
+              isSelectionMode={isSelectionMode}
+              categoryName={categoryName}
+              imageFolderName={imageFolderName}
+            />
           )}
         </div>
         <div className="flex items-center gap-2">
