@@ -11,6 +11,8 @@ export const folderNameAtom = atomWithStorage<string | null>(
   null
 );
 
+export const imageUrlIndexAtom = atomWithStorage<number>("imageUrlIndex", 0);
+
 export const gridLayoutColumnNumberAtom = atomWithStorage<number | null>(
   "gridLayout",
   null
