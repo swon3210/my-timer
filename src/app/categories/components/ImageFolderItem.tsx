@@ -2,7 +2,11 @@
 import FolderItem from "@/components/FolderItem";
 import { Button } from "@/components/ui/button";
 import useImagesQuery from "@/domains/images/useImagesQuery";
-import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
+import {
+  categoryNameAtom,
+  folderNameAtom,
+  imageUrlIndexAtom,
+} from "@/lib/atoms";
 import { useAtom } from "jotai";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -40,6 +44,7 @@ const ImageFolderItem = ({
 
   const [, setCategoryName] = useAtom(categoryNameAtom);
   const [, setFolderName] = useAtom(folderNameAtom);
+  const [, setImageUrlIndex] = useAtom(imageUrlIndexAtom);
 
   const { data: imageUrls } = useImagesQuery({
     categoryName,
@@ -49,6 +54,7 @@ const ImageFolderItem = ({
   const handleFolderSelectButtonClick = (folderName: string) => {
     setCategoryName(categoryName);
     setFolderName(folderName);
+    setImageUrlIndex(0);
 
     router.push("/gallery-timer");
   };

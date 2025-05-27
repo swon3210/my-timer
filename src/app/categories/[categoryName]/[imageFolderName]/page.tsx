@@ -7,6 +7,7 @@ import {
   categoryNameAtom,
   folderNameAtom,
   gridLayoutColumnNumberAtom,
+  imageUrlIndexAtom,
 } from "@/lib/atoms";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAtom } from "jotai";
@@ -30,6 +31,7 @@ export default function ImageFolderPage({
 
   const [, setCategoryName] = useAtom(categoryNameAtom);
   const [, setFolderName] = useAtom(folderNameAtom);
+  const [, setImageUrlIndex] = useAtom(imageUrlIndexAtom);
 
   const router = useRouter();
 
@@ -52,7 +54,8 @@ export default function ImageFolderPage({
   const handleImageClick = (index: number) => {
     setCategoryName(params.categoryName);
     setFolderName(params.imageFolderName);
-    router.push(`/gallery-timer?image-url-index=${index}`);
+    setImageUrlIndex(index);
+    router.push(`/gallery-timer`);
   };
 
   return (

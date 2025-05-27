@@ -199,7 +199,7 @@ const BackgroundGallery = forwardRef<
         <div className="absolute bottom-2 left-2 z-10 flex items-center gap-3">
           <div className="flex items-center gap-1">
             <NavigateToCategoryButton />
-            <NavigateToFolderButton selectedImageIndex={imageUrlIndex} />
+            <NavigateToFolderButton />
           </div>
           <ImageIndexIndicator
             currentIndex={imageUrlIndex}
