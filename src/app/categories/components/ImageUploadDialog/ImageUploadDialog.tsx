@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import { X, Upload, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,13 +15,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { atom, useAtomValue, useSetAtom } from "jotai";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
+import { UploadedFileInfo } from "./types";
+import AttachedFileInfoItem from "./AttachedFileInfoItem";
 
 export type ImageGroup = {
   folderName: string;
   files: File[];
+};
+
+export type ImageUploadDialogRef = {
+  setUploadedFilesInfo: (
+    updater: (prev: UploadedFileInfo[]) => UploadedFileInfo[]
+  ) => void;
 };
 
 type ImageUploadModalOverlayProps = {
@@ -25,30 +37,37 @@ type ImageUploadModalOverlayProps = {
   onImagesUploaded: (imageGroups: ImageGroup[]) => void;
 };
 
-const imagesUploadProgressAtom = atom<undefined | number>(undefined);
-
-export const useSetImagesUploadProgress = () => {
-  return useSetAtom(imagesUploadProgressAtom);
+export const useImageUploadDialogRef = () => {
+  return useRef<ImageUploadDialogRef>(null);
 };
 
 const getFolderNameFromPath = (path: string) => {
   return path.split("/")[1];
 };
 
-const ImageUploadDialog = ({
-  isOpen,
-  close,
-  onImagesUploaded,
-}: ImageUploadModalOverlayProps) => {
-  const imagesUploadProgress = useAtomValue(imagesUploadProgressAtom);
-
+const ImageUploadDialog = forwardRef<
+  ImageUploadDialogRef,
+  ImageUploadModalOverlayProps
+>(({ isOpen, close, onImagesUploaded }, ref) => {
   const [uploadedFilesInfo, setUploadedFilesInfo] = useState<
-    {
-      firstFileSrc: string;
-      folderPath: string;
-      filesCount: number;
-    }[]
+    UploadedFileInfo[]
   >([]);
+
+  const imagesUploadProgress =
+    (uploadedFilesInfo.filter((fileInfo) => fileInfo.status === "uploaded")
+      .length /
+      uploadedFilesInfo.length) *
+    100;
+
+  const uploadingFileItem = uploadedFilesInfo.find(
+    (fileInfo) => fileInfo.status === "uploading"
+  );
+
+  useImperativeHandle(ref, () => ({
+    setUploadedFilesInfo: (updater) => {
+      setUploadedFilesInfo(updater);
+    },
+  }));
 
   const handleDrop = (acceptedFiles: File[]) => {
     const folderNames = Array.from(
@@ -74,8 +93,9 @@ const ImageUploadDialog = ({
       ...uploadedFilesInfo,
       ...imageGroups.map((imageGroup) => ({
         firstFileSrc: URL.createObjectURL(imageGroup.files[0]),
-        folderPath: imageGroup.folderName,
+        folderName: imageGroup.folderName,
         filesCount: imageGroup.files.length,
+        status: "pending" as const,
       })),
     ]);
   };
@@ -117,7 +137,7 @@ const ImageUploadDialog = ({
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={uploadedFilesInfo[0].firstFileSrc}
+                  src={uploadingFileItem?.firstFileSrc}
                   alt="Uploaded preview"
                   className="max-h-48 mx-auto rounded-lg object-cover"
                 />
@@ -145,18 +165,12 @@ const ImageUploadDialog = ({
             )}
           </div>
           <div className="flex max-h-32 flex-col gap-2 grow overflow-y-auto">
-            {uploadedFilesInfo
-              .reverse()
-              .map(({ firstFileSrc, folderPath, filesCount }) => (
-                <div
-                  key={firstFileSrc}
-                  className="flex items-center gap-2 text-sm text-gray-600"
-                >
-                  <span>
-                    업로드 대상 : {folderPath} 포함 {filesCount}개
-                  </span>
-                </div>
-              ))}
+            {uploadedFilesInfo.reverse().map((fileInfo) => (
+              <AttachedFileInfoItem
+                key={fileInfo.firstFileSrc}
+                fileInfo={fileInfo}
+              />
+            ))}
           </div>
         </div>
         {uploadedFilesInfo.length > 0 && (
@@ -172,6 +186,8 @@ const ImageUploadDialog = ({
       </DialogContent>
     </Dialog>
   );
-};
+});
+
+ImageUploadDialog.displayName = "ImageUploadDialog";
 
 export default ImageUploadDialog;
