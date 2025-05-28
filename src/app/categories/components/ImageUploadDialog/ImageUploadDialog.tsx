@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
-import { UploadedFileInfo } from "./types";
-import AttachedFileInfoItem from "./AttachedFileInfoItem";
+import { AttachedFile } from "./types";
+import AttachedFileItemList from "./AttachedFileItemList";
 
 export type ImageGroup = {
   folderName: string;
@@ -26,9 +26,7 @@ export type ImageGroup = {
 };
 
 export type ImageUploadDialogRef = {
-  setUploadedFilesInfo: (
-    updater: (prev: UploadedFileInfo[]) => UploadedFileInfo[]
-  ) => void;
+  setAttachedFiles: (updater: (prev: AttachedFile[]) => AttachedFile[]) => void;
 };
 
 type ImageUploadModalOverlayProps = {
@@ -49,23 +47,20 @@ const ImageUploadDialog = forwardRef<
   ImageUploadDialogRef,
   ImageUploadModalOverlayProps
 >(({ isOpen, close, onImagesUploaded }, ref) => {
-  const [uploadedFilesInfo, setUploadedFilesInfo] = useState<
-    UploadedFileInfo[]
-  >([]);
+  const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
 
   const imagesUploadProgress =
-    (uploadedFilesInfo.filter((fileInfo) => fileInfo.status === "uploaded")
-      .length /
-      uploadedFilesInfo.length) *
+    (attachedFiles.filter((fileInfo) => fileInfo.status === "uploaded").length /
+      attachedFiles.length) *
     100;
 
-  const uploadingFileItem = uploadedFilesInfo.find(
+  const uploadingFileItem = attachedFiles.find(
     (fileInfo) => fileInfo.status === "uploading"
   );
 
   useImperativeHandle(ref, () => ({
-    setUploadedFilesInfo: (updater) => {
-      setUploadedFilesInfo(updater);
+    setAttachedFiles: (updater: (prev: AttachedFile[]) => AttachedFile[]) => {
+      setAttachedFiles((prev) => updater(prev));
     },
   }));
 
@@ -89,8 +84,8 @@ const ImageUploadDialog = forwardRef<
 
     onImagesUploaded(imageGroups);
 
-    setUploadedFilesInfo([
-      ...uploadedFilesInfo,
+    setAttachedFiles([
+      ...attachedFiles,
       ...imageGroups.map((imageGroup) => ({
         firstFileSrc: URL.createObjectURL(imageGroup.files[0]),
         folderName: imageGroup.folderName,
@@ -109,7 +104,7 @@ const ImageUploadDialog = forwardRef<
   });
 
   const removeFileUploadedInfo = () => {
-    setUploadedFilesInfo([]);
+    setAttachedFiles([]);
   };
 
   const handleClose = () => {
@@ -133,7 +128,7 @@ const ImageUploadDialog = forwardRef<
             }`}
           >
             <input {...getInputProps()} />
-            {uploadedFilesInfo.length > 0 ? (
+            {attachedFiles.length > 0 ? (
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -164,16 +159,12 @@ const ImageUploadDialog = forwardRef<
               </div>
             )}
           </div>
-          <div className="flex max-h-32 flex-col gap-2 grow overflow-y-auto">
-            {uploadedFilesInfo.reverse().map((fileInfo) => (
-              <AttachedFileInfoItem
-                key={fileInfo.firstFileSrc}
-                fileInfo={fileInfo}
-              />
-            ))}
-          </div>
+          <AttachedFileItemList
+            attachedFiles={attachedFiles}
+            className="max-h-32 grow overflow-y-auto"
+          />
         </div>
-        {uploadedFilesInfo.length > 0 && (
+        {attachedFiles.length > 0 && (
           <div className="flex items-center gap-2">
             {imagesUploadProgress != null && imagesUploadProgress < 100 ? (
               <Spinner />

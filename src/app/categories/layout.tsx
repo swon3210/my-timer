@@ -122,15 +122,15 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
     for (let index = 0; index < imageGroups.length; index++) {
       const imageGroup = imageGroups[index];
 
-      imageUploadDialogRef.current?.setUploadedFilesInfo((prev) => {
-        return prev.map((fileInfo) => {
-          if (fileInfo.folderName === imageGroup.folderName) {
+      imageUploadDialogRef.current?.setAttachedFiles((prev) => {
+        return prev.map((attachedFile) => {
+          if (attachedFile.folderName === imageGroup.folderName) {
             return {
-              ...fileInfo,
+              ...attachedFile,
               status: "uploading" as const,
             };
           }
-          return fileInfo;
+          return attachedFile;
         });
       });
 
@@ -142,15 +142,15 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
         imageGroup.files
       );
 
-      imageUploadDialogRef.current?.setUploadedFilesInfo((prev) => {
-        return prev.map((fileInfo) => {
-          if (fileInfo.folderName === imageGroup.folderName) {
+      imageUploadDialogRef.current?.setAttachedFiles((prev) => {
+        return prev.map((attachedFile) => {
+          if (attachedFile.folderName === imageGroup.folderName) {
             return {
-              ...fileInfo,
+              ...attachedFile,
               status: "uploaded" as const,
             };
           }
-          return fileInfo;
+          return attachedFile;
         });
       });
     }
@@ -205,12 +205,12 @@ const AddImagesToFolderButton = ({
     for (let index = 0; index < imageGroups.length; index++) {
       const imageGroup = imageGroups[index];
 
-      imageUploadDialogRef.current?.setUploadedFilesInfo((prev) => {
-        return prev.map((fileInfo) => {
-          if (fileInfo.folderName === imageGroup.folderName) {
-            return { ...fileInfo, status: "uploading" as const };
+      imageUploadDialogRef.current?.setAttachedFiles((prev) => {
+        return prev.map((attachedFile) => {
+          if (attachedFile.folderName === imageGroup.folderName) {
+            return { ...attachedFile, status: "uploading" as const };
           }
-          return fileInfo;
+          return attachedFile;
         });
       });
 
@@ -222,16 +222,16 @@ const AddImagesToFolderButton = ({
         imageGroup.files
       );
 
-      imageUploadDialogRef.current?.setUploadedFilesInfo((prev) => {
-        return prev.map((fileInfo) => {
-          if (fileInfo.folderName === imageFolderName) {
+      imageUploadDialogRef.current?.setAttachedFiles((prev) => {
+        return prev.map((attachedFile) => {
+          if (attachedFile.folderName === imageFolderName) {
             return {
-              ...fileInfo,
+              ...attachedFile,
               isOptimized: true,
               isUploadedToServer: true,
             };
           }
-          return fileInfo;
+          return attachedFile;
         });
       });
     }

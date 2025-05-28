@@ -1,4 +1,4 @@
-export type UploadedFileInfo = {
+export type AttachedFile = {
   firstFileSrc: string;
   folderName: string;
   filesCount: number;
