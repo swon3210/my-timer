@@ -34,7 +34,6 @@ const BookMarkItem = ({ bookMark }: { bookMark: BookMark }) => {
   return (
     <button type="button" onClick={handleClick}>
       <motion.div
-        key={imageUrls[bookMark.imageUrlIndex]}
         layout
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
