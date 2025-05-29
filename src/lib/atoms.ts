@@ -18,6 +18,14 @@ export const gridLayoutColumnNumberAtom = atomWithStorage<number | null>(
   null
 );
 
+export type BookMark = {
+  categoryName: string;
+  folderName: string;
+  imageUrlIndex: number;
+};
+
+export const bookMarksAtom = atomWithStorage<BookMark[]>("bookMarks", []);
+
 export const platformAtom = atomWithStorage<
   "IOS" | "AOS" | "WEB-PC" | "WEB-MOBILE" | null
 >("platform", null);

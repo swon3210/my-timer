@@ -1,10 +1,11 @@
 import useImagesQuery from "@/domains/images/useImagesQuery";
 import {
+  bookMarksAtom,
   categoryNameAtom,
   folderNameAtom,
   imageUrlIndexAtom,
 } from "@/lib/atoms";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   forwardRef,
   useCallback,
@@ -48,6 +49,8 @@ const BackgroundGallery = forwardRef<
   const nextImageUrlIndexRef = useRef<number>();
 
   const [imageUrlIndex, setImageUrlIndex] = useAtom(imageUrlIndexAtom);
+
+  const setBookMarks = useSetAtom(bookMarksAtom);
 
   // TODO : decodeURIComponent 제거
   const { data: imageUrls = [] } = useImagesQuery({
@@ -178,6 +181,35 @@ const BackgroundGallery = forwardRef<
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [imageUrls.length, setPrevImageUrlIndex, setNextImageUrlIndex]);
+
+  useEffect(() => {
+    if (categoryName == null || folderName == null) {
+      return;
+    }
+
+    setBookMarks((prev) => {
+      const newBookMarks = [...prev];
+
+      const targetBookMark = newBookMarks.find(
+        (bookMark) =>
+          bookMark.categoryName === categoryName &&
+          bookMark.folderName === folderName
+      );
+
+      if (targetBookMark) {
+        targetBookMark.imageUrlIndex = imageUrlIndex;
+      } else {
+        newBookMarks.push({
+          categoryName,
+          folderName,
+          imageUrlIndex,
+        });
+      }
+
+      return newBookMarks;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageUrlIndex]);
 
   return (
     <div

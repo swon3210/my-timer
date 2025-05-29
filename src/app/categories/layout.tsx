@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
-import { Check, FolderPlus, Trash, Upload, X } from "lucide-react";
+import { Bookmark, Check, FolderPlus, Trash, Upload, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -37,6 +37,7 @@ import {
 import { cn } from "@/lib/utils";
 import Z_INDEX from "../_constants/z-index";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const AddFolderButton = () => {
   const { data: folderNames } = useFolderNamesQuery();
@@ -366,6 +367,16 @@ const XButton = ({ target }: SelectionModeButtonProps) => {
   );
 };
 
+const BookMarkButton = () => {
+  return (
+    <Link href="/bookmarks">
+      <Button variant="outline" size="icon" className="size-10">
+        <Bookmark className="w-4 h-4 text-gray-700" />
+      </Button>
+    </Link>
+  );
+};
+
 const SelectionModeButton = () => {
   const [isSelectionMode, setIsSelectionMode] = useAtom(isSelectionModeAtom);
 
@@ -509,6 +520,7 @@ export default function RootLayout({
           ) : (
             <AddFolderButton />
           )}
+          <BookMarkButton />
         </div>
       </div>
 
