@@ -224,7 +224,6 @@ const BackgroundGallery = forwardRef<
           imageIndex={imageUrlIndex}
           imageUrls={imageUrls}
           onImageClick={handleBackgroundGalleryClick}
-          onImageSlide={setImageUrlIndex}
         />
       )}
       {imageUrls.length > 0 && (
