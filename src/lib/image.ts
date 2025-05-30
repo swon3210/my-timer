@@ -1,7 +1,9 @@
 import { axiosInstance } from "./api";
 
+const OPTIMIZE_TARGET_SIZE = 2 * 1024 * 1024; // 2MB
+
 export const optimizeImage = async (file: File): Promise<Blob> => {
-  if (file.size < 350 * 1024) {
+  if (file.size < OPTIMIZE_TARGET_SIZE) {
     return file;
   }
 
