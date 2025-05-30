@@ -18,8 +18,9 @@ const FullPageCarousel = forwardRef<
     imageIndex: number;
     imageUrls: string[];
     onImageClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onImageSlide: (index: number) => void;
   }
->(({ imageIndex, imageUrls, onImageClick }, forwardRef) => {
+>(({ imageIndex, imageUrls, onImageClick, onImageSlide }, forwardRef) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const combinedRef = combineRefs(containerRef, forwardRef);
 
@@ -27,36 +28,36 @@ const FullPageCarousel = forwardRef<
 
   const slides = getSlides(imageUrls, imageIndex);
 
-  // useEffect(() => {
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       entries.forEach((entry) => {
-  //         if (entry.isIntersecting) {
-  //           const index = slideRefs.current.findIndex(
-  //             (ref) => ref === entry.target
-  //           );
-  //           if (index !== -1) {
-  //             onImageSlide(index);
-  //           }
-  //         }
-  //       });
-  //     },
-  //     {
-  //       root: containerRef.current,
-  //       threshold: 1,
-  //     }
-  //   );
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = slideRefs.current.findIndex(
+              (ref) => ref === entry.target
+            );
+            if (index !== -1) {
+              onImageSlide(index);
+            }
+          }
+        });
+      },
+      {
+        root: containerRef.current,
+        threshold: 1,
+      }
+    );
 
-  //   slideRefs.current.forEach((slide) => {
-  //     if (slide) observer.observe(slide);
-  //   });
+    slideRefs.current.forEach((slide) => {
+      if (slide) observer.observe(slide);
+    });
 
-  //   return () => {
-  //     slideRefs.current.forEach((slide) => {
-  //       if (slide) observer.unobserve(slide);
-  //     });
-  //   };
-  // }, [onImageSlide]);
+    return () => {
+      slideRefs.current.forEach((slide) => {
+        if (slide) observer.unobserve(slide);
+      });
+    };
+  }, [onImageSlide]);
 
   useEffect(() => {
     const currentSlide = slideRefs.current[imageIndex];
