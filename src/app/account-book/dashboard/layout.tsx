@@ -6,7 +6,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col p-5 gap-5">
+    <div className="flex flex-col size-full">
       <Header />
       {children}
     </div>

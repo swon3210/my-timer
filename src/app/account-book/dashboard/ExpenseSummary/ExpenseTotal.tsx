@@ -1,98 +1,94 @@
-import { ArrowDownCircle, ArrowUpCircle, TrendingUp } from "lucide-react";
-import { AccountItem } from "@/domains/account-book/types";
-import useSubTab from "../useSubTab";
-import useDateAtom from "../_atom/useDateAtom";
 import dayjs from "dayjs";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
+import { useAccountItemsQuery } from "@/domains/account-book/useAccountItemsQuery";
+import IncomeIcon from "@/app/assets/icons/ic_income";
+import ExpenseIcon from "@/app/assets/icons/ic_expense";
+import CheckIcon from "@/app/assets/icons/ic_check";
 
-type ExpenseTotalProps = {
-  accountItems: AccountItem[];
-};
+function ProgressBar({ total, used }: { total: number; used: number }) {
+  return (
+    <div className="flex w-full h-7 bg-primary-heavy rounded-full overflow-hidden">
+      <span className="grow flex justify-center items-center text-secondary text-sm font-bold">
+        30%
+        {/* {((used / total) * 100).toFixed(0)}% */}
+      </span>
+      <div
+        className="h-full bg-white rounded-full flex justify-end items-center pr-4"
+        style={{ width: "70%" }}
+        // style={{ width: `${((used / total) * 100).toFixed(0)}%` }}
+      >
+        <span className="text-primary-heavy font-bold text-sm">
+          ₩{Math.abs(used).toLocaleString()}
+        </span>
+      </div>
+    </div>
+  );
+}
 
-export default function ExpenseTotal({ accountItems }: ExpenseTotalProps) {
-  const { subTab } = useSubTab();
+export default function ExpenseTotal() {
+  const { data: accountItems = [] } = useAccountItemsQuery();
 
-  const { date } = useDateAtom();
+  const { data: budgets = [] } = useBudgetsQuery();
 
-  const { data: budgets } = useBudgetsQuery();
-
-  const filteredAccountItems = accountItems.filter((item) => {
-    if (subTab === "weekly") {
-      return dayjs(item.date).isSame(date, "week");
-    }
-
-    if (subTab === "monthly") {
-      return dayjs(item.date).isSame(date, "month");
-    }
-
-    return dayjs(item.date).isSame(date, "year");
-  });
-
-  const totalIncome = filteredAccountItems
-    .filter((item) => item.type === "INCOME")
-    .reduce((acc, item) => acc + item.amount, 0);
+  const date = dayjs();
 
   const totalBudget =
     budgets
-      ?.filter((budget) => {
-        if (subTab === "yearly") {
-          return budget.type === "INCOME";
-        }
-
+      .filter((budget) => {
         return budget.type === "EXPENSE" || budget.type === "FLEX";
       })
       .reduce((acc, budget) => {
-        if (subTab === "weekly" && dayjs(budget.date).isSame(date, "week")) {
+        if (dayjs(budget.date).isSame(date, "month")) {
           return acc + budget.amount;
         }
-
-        if (subTab === "monthly" && dayjs(budget.date).isSame(date, "month")) {
-          return acc + budget.amount;
-        }
-
-        if (subTab === "yearly" && dayjs(budget.date).isSame(date, "year")) {
-          return acc + budget.amount;
-        }
-
         return acc;
       }, 0) ?? 0;
 
-  const totalExpense = filteredAccountItems
-    .filter((item) => item.type === "EXPENSE")
-    .reduce((acc, item) => acc + item.amount, 0);
+  const totalExpense = accountItems
+    .filter((item) => item.type === "EXPENSE" || item.type === "FLEX")
+    .reduce((acc, item) => {
+      if (dayjs(item.date).isSame(date, "month")) {
+        return acc + item.amount;
+      }
 
-  const restBudget = totalBudget + totalExpense;
+      return acc;
+    }, 0);
 
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <div className="bg-green-100 p-4 rounded-lg">
-        <h3 className="text-md font-semibold text-green-800 mb-2 flex items-center flex-wrap">
-          <ArrowUpCircle className="mr-2" />{" "}
-          {subTab === "monthly" ? "총 수입" : "총 예산"}
-        </h3>
-        <p className="text-xl font-bold text-green-600">
-          ₩{" "}
-          {subTab === "monthly"
-            ? totalIncome.toLocaleString()
-            : totalBudget.toLocaleString()}
-        </p>
+    <div className="flex flex-col gap-[10px]">
+      <div className="flex items-center px-4">
+        <div className="flex-1 flex flex-col">
+          <p className="text-sm flex items-center gap-2">
+            <IncomeIcon />
+            {date.month() + 1}월 예산
+          </p>
+          <p className="text-lg font-bold text-white">
+            ₩ {totalBudget.toLocaleString()}
+          </p>
+        </div>
+        <div className="flex-1 flex flex-col">
+          <p className="text-sm flex items-center gap-2">
+            <ExpenseIcon />
+            {date.month() + 1}월 지출
+          </p>
+          <p className="text-lg font-bold text-blue-600">
+            ₩ {Math.abs(totalExpense).toLocaleString()}
+          </p>
+        </div>
       </div>
-      <div className="bg-red-100 p-4 rounded-lg">
-        <h3 className="text-md font-semibold text-red-800 mb-2 flex items-center flex-wrap">
-          <ArrowDownCircle className="mr-2" /> 총 지출
-        </h3>
-        <p className="text-xl font-bold text-red-600">
-          ₩ {totalExpense.toLocaleString()}
-        </p>
-      </div>
-      <div className="bg-blue-100 p-4 rounded-lg">
-        <h3 className="text-md font-semibold text-blue-800 mb-2 flex items-center flex-wrap">
-          <TrendingUp className="mr-2" /> 남은 예산
-        </h3>
-        <p className="text-xl font-bold text-blue-600">
-          ₩ {restBudget.toLocaleString()}
-        </p>
-      </div>
+
+      <ProgressBar total={totalBudget} used={totalExpense} />
+
+      <ul className="flex flex-col gap-1 px-3">
+        <li className="flex items-center gap-2">
+          <CheckIcon />
+          <p className="text-xs">총 예산의 30%, 좋습니다.</p>
+        </li>
+        <li className="flex items-center gap-2">
+          <CheckIcon />
+          <p className="text-xs">앞으로 0주 남았습니다. 화이팅!</p>
+        </li>
+      </ul>
     </div>
   );
 }

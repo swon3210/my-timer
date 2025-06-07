@@ -1,38 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useAccountItemsQuery } from "@/domains/account-book/useAccountItemsQuery";
 import { Suspense } from "react";
 import ExpenseTotal from "./ExpenseTotal";
-import ExpenseTable from "./ExpenseTable";
 
 function ExpenseSummaryContent() {
-  const { data: accountItems = [] } = useAccountItemsQuery();
-
-  if (accountItems.length === 0) {
-    return (
-      <motion.div
-        className="size-full flex items-center justify-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <p className="text-xl text-gray-600">
-          선택한 기간에 대한 거래 내역이 없습니다.
-        </p>
-      </motion.div>
-    );
-  }
-
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-6 px-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <ExpenseTotal accountItems={accountItems} />
-      <ExpenseTable accountItems={accountItems} />
+      <ExpenseTotal />
+      {/* <ExpenseTable /> */}
     </motion.div>
   );
 }
