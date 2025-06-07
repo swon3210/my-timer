@@ -207,7 +207,7 @@ export default function SelectedExpenseList() {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-6 shadow-xl"
+      className="bg-gradient-to-br from-green-50 to-emerald-200 rounded-3xl p-6 shadow-lg shadow-primary/20"
     >
       <div className="mb-6">
         <motion.div
@@ -216,7 +216,11 @@ export default function SelectedExpenseList() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="flex items-center justify-between mb-4"
         >
-          <h2 className="text-lg font-bold text-gray-800">지출 현황</h2>
+          <h2 className="text-lg font-bold text-gray-800">
+            지출 현황
+            <br />
+            <span className="text-sm text-gray-600">(2월 10일 - 2월 16일)</span>
+          </h2>
           <div className="text-right">
             <div className="text-lg font-bold text-gray-800">
               {formatCurrency(totalActual)}
@@ -232,7 +236,7 @@ export default function SelectedExpenseList() {
             className={`h-full rounded-full ${
               overallProgress > 100
                 ? "bg-gradient-to-r from-red-400 to-red-600"
-                : "bg-gradient-to-r from-blue-400 to-indigo-600"
+                : "bg-gradient-to-r from-green-400 to-emerald-600"
             }`}
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(overallProgress, 100)}%` }}

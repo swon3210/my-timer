@@ -14,7 +14,7 @@ export default function ExpenseTabs() {
   const [activeTab, setActiveTab] = useState<TabType>("weekly");
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full">
       <div className="relative bg-gray-100 rounded-xl p-1 shadow-sm">
         {/* Background slider */}
         <div
