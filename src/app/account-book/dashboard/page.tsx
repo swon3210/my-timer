@@ -1,11 +1,8 @@
 "use client";
 
-import BudgetAndExpense from "./BudgetAndExpense";
-
 export default function AccountBookPage() {
   return (
     <div className="grow flex flex-col gap-6 pt-4">
-      <BudgetAndExpense />
       <div className="flex flex-col grow rounded-t-3xl overflow-hidden bg-secondary p-5 gap-6">
         {/* <SelectedExpenseSummary /> */}
         <div className="flex flex-col gap-4">

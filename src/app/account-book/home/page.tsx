@@ -2,10 +2,9 @@
 
 import ExpenseSummary from "./ExpenseSummary";
 import ExpenseTabs from "./ExpenseTabs/ExpenseTabs";
-import SelectedExpenseSummary from "./SelectedExpenseSummary";
 import SelectedExpenseList from "./SelectedExpenseList";
 
-export default function AccountBookPage() {
+export default function AccountBookHomePage() {
   return (
     <div className="grow flex flex-col gap-6 pt-4">
       <ExpenseSummary />

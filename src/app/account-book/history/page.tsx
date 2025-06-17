@@ -6,7 +6,7 @@ import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItems
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
 import useExpenseFormDialogOverlay from "@/app/_components/ExpenseFormDialog/useExpenseFormDialogOverlay";
 
-export default function HistoryPage() {
+export default function AccountBookHistoryPage() {
   const { openExpenseFormDialog, closeExpenseFormDialog } =
     useExpenseFormDialogOverlay();
 
@@ -44,12 +44,16 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="space-y-8 p-6">
-      <div className="flex justify-between items-center">
+    <div className="grow flex flex-col gap-6 pt-4">
+      <div className="flex justify-between items-center px-6">
         <h3 className="text-lg font-bold">거래 내역</h3>
-        <Button onClick={handleAddExpenseButtonClick}>내역 추가</Button>
+        <Button variant="secondary" onClick={handleAddExpenseButtonClick}>
+          내역 추가
+        </Button>
       </div>
-      <ExpenseList />
+      <div className="flex flex-col grow rounded-t-3xl overflow-hidden bg-secondary p-5 gap-6">
+        <ExpenseList />
+      </div>
     </div>
   );
 }
