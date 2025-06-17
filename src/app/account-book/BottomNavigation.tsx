@@ -16,20 +16,20 @@ const navItems: NavItem[] = [
   {
     id: "dashboard",
     icon: Home,
-    label: "대시보드",
-    href: "/account-book/dashboard",
+    label: "홈",
+    href: "/account-book/home",
   },
   {
     id: "summary",
     icon: BarChart3,
-    label: "요약",
+    label: "대시보드",
     href: "/account-book/dashboard",
   },
   {
     id: "history",
     icon: FileText,
     label: "내역",
-    href: "/account-book/dashboard",
+    href: "/account-book/history",
   },
 ];
 
