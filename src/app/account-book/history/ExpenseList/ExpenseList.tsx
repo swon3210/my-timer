@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import useUpdateAccountItemMutation from "@/domains/account-book/useUpdateAccountItemMutation";
 import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
 import useExpenseFormDialogOverlay from "@/app/_components/ExpenseFormDialog/useExpenseFormDialogOverlay";
+
 function ExpenseItem({
   accountItem,
   index,
@@ -102,51 +103,70 @@ function ExpenseItem({
 
   return (
     <motion.div
-      className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between border border-gray-200"
+      className="bg-white p-3 rounded-lg"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
     >
-      <div className="flex items-center space-x-4">
-        <div
-          className={`p-2 rounded-full ${
-            accountItem.amount > 0 ? "bg-green-100" : "bg-red-100"
-          }`}
-        >
-          {accountItem.amount > 0 ? (
-            <ArrowUpCircle className="text-green-500 w-6 h-6" />
-          ) : (
-            <ArrowDownCircle className="text-red-500 w-6 h-6" />
-          )}
-        </div>
-        <div>
-          <p className="font-semibold text-gray-800">
+      {/* 상단: 아이콘, 제목, 금액 */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center space-x-3 flex-1 min-w-0">
+          <div
+            className={`p-1.5 rounded-full flex-shrink-0 ${
+              accountItem.amount > 0 ? "bg-green-100" : "bg-red-100"
+            }`}
+          >
+            {accountItem.amount > 0 ? (
+              <ArrowUpCircle className="text-green-500 w-5 h-5" />
+            ) : (
+              <ArrowDownCircle className="text-red-500 w-5 h-5" />
+            )}
+          </div>
+          <p className="font-semibold text-gray-800 text-sm truncate flex-1">
             {accountItem.description}
           </p>
-          <div className="flex items-center text-sm text-gray-500 mt-1">
-            <Calendar className="w-4 h-4 mr-1" />
-            <span className="mr-2">
-              {new Date(accountItem.date).toLocaleDateString()}
-            </span>
-            <Tag className="w-4 h-4 mr-1" />
-            <span>{category ? category.displayedName : "미분류"}</span>
-          </div>
         </div>
-      </div>
-      <div className="flex items-center space-x-4">
         <p
-          className={`font-bold text-lg ${
+          className={`font-bold text-base ml-2 flex-shrink-0 ${
             accountItem.amount > 0 ? "text-green-500" : "text-red-500"
           }`}
         >
           ₩{Math.abs(accountItem.amount).toLocaleString()}
         </p>
-        <div className="flex items-center space-x-2">
-          <Button onClick={handleEditButtonClick} variant="ghost">
-            <Pencil className="w-4 h-4" />
+      </div>
+
+      {/* 하단: 날짜, 카테고리, 버튼들 */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center text-xs text-gray-500 space-x-3 flex-1 min-w-0">
+          <div className="flex items-center">
+            <Calendar className="w-3 h-3 mr-1" />
+            <span className="whitespace-nowrap">
+              {new Date(accountItem.date).toLocaleDateString()}
+            </span>
+          </div>
+          <div className="flex items-center min-w-0">
+            <Tag className="w-3 h-3 mr-1 flex-shrink-0" />
+            <span className="truncate">
+              {category ? category.displayedName : "미분류"}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center space-x-1 ml-2">
+          <Button
+            onClick={handleEditButtonClick}
+            variant="ghost"
+            size="sm"
+            className="p-1 h-7 w-7"
+          >
+            <Pencil className="w-3 h-3" />
           </Button>
-          <Button onClick={handleDeleteButtonClick} variant="ghost">
-            <Trash2 className="w-4 h-4" />
+          <Button
+            onClick={handleDeleteButtonClick}
+            variant="ghost"
+            size="sm"
+            className="p-1 h-7 w-7"
+          >
+            <Trash2 className="w-3 h-3" />
           </Button>
         </div>
       </div>

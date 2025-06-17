@@ -15,7 +15,7 @@ export default function ExpenseTabs() {
 
   return (
     <div className="w-full">
-      <div className="relative bg-gray-100 rounded-xl p-1 shadow-sm">
+      <div className="relative bg-white rounded-xl p-1 shadow-sm">
         {/* Background slider */}
         <div
           className={`absolute top-1 bottom-1 bg-primary rounded-lg shadow-md transition-all duration-300 ease-in-out ${
