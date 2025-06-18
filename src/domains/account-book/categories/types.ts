@@ -4,6 +4,7 @@ export type Category = {
   id: string;
   displayedName: string;
   type: TransactionType;
+  icon?: string;
   createdAt: string;
   updatedAt: string;
 };

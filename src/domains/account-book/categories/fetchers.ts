@@ -26,15 +26,23 @@ export const deleteAccountItemCategory = async (categoryId: string) => {
 export const updateAccountItemCategory = async ({
   categoryId,
   displayedName,
+  icon,
 }: {
   categoryId: string;
   displayedName: string;
+  icon?: string;
 }) => {
+  const updateData: { displayedName: string; icon?: string } = {
+    displayedName,
+  };
+
+  if (icon !== undefined) {
+    updateData.icon = icon;
+  }
+
   const response = await axiosInstance.patch<Category>(
     `/api/account-books/categories/${categoryId}`,
-    {
-      displayedName,
-    }
+    updateData
   );
   return response.data;
 };

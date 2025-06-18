@@ -6,10 +6,7 @@ import useSubTab from "../useSubTab";
 import dayjs from "dayjs";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
-
-type ExpenseTableProps = {
-  accountItems: AccountItem[];
-};
+import { useAccountItemsQuery } from "@/domains/account-book/useAccountItemsQuery";
 
 function ExpenseTableItem({
   type,
@@ -67,7 +64,9 @@ function ExpenseTableItem({
 //     .reverse();
 // };
 
-export default function ExpenseTable({ accountItems }: ExpenseTableProps) {
+export default function ExpenseTable() {
+  const { data: accountItems = [] } = useAccountItemsQuery();
+
   const { subTab } = useSubTab();
 
   const { date } = useDateAtom();

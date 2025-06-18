@@ -12,6 +12,26 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "Pretendard Variable",
+          "Pretendard",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "system-ui",
+          "Roboto",
+          "Helvetica Neue",
+          "Segoe UI",
+          "Apple SD Gothic Neo",
+          "Noto Sans KR",
+          "Malgun Gothic",
+          "Apple Color Emoji",
+          "Segoe UI Emoji",
+          "Segoe UI Symbol",
+          "Arial",
+          "sans-serif",
+        ],
+      },
       maxWidth: {
         "app-container": "1024px",
       },
@@ -29,6 +49,7 @@ const config: Config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          heavy: "hsl(var(--primary-heavy))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -55,6 +76,10 @@ const config: Config = {
           "3": "hsl(var(--chart-3))",
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
+        },
+        mint: {
+          light: "hsl(var(--mint-light))",
+          medium: "hsl(var(--mint-medium))",
         },
       },
       borderRadius: {
