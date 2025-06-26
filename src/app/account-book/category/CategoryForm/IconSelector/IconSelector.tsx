@@ -6,42 +6,37 @@ import { TransactionType } from "@/domains/account-book/types";
 import {
   getIconsByType,
   getIconById,
-  DEFAULT_ICONS,
-  CategoryIcon,
-} from "@/utils/categoryIcons";
+} from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+import { CategoryIcon } from "@/domains/account-book/categories/types";
 
 interface IconSelectorProps {
-  selectedIconId?: string;
+  selectedIcon?: CategoryIcon;
   categoryType: TransactionType;
-  onIconSelect: (iconId: string) => void;
+  onIconSelect: (iconId: CategoryIcon) => void;
   placeholder?: string;
 }
 
 export default function IconSelector({
-  selectedIconId,
+  selectedIcon,
   categoryType,
   onIconSelect,
-  placeholder = "아이콘 선택",
 }: IconSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const availableIcons = getIconsByType(categoryType);
-  const selectedIcon = selectedIconId
-    ? getIconById(selectedIconId)
-    : getIconById(DEFAULT_ICONS[categoryType]);
 
   const filteredIcons = availableIcons.filter((iconItem) =>
     iconItem.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleIconSelect = (iconId: string) => {
+  const handleIconSelect = (iconId: CategoryIcon) => {
     onIconSelect(iconId);
     setIsOpen(false);
     setSearchTerm("");
   };
 
-  const SelectedIcon = selectedIcon.icon;
+  const SelectedIcon = getIconById(selectedIcon)?.icon;
 
   return (
     <div className="relative">
@@ -53,9 +48,11 @@ export default function IconSelector({
       >
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-lg">
-            <SelectedIcon className="w-5 h-5 text-gray-600" />
+            {SelectedIcon && <SelectedIcon className="w-5 h-5 text-gray-600" />}
           </div>
-          <span className="text-gray-700 font-medium">{selectedIcon.name}</span>
+          <span className="text-gray-700 font-medium">
+            {getIconById(selectedIcon)?.name}
+          </span>
         </div>
         <ChevronDown
           className={`w-5 h-5 text-gray-400 transition-transform ${
@@ -86,14 +83,16 @@ export default function IconSelector({
             {filteredIcons.length > 0 ? (
               <div className="grid grid-cols-6 gap-2">
                 {filteredIcons.map((iconItem) => {
-                  const IconComponent = iconItem.icon;
-                  const isSelected = selectedIconId === iconItem.id;
+                  const isSelected = selectedIcon === iconItem.id;
+                  const IconComponent = getIconById(iconItem.id)?.icon;
 
                   return (
                     <button
                       key={iconItem.id}
                       type="button"
-                      onClick={() => handleIconSelect(iconItem.id)}
+                      onClick={() =>
+                        handleIconSelect(iconItem.id as CategoryIcon)
+                      }
                       className={`p-3 rounded-lg border-2 transition-all hover:scale-105 ${
                         isSelected
                           ? "border-blue-500 bg-blue-50 text-blue-600"
@@ -101,7 +100,9 @@ export default function IconSelector({
                       }`}
                       title={iconItem.name}
                     >
-                      <IconComponent className="w-5 h-5 mx-auto" />
+                      {IconComponent && (
+                        <IconComponent className="w-5 h-5 mx-auto" />
+                      )}
                     </button>
                   );
                 })}

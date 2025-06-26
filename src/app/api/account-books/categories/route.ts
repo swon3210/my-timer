@@ -11,6 +11,7 @@ const getCategoriesResponseSchema = z.record(
   z.object({
     displayedName: z.string(),
     type: z.enum(["INCOME", "EXPENSE", "INVESTMENT", "FLEX"]),
+    icon: z.string().optional(),
     createdAt: z.string(),
     updatedAt: z.string(),
   })
@@ -51,11 +52,12 @@ export const GET = withAuth(async (req: AuthRequest) => {
 // POST: 새 카테고리 추가
 export const POST = withAuth(async (req: AuthRequest) => {
   try {
-    const { displayedName, type } = await req.json();
+    const { displayedName, type, icon } = await req.json();
 
     const newCategory: Omit<Category, "id"> = {
       displayedName,
       type,
+      icon,
       createdAt: dayjs().toISOString(),
       updatedAt: dayjs().toISOString(),
     };

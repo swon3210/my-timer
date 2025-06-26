@@ -7,7 +7,7 @@ import {
   getIconsByType,
   getIconById,
   DEFAULT_ICONS,
-} from "@/utils/categoryIcons";
+} from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
 
 interface InlineIconSelectorProps {
   selectedIconId?: string;

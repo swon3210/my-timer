@@ -1,10 +1,16 @@
 import { TransactionType } from "../types";
 
+export type CategoryIcon =
+  | "dollar-sign"
+  | "shopping-bag"
+  | "factory"
+  | "more-horizontal";
+
 export type Category = {
   id: string;
   displayedName: string;
   type: TransactionType;
-  icon?: string;
+  icon?: CategoryIcon;
   createdAt: string;
   updatedAt: string;
 };

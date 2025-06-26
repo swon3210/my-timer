@@ -3,7 +3,7 @@
 import { Transaction } from "@/types/transaction";
 import { useState } from "react";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
-import { getIconById } from "@/utils/categoryIcons";
+import { getIconById } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
 
 interface TransactionItemProps {
   transaction: Transaction;

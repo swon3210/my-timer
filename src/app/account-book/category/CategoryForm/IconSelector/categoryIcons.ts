@@ -54,7 +54,7 @@ import {
 export interface CategoryIcon {
   id: string;
   name: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   category: "수입" | "지출" | "투자" | "공통";
 }
 
@@ -184,6 +184,4 @@ export const getIconById = (iconId?: string) => {
 export const DEFAULT_ICONS = {
   INCOME: "dollar-sign",
   EXPENSE: "shopping-bag",
-  INVESTMENT: "trending-up",
-  FLEX: "more-horizontal",
 } as const;
