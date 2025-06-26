@@ -7,9 +7,9 @@ import { NextResponse } from "next/server";
 export const PATCH = withAuth(async (req, routeInfo) => {
   try {
     const id = routeInfo?.params.categoryId;
-    const { displayedName } = await req.json();
+    const { displayedName, icon } = await req.json();
 
-    if (!id || !displayedName) {
+    if (!id || !displayedName || !icon) {
       return NextResponse.json(
         { error: "필수 필드가 누락되었습니다." },
         { status: 400 }
@@ -21,7 +21,7 @@ export const PATCH = withAuth(async (req, routeInfo) => {
       `account-book-categories/${req.user.uid}/${id}`
     );
 
-    const updates = { displayedName };
+    const updates = { displayedName, icon };
     await update(categoryRef, updates);
 
     return NextResponse.json({ success: true });

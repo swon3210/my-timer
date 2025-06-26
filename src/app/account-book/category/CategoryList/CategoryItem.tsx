@@ -6,7 +6,7 @@ import { useSetAccountItemCategories } from "@/domains/account-book/categories/u
 import { useDeleteAccountItemCategoryMutation } from "@/domains/account-book/categories/useDeleteAccountItemCategoryMutation";
 import { Button } from "@/components/ui/button";
 import { getIconById } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
-import CategoryEditModal from "@/components/category/CategoryEditModal";
+import CategoryEditModal from "@/app/account-book/category/CategoryEditModal/CategoryEditModal";
 
 interface CategoryItemProps {
   category: Category;
