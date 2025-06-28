@@ -1,19 +1,10 @@
-export interface Transaction {
-  id: string;
-  userId: string;
-  amount: number;
-  type: "income" | "expense";
-  category: string;
-  description: string;
-  date: string;
-  paymentMethod?: string;
-  location?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import {
+  Transaction,
+  TransactionType,
+} from "@/app/api/account-books/transactions/types";
 
 export interface TransactionFilter {
-  type?: "income" | "expense" | "all";
+  type?: TransactionType | "ALL";
   category?: string;
   dateRange?: {
     start: string;
@@ -30,15 +21,10 @@ export interface TransactionSort {
   direction: "asc" | "desc";
 }
 
-export interface TransactionFormData {
-  amount: number;
-  type: "income" | "expense";
-  category: string;
-  description: string;
-  date: string;
-  paymentMethod?: string;
-  location?: string;
-}
+export type TransactionFormData = Omit<
+  Transaction,
+  "createdAt" | "updatedAt" | "userId"
+>;
 
 export interface TransactionStats {
   totalIncome: number;

@@ -1,12 +1,13 @@
-import { AccountItem, TransactionType } from "@/domains/account-book/types";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import useDateAtom from "../_atom/useDateAtom";
 import useSubTab from "../useSubTab";
 import dayjs from "dayjs";
-import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
+import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
-import { useAccountItemsQuery } from "@/domains/account-book/useAccountItemsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/useTransactionsQuery";
+import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { Transaction } from "@/app/api/account-books/transactions/types";
 
 function ExpenseTableItem({
   type,
@@ -65,7 +66,7 @@ function ExpenseTableItem({
 // };
 
 export default function ExpenseTable() {
-  const { data: accountItems = [] } = useAccountItemsQuery();
+  const { data: accountItems = [] } = useTransactionsQuery();
 
   const { subTab } = useSubTab();
 
@@ -98,7 +99,7 @@ export default function ExpenseTable() {
 
   const getTotalCategoryExpenseAmount = (
     categoryId: string,
-    accountItems: AccountItem[]
+    accountItems: Transaction[]
   ) => {
     return accountItems.reduce((acc, item) => {
       if (item.categoryId === categoryId) {

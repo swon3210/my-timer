@@ -1,5 +1,3 @@
-export type TransactionType = "EXPENSE" | "INCOME" | "INVESTMENT" | "FLEX";
-
 export type Frequency = "MONTHLY" | "WEEKLY" | "YEARLY";
 
 export interface BaseAccountItem {

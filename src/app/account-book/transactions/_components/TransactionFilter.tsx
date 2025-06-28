@@ -1,5 +1,6 @@
 "use client";
 
+import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { TransactionFilter, TransactionSort } from "@/types/transaction";
 import { useState } from "react";
 
@@ -20,21 +21,12 @@ export default function TransactionFilterComponent({
 }: TransactionFilterProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const categories = [
-    "식비",
-    "교통",
-    "쇼핑",
-    "문화",
-    "의료",
-    "급여",
-    "용돈",
-    "기타",
-  ];
+  const { data: categories } = useTransactionCategoriesQuery();
 
-  const handleTypeChange = (type: "income" | "expense" | "all") => {
+  const handleTypeChange = (type: "INCOME" | "EXPENSE" | "ALL") => {
     onFilterChange({
       ...filter,
-      type: type === "all" ? undefined : type,
+      type: type === "ALL" ? undefined : type,
     });
   };
 
@@ -124,7 +116,7 @@ export default function TransactionFilterComponent({
       <div className="p-4 space-y-4">
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => handleTypeChange("all")}
+            onClick={() => handleTypeChange("ALL")}
             className={`px-3 py-1 rounded-full text-sm transition-colors ${
               !filter.type
                 ? "bg-blue-500 text-white"
@@ -134,9 +126,9 @@ export default function TransactionFilterComponent({
             전체
           </button>
           <button
-            onClick={() => handleTypeChange("income")}
+            onClick={() => handleTypeChange("INCOME")}
             className={`px-3 py-1 rounded-full text-sm transition-colors ${
-              filter.type === "income"
+              filter.type === "INCOME"
                 ? "bg-green-500 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
@@ -144,9 +136,9 @@ export default function TransactionFilterComponent({
             수입
           </button>
           <button
-            onClick={() => handleTypeChange("expense")}
+            onClick={() => handleTypeChange("EXPENSE")}
             className={`px-3 py-1 rounded-full text-sm transition-colors ${
-              filter.type === "expense"
+              filter.type === "EXPENSE"
                 ? "bg-red-500 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
@@ -158,7 +150,7 @@ export default function TransactionFilterComponent({
         {/* 정렬 */}
         <div className="flex items-center space-x-2">
           <span className="text-sm text-gray-600">정렬:</span>
-          {(["date", "amount", "category"] as const).map((field) => (
+          {(["date", "amount"] as const).map((field) => (
             <button
               key={field}
               onClick={() => handleSortChange(field)}
@@ -171,7 +163,6 @@ export default function TransactionFilterComponent({
               <span>
                 {field === "date" && "날짜"}
                 {field === "amount" && "금액"}
-                {field === "category" && "카테고리"}
               </span>
               {sort.field === field && (
                 <svg
@@ -212,10 +203,10 @@ export default function TransactionFilterComponent({
               onChange={(e) => handleCategoryChange(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">전체 카테고리</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+              <option value="all">전체</option>
+              {categories?.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.displayedName}
                 </option>
               ))}
             </select>

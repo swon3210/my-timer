@@ -1,7 +1,7 @@
+import { Category } from "@/app/api/account-books/categories/types";
 import { axiosInstance } from "@/lib/api";
-import { Category } from "./types";
 
-export const getAccountItemsCategories = async () => {
+export const getTransactionCategories = async () => {
   const response = await axiosInstance.get<Category[]>(
     "/api/account-books/categories"
   );
@@ -9,7 +9,7 @@ export const getAccountItemsCategories = async () => {
   return response.data;
 };
 
-export const postAccountItemCategory = async (
+export const postTransactionCategory = async (
   category: Omit<Category, "id" | "createdAt" | "updatedAt">
 ) => {
   const response = await axiosInstance.post<Category>(
@@ -19,11 +19,11 @@ export const postAccountItemCategory = async (
   return response.data;
 };
 
-export const deleteAccountItemCategory = async (categoryId: string) => {
+export const deleteTransactionCategory = async (categoryId: string) => {
   await axiosInstance.delete(`/api/account-books/categories/${categoryId}`);
 };
 
-export const updateAccountItemCategory = async ({
+export const updateTransactionCategory = async ({
   categoryId,
   displayedName,
   icon,

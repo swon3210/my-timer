@@ -1,32 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { Transaction } from "@/app/api/account-books/transactions/types";
+import useDeleteTransactionMutation from "@/domains/account-book/useDeleteTransactionMutation";
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => Promise<void>;
-  transactionDescription?: string;
+  targetTransaction: Transaction;
 }
 
 export default function DeleteConfirmModal({
   isOpen,
   onClose,
-  onConfirm,
-  transactionDescription,
+  targetTransaction,
 }: DeleteConfirmModalProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { mutateAsync: deleteTransaction, isPending } =
+    useDeleteTransactionMutation();
 
   const handleConfirm = async () => {
-    setIsDeleting(true);
-    try {
-      await onConfirm();
-      onClose();
-    } catch (error) {
-      console.error("Failed to delete transaction:", error);
-    } finally {
-      setIsDeleting(false);
-    }
+    await deleteTransaction(targetTransaction.id);
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -65,17 +58,13 @@ export default function DeleteConfirmModal({
 
         {/* 내용 */}
         <div className="p-6">
-          <p className="text-gray-700 mb-4">
-            다음 거래 내역을 정말 삭제하시겠습니까?
-          </p>
+          <p className="text-gray-700 mb-4">정말 삭제하시겠습니까?</p>
 
-          {transactionDescription && (
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <p className="font-medium text-gray-900">
-                "{transactionDescription}"
-              </p>
-            </div>
-          )}
+          <div className="bg-gray-50 rounded-lg p-4 mb-4">
+            <p className="font-medium text-gray-900">
+              {targetTransaction.description}
+            </p>
+          </div>
 
           <p className="text-sm text-gray-600">
             삭제된 거래 내역은 복구할 수 없습니다.
@@ -86,17 +75,17 @@ export default function DeleteConfirmModal({
         <div className="flex space-x-3 p-6 pt-0">
           <button
             onClick={onClose}
-            disabled={isDeleting}
+            disabled={isPending}
             className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             취소
           </button>
           <button
             onClick={handleConfirm}
-            disabled={isDeleting}
+            disabled={isPending}
             className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
           >
-            {isDeleting ? (
+            {isPending ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                 삭제 중...

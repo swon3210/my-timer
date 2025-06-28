@@ -184,4 +184,6 @@ export const getIconById = (iconId?: string) => {
 export const DEFAULT_ICONS = {
   INCOME: "dollar-sign",
   EXPENSE: "shopping-bag",
+  INVESTMENT: "factory",
+  FLEX: "more-horizontal",
 } as const;

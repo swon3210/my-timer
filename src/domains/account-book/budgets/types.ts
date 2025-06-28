@@ -1,4 +1,4 @@
-import { TransactionType } from "../types";
+import { TransactionType } from "@/app/api/account-books/transactions/types";
 
 export type Budget = {
   id: string;

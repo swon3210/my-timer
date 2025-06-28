@@ -10,14 +10,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
-import { useAddAccountItemCategoryMutation } from "@/domains/account-book/categories/useAddAccountItemCategoryMutation";
+import { useAddTransactionCategoryMutation } from "@/domains/account-book/categories/useAddTransactionCategoryMutation";
 import { useQueryClient } from "@tanstack/react-query";
-import { getAccountItemCategoriesQueryKey } from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
+import { getTransactionCategoriesQueryKey } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import IconSelector from "@/app/account-book/category/CategoryForm/IconSelector/IconSelector";
 import { DEFAULT_ICONS } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
 import { useUserQuery } from "@/domains/users/useUserQuery";
-import { TransactionType } from "@/domains/account-book/types";
-import { CategoryIcon } from "@/domains/account-book/categories/types";
+import { CategoryIcon } from "@/app/api/account-books/categories/types";
+import { TransactionType } from "@/app/api/account-books/transactions/types";
 
 type CategoryFormValues = {
   name: string;
@@ -30,7 +30,7 @@ export default function CategoryForm() {
 
   const { data: user } = useUserQuery();
 
-  const { mutateAsync: addCategory } = useAddAccountItemCategoryMutation();
+  const { mutateAsync: addCategory } = useAddTransactionCategoryMutation();
   const { register, handleSubmit, setValue, watch } =
     useForm<CategoryFormValues>({
       defaultValues: {
@@ -70,7 +70,7 @@ export default function CategoryForm() {
       setValue("icon", DEFAULT_ICONS[type as keyof typeof DEFAULT_ICONS]);
 
       queryClient.invalidateQueries({
-        queryKey: getAccountItemCategoriesQueryKey(),
+        queryKey: getTransactionCategoriesQueryKey(),
       });
     } catch (error) {
       console.error(error);

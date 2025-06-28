@@ -1,4 +1,4 @@
-import { TransactionType } from "@/domains/account-book/types";
+import { TransactionType } from "@/app/api/account-books/transactions/types";
 
 export type OutcomeFormValues = {
   amount: number;

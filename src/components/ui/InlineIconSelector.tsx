@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { TransactionType } from "@/domains/account-book/types";
+import { TransactionType } from "@/app/api/account-books/transactions/types";
 import {
   getIconsByType,
   getIconById,

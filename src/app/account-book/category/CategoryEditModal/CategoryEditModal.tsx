@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
-import useUpdateAccountItemCategoryMutation from "@/domains/account-book/categories/useUpdateAccountItemCategoryMutation";
-import { getAccountItemCategoriesQueryKey } from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
-import { Category } from "@/domains/account-book/categories/types";
+import useUpdateAccountItemCategoryMutation from "@/domains/account-book/categories/useUpdateTransactionCategoryMutation";
+import { getTransactionCategoriesQueryKey } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import InlineIconSelector from "@/components/ui/InlineIconSelector";
 import { getIconById } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+import { Category } from "@/app/api/account-books/categories/types";
 
 interface CategoryEditModalProps {
   isOpen: boolean;
@@ -62,7 +62,7 @@ export default function CategoryEditModal({
       });
 
       queryClient.invalidateQueries({
-        queryKey: getAccountItemCategoriesQueryKey(),
+        queryKey: getTransactionCategoriesQueryKey(),
       });
 
       onClose();

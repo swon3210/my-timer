@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
-import { useAccountItemsQuery } from "@/domains/account-book/useAccountItemsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/useTransactionsQuery";
 import IncomeIcon from "@/app/assets/icons/ic_income";
 import ExpenseIcon from "@/app/assets/icons/ic_expense";
 import CheckIcon from "@/app/assets/icons/ic_check";
 
-function ProgressBar({ total, used }: { total: number; used: number }) {
+function ProgressBar({ used }: { total: number; used: number }) {
   return (
     <div className="flex w-full h-7 bg-primary-heavy rounded-full overflow-hidden">
       <span className="grow flex justify-center items-center text-secondary text-sm font-bold">
@@ -26,7 +26,7 @@ function ProgressBar({ total, used }: { total: number; used: number }) {
 }
 
 export default function ExpenseTotal() {
-  const { data: accountItems = [] } = useAccountItemsQuery();
+  const { data: transactions = [] } = useTransactionsQuery();
 
   const { data: budgets = [] } = useBudgetsQuery();
 
@@ -44,7 +44,7 @@ export default function ExpenseTotal() {
         return acc;
       }, 0) ?? 0;
 
-  const totalExpense = accountItems
+  const totalExpense = transactions
     .filter((item) => item.type === "EXPENSE" || item.type === "FLEX")
     .reduce((acc, item) => {
       if (dayjs(item.date).isSame(date, "month")) {

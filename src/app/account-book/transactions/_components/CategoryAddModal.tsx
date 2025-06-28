@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAddAccountItemCategoryMutation } from "@/domains/account-book/categories/useAddAccountItemCategoryMutation";
-import { getAccountItemCategoriesQueryKey } from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
-import { TransactionType } from "@/domains/account-book/types";
+import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { useAddTransactionCategoryMutation } from "@/domains/account-book/categories/useAddTransactionCategoryMutation";
+import { getTransactionCategoriesQueryKey } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import InlineIconSelector from "@/components/ui/InlineIconSelector";
 import { DEFAULT_ICONS } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
 
@@ -29,7 +29,7 @@ export default function CategoryAddModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
 
-  const { mutateAsync: addCategory } = useAddAccountItemCategoryMutation();
+  const { mutateAsync: addCategory } = useAddTransactionCategoryMutation();
   const {
     register,
     handleSubmit,
@@ -72,7 +72,7 @@ export default function CategoryAddModal({
 
       reset();
       queryClient.invalidateQueries({
-        queryKey: getAccountItemCategoriesQueryKey(),
+        queryKey: getTransactionCategoriesQueryKey(),
       });
 
       onClose();

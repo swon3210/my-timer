@@ -6,7 +6,7 @@ import { Pencil, Trash } from "lucide-react";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
 import { Budget } from "@/domains/account-book/budgets/types";
 import { useUpdateBudgetsMutation } from "@/domains/account-book/budgets/useUpdateBudgetsMutation";
-import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
+import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { useDeleteBudgetsMutation } from "@/domains/account-book/budgets/useDeleteBudgetsMutation";
 import { useSetBudgetsQuery } from "@/domains/account-book/budgets/useSetBudgetsQuery";
 import useOutcomeFormDialogOverlay from "../useOutcomeFormDialogOverlay";

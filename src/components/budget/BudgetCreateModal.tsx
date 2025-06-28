@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Budget } from "@/types/budget";
 import { CreateBudgetRequest } from "@/services/budgetService";
-import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
+import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 
 interface BudgetCreateModalProps {
   isOpen: boolean;

@@ -1,4 +1,4 @@
-import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
+import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import CategoryItem from "./CategoryItem";
 import EmptyCategoryList from "./EmptyCategoryList";
 

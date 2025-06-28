@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Edit2, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Category } from "@/domains/account-book/categories/types";
-import { useSetAccountItemCategories } from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
-import { useDeleteAccountItemCategoryMutation } from "@/domains/account-book/categories/useDeleteAccountItemCategoryMutation";
+import { useSetTransactionCategories } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
+import { useDeleteTransactionCategoryMutation } from "@/domains/account-book/categories/useDeleteTransactionCategoryMutation";
 import { Button } from "@/components/ui/button";
 import { getIconById } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
 import CategoryEditModal from "@/app/account-book/category/CategoryEditModal/CategoryEditModal";
+import { Category } from "@/app/api/account-books/categories/types";
 
 interface CategoryItemProps {
   category: Category;
@@ -15,9 +15,9 @@ interface CategoryItemProps {
 export default function CategoryItem({ category }: CategoryItemProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { mutateAsync: deleteCategory } =
-    useDeleteAccountItemCategoryMutation();
+    useDeleteTransactionCategoryMutation();
 
-  const { setAccountItemCategories } = useSetAccountItemCategories();
+  const { setTransactionCategories } = useSetTransactionCategories();
 
   const handleDeleteCategoryButtonClick = async () => {
     const confirmDelete = confirm(
@@ -29,7 +29,7 @@ export default function CategoryItem({ category }: CategoryItemProps) {
     }
 
     try {
-      setAccountItemCategories((categories) => {
+      setTransactionCategories((categories) => {
         return categories.filter(
           (prevCategory) => prevCategory.id !== category.id
         );
@@ -37,7 +37,7 @@ export default function CategoryItem({ category }: CategoryItemProps) {
 
       await deleteCategory(category.id);
     } catch (error) {
-      setAccountItemCategories((categories) => {
+      setTransactionCategories((categories) => {
         return [...categories, category];
       });
 

@@ -2,29 +2,32 @@ import useExpenseFormDialogOverlay from "@/app/_components/ExpenseFormDialog/use
 import useDateAtom from "../_atom/useDateAtom";
 import { Button } from "@/components/ui/button";
 import MonthManager from "./MonthManager";
-import { AccountItem } from "@/domains/account-book/types";
-import useUpdateAccountItemMutation from "@/domains/account-book/useUpdateAccountItemMutation";
+// import useUpdateTransactionMutation from "@/domains/account-book/useUpdateTransactionMutation";
 import {
-  useAccountItemsQuery,
-  useSetAccountItems,
-} from "@/domains/account-book/useAccountItemsQuery";
+  useTransactionsQuery,
+  useSetTransactions,
+} from "@/domains/account-book/useTransactionsQuery";
 import { Pencil, Trash } from "lucide-react";
-import useDeleteAccountItemMutation from "@/domains/account-book/useDeleteAccountItemMutation";
 
 import { motion } from "framer-motion";
-import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useAccountItemCategoriesQuery";
-import useAddAccountItemMutation from "@/domains/account-book/useAddAccountItemsMutation";
+import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
+// import useAddTransactionMutation from "@/domains/account-book/useAddTransactionMutation";
 import dayjs from "dayjs";
+import { Transaction } from "@/app/api/account-books/transactions/types";
+import useDeleteTransactionMutation from "@/domains/account-book/useDeleteTransactionMutation";
+// import { useUserSuspenseQuery } from "@/domains/users/useUserQuery";
 
 function IncomeAddButton() {
-  const { date } = useDateAtom();
+  // const { date } = useDateAtom();
 
   const { openExpenseFormDialog, closeExpenseFormDialog } =
     useExpenseFormDialogOverlay();
 
-  const { mutateAsync: addAccountItem } = useAddAccountItemMutation();
+  // const { data: user } = useUserSuspenseQuery();
 
-  const { data: categories } = useAccountItemCategoriesQuery();
+  // const { mutateAsync: addTransaction } = useAddTransactionMutation();
+
+  const { data: categories } = useTransactionCategoriesQuery();
 
   const handleClick = async () => {
     const formValues = await openExpenseFormDialog({
@@ -48,14 +51,14 @@ function IncomeAddButton() {
     }
 
     try {
-      await addAccountItem({
-        amount: Number(formValues.amount),
-        categoryId: formValues.categoryId,
-        type: formValues.type,
-        date: date.toISOString(),
-        categoryDisplayedName: category.displayedName,
-        description: formValues.description,
-      });
+      // await addTransaction({
+      //   amount: Number(formValues.amount),
+      //   categoryId: formValues.categoryId,
+      //   type: formValues.type,
+      //   date: date.toISOString(),
+      //   description: formValues.description,
+      //   userId: user.uid,
+      // });
 
       closeExpenseFormDialog();
     } catch (error) {
@@ -66,11 +69,11 @@ function IncomeAddButton() {
   return <Button onClick={handleClick}>월 수입 추가</Button>;
 }
 
-function IncomeUpdateButton({ income }: { income: AccountItem }) {
+function IncomeUpdateButton({ income }: { income: Transaction }) {
   const { openExpenseFormDialog } = useExpenseFormDialogOverlay();
 
-  const { mutateAsync: updateIncome } = useUpdateAccountItemMutation();
-  const { setAccountItems } = useSetAccountItems();
+  // const { mutateAsync: updateIncome } = useUpdateTransactionMutation();
+  const { setTransactions } = useSetTransactions();
 
   const handleClick = async () => {
     const formValues = await openExpenseFormDialog({
@@ -90,7 +93,7 @@ function IncomeUpdateButton({ income }: { income: AccountItem }) {
         return;
       }
 
-      setAccountItems((accountItems) =>
+      setTransactions((accountItems) =>
         accountItems.map((prevAccountItem) =>
           prevAccountItem.id === income.id
             ? {
@@ -103,16 +106,16 @@ function IncomeUpdateButton({ income }: { income: AccountItem }) {
         )
       );
 
-      await updateIncome({
-        ...income,
-        ...formValues,
-        type: formValues.type as "INCOME",
-        categoryId: formValues.categoryId!,
-      });
+      // await updateIncome({
+      //   ...income,
+      //   ...formValues,
+      //   type: formValues.type as "INCOME",
+      //   categoryId: formValues.categoryId!,
+      // });
     } catch (error) {
-      setAccountItems((accountItems) =>
-        accountItems.map((prevAccountItem) =>
-          prevAccountItem.id === income.id ? income : prevAccountItem
+      setTransactions((transactions) =>
+        transactions.map((prevTransaction) =>
+          prevTransaction.id === income.id ? income : prevTransaction
         )
       );
 
@@ -127,9 +130,9 @@ function IncomeUpdateButton({ income }: { income: AccountItem }) {
   );
 }
 
-function IncomeDeleteButton({ income }: { income: AccountItem }) {
-  const { mutateAsync: deleteIncome } = useDeleteAccountItemMutation();
-  const { setAccountItems } = useSetAccountItems();
+function IncomeDeleteButton({ income }: { income: Transaction }) {
+  const { mutateAsync: deleteTransaction } = useDeleteTransactionMutation();
+  const { setTransactions } = useSetTransactions();
 
   const handleClick = async () => {
     if (!confirm("정말로 삭제하시겠습니까?")) {
@@ -137,14 +140,14 @@ function IncomeDeleteButton({ income }: { income: AccountItem }) {
     }
 
     try {
-      setAccountItems((accountItems) =>
-        accountItems.filter(
-          (prevAccountItem) => prevAccountItem.id !== income.id
+      setTransactions((transactions) =>
+        transactions.filter(
+          (prevTransaction) => prevTransaction.id !== income.id
         )
       );
-      await deleteIncome(income.id);
+      await deleteTransaction(income.id);
     } catch (error) {
-      setAccountItems((accountItems) => [...accountItems, income]);
+      setTransactions((transactions) => [...transactions, income]);
       console.error(error);
     }
   };
@@ -156,8 +159,8 @@ function IncomeDeleteButton({ income }: { income: AccountItem }) {
   );
 }
 
-function IncomeItem({ income }: { income: AccountItem }) {
-  const { data: categories } = useAccountItemCategoriesQuery();
+function IncomeItem({ income }: { income: Transaction }) {
+  const { data: categories } = useTransactionCategoriesQuery();
 
   const category = categories?.find(
     (category) => category.id === income.categoryId
@@ -191,7 +194,7 @@ function IncomeItem({ income }: { income: AccountItem }) {
 function IncomeList() {
   const { date } = useDateAtom();
 
-  const { data: accountItems } = useAccountItemsQuery();
+  const { data: accountItems } = useTransactionsQuery();
 
   const incomes = accountItems?.filter(
     (accountItem) =>

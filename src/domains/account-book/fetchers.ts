@@ -1,34 +1,24 @@
 import { axiosInstance } from "@/lib/api";
-import { AccountItem } from "./types";
 import dayjs from "dayjs";
+import {
+  CreateTransactionRequestParams,
+  UpdateTransactionRequestParams,
+  Transaction,
+} from "@/app/api/account-books/transactions/types";
 
-type CreateAccountItemParams = Omit<
-  AccountItem,
-  "id" | "createdAt" | "updatedAt"
->;
-
-export const postAccountItem = async (item: CreateAccountItemParams) => {
-  const now = dayjs().toDate();
-  const newItem = {
-    ...item,
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  const response = await axiosInstance.post<AccountItem>(
-    "/api/account-books",
-    newItem
+export const postTransaction = async (item: CreateTransactionRequestParams) => {
+  const response = await axiosInstance.post<Transaction>(
+    "/api/account-books/transactions",
+    item
   );
-  return {
-    ...response.data,
-    date: dayjs(response.data.date).toDate(),
-    createdAt: dayjs(response.data.createdAt).toDate(),
-    updatedAt: dayjs(response.data.updatedAt).toDate(),
-  };
+
+  return response.data;
 };
 
-export const getAccountItems = async () => {
-  const response = await axiosInstance.get<AccountItem[]>("/api/account-books");
+export const getTransactions = async () => {
+  const response = await axiosInstance.get<Transaction[]>(
+    "/api/account-books/transactions"
+  );
 
   return response.data
     .map((item) => ({
@@ -37,33 +27,29 @@ export const getAccountItems = async () => {
     .sort((a, b) => dayjs(b.date).unix() - dayjs(a.date).unix());
 };
 
-export const updateAccountItem = async (item: AccountItem) => {
-  const updatedData = {
-    ...item,
-    updatedAt: dayjs().toISOString(),
-  };
-
-  const response = await axiosInstance.patch<AccountItem>(
-    `/api/account-books/${item.id}`,
-    updatedData
+export const updateTransaction = async ({
+  id,
+  transaction,
+}: UpdateTransactionRequestParams & { id: string }) => {
+  const response = await axiosInstance.patch<Transaction>(
+    `/api/account-books/transactions/${id}`,
+    {
+      transaction,
+    }
   );
-  return {
-    ...response.data,
-    date: dayjs(response.data.date).toDate(),
-    createdAt: dayjs(response.data.createdAt).toDate(),
-    updatedAt: dayjs(response.data.updatedAt).toDate(),
-  };
+
+  return response.data;
 };
 
-export const deleteAccountItem = async (itemId: string) => {
-  await axiosInstance.delete(`/api/account-books/${itemId}`);
+export const deleteTransaction = async (itemId: string) => {
+  await axiosInstance.delete(`/api/account-books/transactions/${itemId}`);
 };
 
-export const getAccountItemsByPeriod = async (
+export const getTransactionsByPeriod = async (
   startDate: Date,
   endDate: Date
 ) => {
-  const items = await getAccountItems();
+  const items = await getTransactions();
   return items.filter((item) => {
     const itemDate = dayjs(item.date);
     return itemDate.isAfter(startDate) && itemDate.isBefore(endDate);
