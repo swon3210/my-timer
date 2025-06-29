@@ -6,7 +6,7 @@ import MonthManager from "./MonthManager";
 import {
   useTransactionsQuery,
   useSetTransactions,
-} from "@/domains/account-book/useTransactionsQuery";
+} from "@/domains/account-book/transactions/useTransactionsQuery";
 import { Pencil, Trash } from "lucide-react";
 
 import { motion } from "framer-motion";
@@ -14,7 +14,7 @@ import useTransactionCategoriesQuery from "@/domains/account-book/categories/use
 // import useAddTransactionMutation from "@/domains/account-book/useAddTransactionMutation";
 import dayjs from "dayjs";
 import { Transaction } from "@/app/api/account-books/transactions/types";
-import useDeleteTransactionMutation from "@/domains/account-book/useDeleteTransactionMutation";
+import useDeleteTransactionMutation from "@/domains/account-book/transactions/useDeleteTransactionMutation";
 // import { useUserSuspenseQuery } from "@/domains/users/useUserQuery";
 
 function IncomeAddButton() {

@@ -3,8 +3,8 @@
 import { TransactionFormData } from "@/types/transaction";
 import { FormProvider, useForm } from "react-hook-form";
 import PaymentMethodSelector from "./PaymentMethodSelector";
-import useAddTransactionMutation from "@/domains/account-book/useAddTransactionMutation";
-import useUpdateTransactionMutation from "@/domains/account-book/useUpdateTransactionMutation";
+import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";
+import useUpdateTransactionMutation from "@/domains/account-book/transactions/useUpdateTransactionMutation";
 import TransactionCategorySelector from "./TransactionCategorySelector";
 import TransactionTypeSelector from "./TransactionTypeSelector";
 

@@ -7,7 +7,7 @@ import TransactionForm from "./_components/TransactionForm";
 import TransactionFilterComponent from "./_components/TransactionFilter";
 import DeleteConfirmModal from "./_components/DeleteConfirmModal";
 import { Transaction } from "@/app/api/account-books/transactions/types";
-import { useTransactionsQuery } from "@/domains/account-book/useTransactionsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 
 export default function TransactionsPage() {
   // 상태 관리

@@ -3,7 +3,7 @@
 import { TransactionFilter, TransactionSort } from "@/types/transaction";
 import TransactionItem from "./TransactionItem";
 import EmptyTransactionList from "./EmptyTransactionList";
-import { useTransactionsQuery } from "@/domains/account-book/useTransactionsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 import { Transaction } from "@/app/api/account-books/transactions/types";
 
 interface TransactionListProps {

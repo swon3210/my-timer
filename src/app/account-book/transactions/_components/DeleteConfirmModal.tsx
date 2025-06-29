@@ -1,7 +1,7 @@
 "use client";
 
 import { Transaction } from "@/app/api/account-books/transactions/types";
-import useDeleteTransactionMutation from "@/domains/account-book/useDeleteTransactionMutation";
+import useDeleteTransactionMutation from "@/domains/account-book/transactions/useDeleteTransactionMutation";
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;

@@ -1,23 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import BudgetOverview from "@/components/budget/BudgetOverview";
-import CategoryBudgetList from "@/components/budget/CategoryBudgetList";
 import { BudgetStatus } from "@/types/budget";
+import { useSavingsQuery } from "@/domains/account-book/dashboard/useSavingsQuery";
 
 export default function AccountBookDashboardPage() {
-  const [isLoading, setIsLoading] = useState(true);
   const [budgetStatus, setBudgetStatus] = useState<BudgetStatus | null>(null);
 
-  // 샘플 데이터 - 실제로는 API에서 불러올 데이터
-  const [savingsData, setSavingsData] = useState({
-    totalSavings: 15500000, // 총 저축금액
-    thisMonthSavings: 450000, // 이번 달 저축금액
-    lastMonthSavings: 380000, // 지난 달 저축금액
-    savingsGrowth: 18.4, // 전월 대비 증가율,
-  });
+  const { data: savingsData, isLoading } = useSavingsQuery();
 
-  const [goalsData, setGoalsData] = useState({
+  const savingsGrowth =
+    ((savingsData?.thisMonthSavings ?? 0) /
+      (savingsData?.lastMonthSavings ?? 0)) *
+    100;
+
+  const [goalsData] = useState({
     activeGoals: 3,
     completedGoals: 7,
     recentGoals: [
@@ -115,7 +112,6 @@ export default function AccountBookDashboardPage() {
 
     setTimeout(() => {
       setBudgetStatus(sampleBudgetStatus);
-      setIsLoading(false);
     }, 500);
   }, []);
 
@@ -219,21 +215,19 @@ export default function AccountBookDashboardPage() {
 
             <div className="text-center">
               <p className="text-4xl font-bold mb-2">
-                ₩{savingsData.totalSavings.toLocaleString()}
+                ₩{savingsData?.totalSavings.toLocaleString()}
               </p>
               <p className="text-green-100 text-sm mb-4">총 저축금액</p>
 
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/20">
                 <div className="text-center">
                   <p className="text-lg font-bold">
-                    ₩{savingsData.thisMonthSavings.toLocaleString()}
+                    ₩{savingsData?.thisMonthSavings.toLocaleString()}
                   </p>
                   <p className="text-green-100 text-xs">이번 달</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-bold">
-                    +{savingsData.savingsGrowth}%
-                  </p>
+                  <p className="text-lg font-bold">+{savingsGrowth}%</p>
                   <p className="text-green-100 text-xs">증가율</p>
                 </div>
               </div>
@@ -268,7 +262,7 @@ export default function AccountBookDashboardPage() {
                 <div>
                   <p className="text-sm text-gray-600">이번 달 저축</p>
                   <p className="text-2xl font-bold text-gray-800">
-                    ₩{savingsData.thisMonthSavings.toLocaleString()}
+                    ₩{savingsData?.thisMonthSavings.toLocaleString()}
                   </p>
                 </div>
                 <div className="flex items-center space-x-1">
@@ -286,7 +280,7 @@ export default function AccountBookDashboardPage() {
                     />
                   </svg>
                   <span className="text-sm text-green-600 font-medium">
-                    +{savingsData.savingsGrowth}%
+                    +{savingsGrowth}%
                   </span>
                 </div>
               </div>
@@ -296,7 +290,7 @@ export default function AccountBookDashboardPage() {
                   <div>
                     <p className="text-xs text-gray-500">지난 달</p>
                     <p className="text-lg font-bold text-gray-800">
-                      ₩{savingsData.lastMonthSavings.toLocaleString()}
+                      ₩{savingsData?.lastMonthSavings.toLocaleString()}
                     </p>
                   </div>
                   <div>
@@ -304,7 +298,7 @@ export default function AccountBookDashboardPage() {
                     <p className="text-lg font-bold text-gray-800">
                       ₩
                       {Math.round(
-                        savingsData.totalSavings / 12
+                        (savingsData?.totalSavings ?? 0) / 12
                       ).toLocaleString()}
                     </p>
                   </div>

@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
-import { useTransactionsQuery } from "@/domains/account-book/useTransactionsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 import IncomeIcon from "@/app/assets/icons/ic_income";
 import ExpenseIcon from "@/app/assets/icons/ic_expense";
 import CheckIcon from "@/app/assets/icons/ic_check";

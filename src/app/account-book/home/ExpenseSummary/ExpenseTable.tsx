@@ -5,7 +5,7 @@ import useSubTab from "../useSubTab";
 import dayjs from "dayjs";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
-import { useTransactionsQuery } from "@/domains/account-book/useTransactionsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 import { TransactionType } from "@/app/api/account-books/transactions/types";
 import { Transaction } from "@/app/api/account-books/transactions/types";
 
