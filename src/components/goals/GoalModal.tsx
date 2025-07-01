@@ -3,6 +3,7 @@ import { Goal } from "@/app/api/account-books/goals/types";
 import { useForm } from "react-hook-form";
 import { useAddGoalsMutation } from "@/domains/account-book/goal/useAddGoalsMutation";
 import { useUpdateGoalsMutation } from "@/domains/account-book/goal/useUpdateBudgetsMutation";
+import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 
 type GoalFormData = Omit<Goal, "id">;
 
@@ -19,8 +20,10 @@ export const openGoalModal = (goal?: Goal) => {
 };
 
 export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
-  const { register, handleSubmit } = useForm<GoalFormData>({
+  const { register, handleSubmit, watch } = useForm<GoalFormData>({
     defaultValues: goal ?? {
+      categoryType: "INCOME",
+      categoryId: "",
       displayName: "",
       description: "",
       imageUrl: "",
@@ -30,6 +33,13 @@ export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
       priority: "MEDIUM",
     },
   });
+
+  const categoryType = watch("categoryType");
+
+  const { data: categories } = useTransactionCategoriesQuery();
+
+  const categoryOptions =
+    categories?.filter((category) => category.type === categoryType) ?? [];
 
   const { mutate: addGoal, isPending: isAdding } = useAddGoalsMutation();
   const { mutate: updateGoal, isPending: isUpdating } =
@@ -77,6 +87,35 @@ export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
         <form onSubmit={handleFormSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              유형 *
+            </label>
+            <select
+              {...register("categoryType")}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="INCOME">수입</option>
+              <option value="EXPENSE">지출</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              카테고리 *
+            </label>
+            <select
+              {...register("categoryId")}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {categoryOptions.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.displayedName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               목표 제목 *
             </label>
             <input
@@ -89,7 +128,7 @@ export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              목표 금액 *
+              {categoryType === "INCOME" ? "목표 수입" : "목표 지출"} *
             </label>
             <input
               type="number"
@@ -103,7 +142,18 @@ export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              마감일 *
+              시작일
+            </label>
+            <input
+              type="date"
+              {...register("startAt")}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              마감일
             </label>
             <input
               type="date"

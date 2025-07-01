@@ -35,24 +35,10 @@ export const GET = withAuth(async (req: AuthRequest) => {
 
 export const POST = withAuth(async (req: AuthRequest) => {
   try {
-    const {
-      priority,
-      displayName,
-      description,
-      imageUrl,
-      targetAmount,
-      startAt,
-      endAt,
-    } = await req.json();
+    const body = await req.json();
 
     const newGoal: Omit<Goal, "id"> = {
-      priority,
-      displayName,
-      description,
-      imageUrl,
-      targetAmount,
-      startAt,
-      endAt,
+      ...body,
       status: "ON-GOING",
     };
 
