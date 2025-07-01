@@ -1,9 +1,9 @@
 "use client";
 
-import { OverlayProvider as TossOverlayProvider } from "@toss/use-overlay";
+import { OverlayProvider as OverlayKitProvider } from "overlay-kit";
 
 const OverlayProvider = ({ children }: { children: React.ReactNode }) => {
-  return <TossOverlayProvider>{children}</TossOverlayProvider>;
+  return <OverlayKitProvider>{children}</OverlayKitProvider>;
 };
 
 export default OverlayProvider;

@@ -1,10 +1,8 @@
-import useOverlay from "@/hooks/useOverlay";
+import { overlay } from "overlay-kit";
 import { OutcomeFormValues } from "./types";
 import OutcomeFormDialog from "./OutcomeFormDialog";
 
 const useOutcomeFormDialogOverlay = () => {
-  const overlay = useOverlay();
-
   const openOutcomeFormDialog = (
     params: {
       defaultValues?: OutcomeFormValues;

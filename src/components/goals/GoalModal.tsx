@@ -1,31 +1,51 @@
-import { useState } from "react";
-import { Goal, Priority, GoalFormData } from "@/types/goal";
+import { overlay } from "overlay-kit";
+import { Goal } from "@/app/api/account-books/goals/types";
+import { useForm } from "react-hook-form";
+import { useAddGoalsMutation } from "@/domains/account-book/goal/useAddGoalsMutation";
+import { useUpdateGoalsMutation } from "@/domains/account-book/goal/useUpdateBudgetsMutation";
+
+type GoalFormData = Omit<Goal, "id">;
 
 interface GoalModalProps {
-  goal: Goal | null;
+  isOpen: boolean;
+  goal?: Goal;
   onClose: () => void;
-  onSave: (goalData: GoalFormData) => void;
 }
 
-export default function GoalModal({ goal, onClose, onSave }: GoalModalProps) {
-  const [formData, setFormData] = useState<GoalFormData>({
-    title: goal?.title || "",
-    target: goal?.target || 0,
-    category: goal?.category || "",
-    dueDate: goal?.dueDate || "",
-    priority: goal?.priority || "medium",
-    image: goal?.image || "",
-    description: goal?.description || "",
+export const openGoalModal = (goal?: Goal) => {
+  overlay.open(({ isOpen, close }) => (
+    <GoalModal isOpen={isOpen} goal={goal} onClose={close} />
+  ));
+};
+
+export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
+  const { register, handleSubmit } = useForm<GoalFormData>({
+    defaultValues: goal ?? {
+      displayName: "",
+      description: "",
+      imageUrl: "",
+      targetAmount: 0,
+      startAt: "",
+      endAt: "",
+      priority: "MEDIUM",
+    },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title || !formData.target || !formData.dueDate) {
-      alert("필수 항목을 모두 입력해주세요.");
-      return;
+  const { mutate: addGoal, isPending: isAdding } = useAddGoalsMutation();
+  const { mutate: updateGoal, isPending: isUpdating } =
+    useUpdateGoalsMutation();
+
+  const handleFormSubmit = handleSubmit((data) => {
+    if (goal) {
+      updateGoal({ ...data, id: goal.id });
+    } else {
+      addGoal(data);
     }
-    onSave(formData);
-  };
+  });
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -54,17 +74,14 @@ export default function GoalModal({ goal, onClose, onSave }: GoalModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               목표 제목 *
             </label>
             <input
               type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
+              {...register("displayName")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="예: 새 노트북 구매"
             />
@@ -76,27 +93,11 @@ export default function GoalModal({ goal, onClose, onSave }: GoalModalProps) {
             </label>
             <input
               type="number"
-              value={formData.target}
-              onChange={(e) =>
-                setFormData({ ...formData, target: Number(e.target.value) })
-              }
+              {...register("targetAmount", {
+                valueAsNumber: true,
+              })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              카테고리
-            </label>
-            <input
-              type="text"
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="예: 구매, 여행, 저축"
             />
           </div>
 
@@ -106,10 +107,7 @@ export default function GoalModal({ goal, onClose, onSave }: GoalModalProps) {
             </label>
             <input
               type="date"
-              value={formData.dueDate}
-              onChange={(e) =>
-                setFormData({ ...formData, dueDate: e.target.value })
-              }
+              {...register("endAt")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -119,18 +117,12 @@ export default function GoalModal({ goal, onClose, onSave }: GoalModalProps) {
               우선순위
             </label>
             <select
-              value={formData.priority}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  priority: e.target.value as Priority,
-                })
-              }
+              {...register("priority")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="low">낮음</option>
-              <option value="medium">보통</option>
-              <option value="high">높음</option>
+              <option value="LOW">낮음</option>
+              <option value="MEDIUM">보통</option>
+              <option value="HIGH">높음</option>
             </select>
           </div>
 
@@ -140,10 +132,7 @@ export default function GoalModal({ goal, onClose, onSave }: GoalModalProps) {
             </label>
             <input
               type="url"
-              value={formData.image}
-              onChange={(e) =>
-                setFormData({ ...formData, image: e.target.value })
-              }
+              {...register("imageUrl")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="https://example.com/image.jpg"
             />
@@ -154,10 +143,7 @@ export default function GoalModal({ goal, onClose, onSave }: GoalModalProps) {
               설명
             </label>
             <textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
+              {...register("description")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={3}
               placeholder="목표에 대한 상세 설명을 입력하세요"
@@ -176,7 +162,7 @@ export default function GoalModal({ goal, onClose, onSave }: GoalModalProps) {
               type="submit"
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              {goal ? "수정" : "추가"}
+              {isAdding || isUpdating ? "저장중..." : goal ? "수정" : "추가"}
             </button>
           </div>
         </form>

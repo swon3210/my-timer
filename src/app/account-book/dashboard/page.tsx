@@ -1,158 +1,34 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { BudgetStatus } from "@/types/budget";
 import { useSavingsQuery } from "@/domains/account-book/dashboard/useSavingsQuery";
+import { cn } from "@/lib/utils";
+import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
+import { Goal } from "@/app/api/account-books/goals/types";
 
 export default function AccountBookDashboardPage() {
-  const [budgetStatus, setBudgetStatus] = useState<BudgetStatus | null>(null);
-
   const { data: savingsData, isLoading } = useSavingsQuery();
+
+  const { data: goals } = useGoalsQuery();
+
+  const onGoingGoals = goals?.filter((goal) => goal.status === "ON-GOING");
+  const completedGoals = goals?.filter((goal) => goal.status === "COMPLETED");
 
   const savingsGrowth =
     ((savingsData?.thisMonthSavings ?? 0) /
       (savingsData?.lastMonthSavings ?? 0)) *
     100;
 
-  const [goalsData] = useState({
-    activeGoals: 3,
-    completedGoals: 7,
-    recentGoals: [
-      {
-        id: 1,
-        title: "새 노트북 구매",
-        target: 2000000,
-        current: 1650000,
-        progress: 82.5,
-        category: "구매",
-        dueDate: "2024-03-15",
-      },
-      {
-        id: 2,
-        title: "여행 자금",
-        target: 3000000,
-        current: 2100000,
-        progress: 70,
-        category: "여행",
-        dueDate: "2024-06-01",
-      },
-      {
-        id: 3,
-        title: "비상금 마련",
-        target: 5000000,
-        current: 3800000,
-        progress: 76,
-        category: "저축",
-        dueDate: "2024-12-31",
-      },
-    ],
-  });
-
-  useEffect(() => {
-    // 샘플 예산 상태 데이터
-    const sampleBudgetStatus: BudgetStatus = {
-      totalBudget: 2000000,
-      totalSpent: 1650000,
-      remainingBudget: 350000,
-      progressPercentage: 82.5,
-      isOverBudget: false,
-      categories: [
-        {
-          id: "1",
-          name: "식비",
-          allocated: 600000,
-          spent: 520000,
-          remaining: 80000,
-          percentage: 86.7,
-          isOverBudget: false,
-          color: "#10B981",
-        },
-        {
-          id: "2",
-          name: "교통비",
-          allocated: 200000,
-          spent: 240000,
-          remaining: -40000,
-          percentage: 120,
-          isOverBudget: true,
-          color: "#EF4444",
-        },
-        {
-          id: "3",
-          name: "쇼핑",
-          allocated: 400000,
-          spent: 350000,
-          remaining: 50000,
-          percentage: 87.5,
-          isOverBudget: false,
-          color: "#8B5CF6",
-        },
-        {
-          id: "4",
-          name: "문화생활",
-          allocated: 300000,
-          spent: 180000,
-          remaining: 120000,
-          percentage: 60,
-          isOverBudget: false,
-          color: "#F59E0B",
-        },
-        {
-          id: "5",
-          name: "기타",
-          allocated: 500000,
-          spent: 360000,
-          remaining: 140000,
-          percentage: 72,
-          isOverBudget: false,
-          color: "#3B82F6",
-        },
-      ],
-    };
-
-    setTimeout(() => {
-      setBudgetStatus(sampleBudgetStatus);
-    }, 500);
-  }, []);
+  const goalProgress = (goal: Goal) => {
+    const progress =
+      (goal.targetAmount / (savingsData?.totalSavings ?? 0)) * 100;
+    return progress;
+  };
 
   if (isLoading) {
     return (
       <div className="grow flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <p className="mt-4 text-gray-600">예산 정보를 불러오는 중...</p>
-      </div>
-    );
-  }
-
-  if (!budgetStatus) {
-    return (
-      <div className="grow flex flex-col items-center justify-center p-6">
-        <div className="text-center">
-          <div className="w-24 h-24 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg
-              className="w-12 h-12 text-blue-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
-              />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
-            예산을 설정해보세요
-          </h2>
-          <p className="text-gray-600 mb-6">
-            월간 예산을 설정하여 지출을 체계적으로 관리할 수 있습니다.
-          </p>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors">
-            예산 설정하기
-          </button>
-        </div>
       </div>
     );
   }
@@ -197,7 +73,7 @@ export default function AccountBookDashboardPage() {
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                 <svg
-                  className="w-6 h-6"
+                  className="size-12"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -215,19 +91,19 @@ export default function AccountBookDashboardPage() {
 
             <div className="text-center">
               <p className="text-4xl font-bold mb-2">
-                ₩{savingsData?.totalSavings.toLocaleString()}
+                {savingsData?.totalSavings.toLocaleString()}원
               </p>
               <p className="text-green-100 text-sm mb-4">총 저축금액</p>
 
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/20">
                 <div className="text-center">
                   <p className="text-lg font-bold">
-                    ₩{savingsData?.thisMonthSavings.toLocaleString()}
+                    {savingsData?.thisMonthSavings.toLocaleString()}원
                   </p>
                   <p className="text-green-100 text-xs">이번 달</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-bold">+{savingsGrowth}%</p>
+                  <p className="text-lg font-bold">{savingsGrowth}%</p>
                   <p className="text-green-100 text-xs">증가율</p>
                 </div>
               </div>
@@ -262,12 +138,17 @@ export default function AccountBookDashboardPage() {
                 <div>
                   <p className="text-sm text-gray-600">이번 달 저축</p>
                   <p className="text-2xl font-bold text-gray-800">
-                    ₩{savingsData?.thisMonthSavings.toLocaleString()}
+                    {savingsData?.thisMonthSavings.toLocaleString()}원
                   </p>
                 </div>
                 <div className="flex items-center space-x-1">
                   <svg
-                    className="w-4 h-4 text-green-500"
+                    className={cn(
+                      "w-4 h-4",
+                      savingsGrowth > 0
+                        ? "text-green-500"
+                        : "text-red-500 rotate-180"
+                    )}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -279,8 +160,13 @@ export default function AccountBookDashboardPage() {
                       d="M5 10l7-7m0 0l7 7m-7-7v18"
                     />
                   </svg>
-                  <span className="text-sm text-green-600 font-medium">
-                    +{savingsGrowth}%
+                  <span
+                    className={cn(
+                      "text-sm font-medium",
+                      savingsGrowth > 0 ? "text-green-500" : "text-red-500"
+                    )}
+                  >
+                    {savingsGrowth}%
                   </span>
                 </div>
               </div>
@@ -290,16 +176,16 @@ export default function AccountBookDashboardPage() {
                   <div>
                     <p className="text-xs text-gray-500">지난 달</p>
                     <p className="text-lg font-bold text-gray-800">
-                      ₩{savingsData?.lastMonthSavings.toLocaleString()}
+                      {savingsData?.lastMonthSavings.toLocaleString()}원
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">월 평균</p>
                     <p className="text-lg font-bold text-gray-800">
-                      ₩
                       {Math.round(
                         (savingsData?.totalSavings ?? 0) / 12
                       ).toLocaleString()}
+                      원
                     </p>
                   </div>
                 </div>
@@ -360,11 +246,11 @@ export default function AccountBookDashboardPage() {
 
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="text-center">
-                <p className="text-3xl font-bold">{goalsData.activeGoals}</p>
+                <p className="text-3xl font-bold">{onGoingGoals?.length}</p>
                 <p className="text-blue-100 text-sm">진행중</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold">{goalsData.completedGoals}</p>
+                <p className="text-3xl font-bold">{completedGoals?.length}</p>
                 <p className="text-blue-100 text-sm">완료</p>
               </div>
             </div>
@@ -374,8 +260,9 @@ export default function AccountBookDashboardPage() {
                 <p className="text-blue-100 text-sm mb-1">전체 목표 달성률</p>
                 <p className="text-2xl font-bold">
                   {Math.round(
-                    (goalsData.completedGoals /
-                      (goalsData.activeGoals + goalsData.completedGoals)) *
+                    ((completedGoals?.length ?? 0) /
+                      ((onGoingGoals?.length ?? 0) +
+                        (completedGoals?.length ?? 0))) *
                       100
                   )}
                   %
@@ -386,7 +273,7 @@ export default function AccountBookDashboardPage() {
 
           {/* 최근 목표들 */}
           <div className="lg:col-span-2 space-y-4">
-            {goalsData.recentGoals.map((goal) => (
+            {onGoingGoals?.map((goal) => (
               <div
                 key={goal.id}
                 className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all hover-lift"
@@ -395,22 +282,24 @@ export default function AccountBookDashboardPage() {
                   <div className="flex items-center space-x-3">
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                     <div>
-                      <h5 className="font-bold text-gray-800">{goal.title}</h5>
+                      <h5 className="font-bold text-gray-800">
+                        {goal.displayName}
+                      </h5>
                       <div className="flex items-center space-x-2 text-xs text-gray-500">
                         <span className="bg-gray-100 px-2 py-1 rounded">
-                          {goal.category}
+                          {goal.description}
                         </span>
-                        <span>마감: {goal.dueDate}</span>
+                        <span>마감: {goal.endAt}</span>
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold text-gray-800">
-                      ₩{goal.current.toLocaleString()} / ₩
-                      {goal.target.toLocaleString()}
+                      ₩{savingsData?.totalSavings.toLocaleString()} / ₩
+                      {goal.targetAmount.toLocaleString()}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {goal.progress}% 달성
+                      {goalProgress(goal)}% 달성
                     </p>
                   </div>
                 </div>
@@ -418,7 +307,7 @@ export default function AccountBookDashboardPage() {
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-blue-500 rounded-full h-2 transition-all duration-1000"
-                    style={{ width: `${goal.progress}%` }}
+                    style={{ width: `${goalProgress(goal)}%` }}
                   ></div>
                 </div>
               </div>

@@ -1,30 +1,35 @@
-import { Goal, Priority } from "@/types/goal";
+import { Goal, Priority } from "@/app/api/account-books/goals/types";
+import { useSavingsQuery } from "@/domains/account-book/dashboard/useSavingsQuery";
 
 interface GoalCardProps {
   goal: Goal;
   onEdit: (goal: Goal) => void;
-  onDelete: (goalId: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
+  const { data: savings } = useSavingsQuery();
+
+  const progress = (savings?.totalSavings ?? 0) / (goal.targetAmount ?? 0);
+
   const getPriorityColor = (priority: Priority) => {
     switch (priority) {
-      case "high":
+      case "HIGH":
         return "bg-red-100 text-red-800";
-      case "medium":
+      case "MEDIUM":
         return "bg-yellow-100 text-yellow-800";
-      case "low":
+      case "LOW":
         return "bg-green-100 text-green-800";
     }
   };
 
   const getPriorityText = (priority: Priority) => {
     switch (priority) {
-      case "high":
+      case "HIGH":
         return "높음";
-      case "medium":
+      case "MEDIUM":
         return "보통";
-      case "low":
+      case "LOW":
         return "낮음";
     }
   };
@@ -41,10 +46,11 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
         <div className="flex items-start space-x-4">
           {/* 목표 이미지 */}
           <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-            {goal.image ? (
+            {goal.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={goal.image}
-                alt={goal.title}
+                src={goal.imageUrl}
+                alt={goal.displayName}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -66,7 +72,9 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
 
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
-              <h3 className="text-lg font-bold text-gray-800">{goal.title}</h3>
+              <h3 className="text-lg font-bold text-gray-800">
+                {goal.displayName}
+              </h3>
               <span
                 className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(
                   goal.priority
@@ -75,7 +83,7 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
                 {getPriorityText(goal.priority)}
               </span>
               <span className="bg-gray-100 px-2 py-1 rounded text-xs text-gray-600">
-                {goal.category}
+                {goal.description}
               </span>
             </div>
 
@@ -84,8 +92,8 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
             )}
 
             <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span>마감: {goal.dueDate}</span>
-              <span>달성률: {goal.progress}%</span>
+              <span>마감: {goal.endAt}</span>
+              <span>달성률: {goal.targetAmount}%</span>
             </div>
           </div>
         </div>
@@ -134,23 +142,26 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium text-gray-700">
-            ₩{goal.current.toLocaleString()} / ₩{goal.target.toLocaleString()}
+            ₩{goal.targetAmount.toLocaleString()} / ₩
+            {goal.targetAmount.toLocaleString()}
           </span>
           <span className="text-sm font-bold text-blue-600">
-            {goal.progress}%
+            {progress.toFixed(2)}%
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div
             className="bg-blue-500 rounded-full h-3 transition-all duration-1000"
-            style={{ width: `${Math.min(goal.progress, 100)}%` }}
+            style={{ width: `${Math.min(progress, 100)}%` }}
           ></div>
         </div>
       </div>
 
       {/* 남은 금액 */}
       <div className="text-sm text-gray-600">
-        목표까지 ₩{(goal.target - goal.current).toLocaleString()} 남음
+        목표까지 ₩
+        {(goal.targetAmount - (savings?.totalSavings ?? 0)).toLocaleString()}
+        남음
       </div>
     </div>
   );

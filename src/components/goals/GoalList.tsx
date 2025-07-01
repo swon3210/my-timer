@@ -1,20 +1,22 @@
-import { Goal } from "@/types/goal";
+import { Goal } from "@/app/api/account-books/goals/types";
 import GoalCard from "./GoalCard";
+import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
+import { openGoalModal } from "./GoalModal";
 
-interface GoalListProps {
-  goals: Goal[];
-  onEdit: (goal: Goal) => void;
-  onDelete: (goalId: number) => void;
-  onAddNew: () => void;
-}
+export default function GoalList() {
+  const { data: goals } = useGoalsQuery();
 
-export default function GoalList({
-  goals,
-  onEdit,
-  onDelete,
-  onAddNew,
-}: GoalListProps) {
-  if (goals.length === 0) {
+  const handleEdit = (goal: Goal) => {
+    openGoalModal(goal);
+  };
+
+  const handleDelete = (id: string) => {
+    console.log({
+      id,
+    });
+  };
+
+  if (goals?.length === 0) {
     return (
       <div className="text-center py-12">
         <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
@@ -39,7 +41,7 @@ export default function GoalList({
           필터 조건을 변경하거나 새 목표를 추가해보세요
         </p>
         <button
-          onClick={onAddNew}
+          onClick={() => openGoalModal()}
           className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
         >
           새 목표 추가
@@ -50,12 +52,12 @@ export default function GoalList({
 
   return (
     <div className="space-y-4">
-      {goals.map((goal) => (
+      {goals?.map((goal) => (
         <GoalCard
           key={goal.id}
           goal={goal}
-          onEdit={onEdit}
-          onDelete={onDelete}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       ))}
     </div>

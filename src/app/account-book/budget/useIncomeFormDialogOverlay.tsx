@@ -1,10 +1,8 @@
-import useOverlay from "@/hooks/useOverlay";
+import { overlay } from "overlay-kit";
 import { IncomeFormValues } from "./types";
 import IncomeFormDialog from "./IncomeFormDialog";
 
 const useIncomeFormDialogOverlay = () => {
-  const overlay = useOverlay();
-
   const openIncomeFormDialog = (
     params: {
       defaultValues?: IncomeFormValues;
