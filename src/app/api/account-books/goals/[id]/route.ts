@@ -57,7 +57,7 @@ export const PATCH = withAuth(async (req, routeInfo) => {
 
 export const DELETE = withAuth(async (req, routeInfo) => {
   try {
-    const id = routeInfo?.params.goalId;
+    const id = routeInfo?.params.id;
 
     if (!id) {
       return NextResponse.json(

@@ -20,9 +20,7 @@ export const patchGoals = async (goal: Goal) => {
   return response.data;
 };
 
-export const deleteGoals = async (goalId: string) => {
-  const response = await axiosInstance.delete(
-    `/api/account-books/goals/${goalId}`
-  );
+export const deleteGoals = async (id: string) => {
+  const response = await axiosInstance.delete(`/api/account-books/goals/${id}`);
   return response.data;
 };

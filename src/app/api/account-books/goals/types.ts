@@ -9,7 +9,6 @@ const statusSchema = z.enum(["ON-GOING", "COMPLETED", "CANCELLED"]);
 export type Status = z.infer<typeof statusSchema>;
 
 export const goalSchema = z.object({
-  categoryType: z.enum(["INCOME", "EXPENSE"]),
   categoryId: z.string(),
   priority: prioritySchema,
   displayName: z.string(),

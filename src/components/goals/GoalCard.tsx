@@ -1,5 +1,27 @@
 import { Goal, Priority } from "@/app/api/account-books/goals/types";
-import { useSavingsQuery } from "@/domains/account-book/dashboard/useSavingsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
+
+const getPriorityColor = (priority: Priority) => {
+  switch (priority) {
+    case "HIGH":
+      return "bg-red-100 text-red-800";
+    case "MEDIUM":
+      return "bg-yellow-100 text-yellow-800";
+    case "LOW":
+      return "bg-green-100 text-green-800";
+  }
+};
+
+const getPriorityText = (priority: Priority) => {
+  switch (priority) {
+    case "HIGH":
+      return "높음";
+    case "MEDIUM":
+      return "보통";
+    case "LOW":
+      return "낮음";
+  }
+};
 
 interface GoalCardProps {
   goal: Goal;
@@ -8,31 +30,23 @@ interface GoalCardProps {
 }
 
 export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
-  const { data: savings } = useSavingsQuery();
+  const { data: transactions } = useTransactionsQuery();
 
-  const progress = (savings?.totalSavings ?? 0) / (goal.targetAmount ?? 0);
+  const incomeTransactions =
+    transactions?.filter(
+      (transaction) =>
+        transaction.type === "INCOME" &&
+        transaction.categoryId === goal.categoryId
+    ) ?? [];
 
-  const getPriorityColor = (priority: Priority) => {
-    switch (priority) {
-      case "HIGH":
-        return "bg-red-100 text-red-800";
-      case "MEDIUM":
-        return "bg-yellow-100 text-yellow-800";
-      case "LOW":
-        return "bg-green-100 text-green-800";
-    }
-  };
+  const totalIncome = incomeTransactions.reduce(
+    (acc, transaction) => acc + transaction.amount,
+    0
+  );
 
-  const getPriorityText = (priority: Priority) => {
-    switch (priority) {
-      case "HIGH":
-        return "높음";
-      case "MEDIUM":
-        return "보통";
-      case "LOW":
-        return "낮음";
-    }
-  };
+  const progress = (totalIncome ?? 0) / (goal.targetAmount ?? 0);
+  const progressPercentage = Math.min(Math.floor(progress * 100), 100);
+  const remainingAmount = goal.targetAmount - totalIncome;
 
   const handleDeleteClick = () => {
     if (confirm("이 목표를 삭제하시겠습니까?")) {
@@ -93,7 +107,7 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
 
             <div className="flex items-center space-x-4 text-sm text-gray-500">
               <span>마감: {goal.endAt}</span>
-              <span>달성률: {goal.targetAmount}%</span>
+              <span>달성률: {progressPercentage}%</span>
             </div>
           </div>
         </div>
@@ -142,7 +156,7 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium text-gray-700">
-            ₩{goal.targetAmount.toLocaleString()} / ₩
+            ₩{totalIncome?.toLocaleString()} / ₩
             {goal.targetAmount.toLocaleString()}
           </span>
           <span className="text-sm font-bold text-blue-600">
@@ -152,16 +166,16 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div
             className="bg-blue-500 rounded-full h-3 transition-all duration-1000"
-            style={{ width: `${Math.min(progress, 100)}%` }}
+            style={{ width: `${progressPercentage}%` }}
           ></div>
         </div>
       </div>
 
       {/* 남은 금액 */}
       <div className="text-sm text-gray-600">
-        목표까지 ₩
-        {(goal.targetAmount - (savings?.totalSavings ?? 0)).toLocaleString()}
-        남음
+        {remainingAmount > 0
+          ? `목표까지 ₩${remainingAmount.toLocaleString()} 남음`
+          : `목표 달성!`}
       </div>
     </div>
   );

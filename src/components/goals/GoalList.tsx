@@ -2,18 +2,26 @@ import { Goal } from "@/app/api/account-books/goals/types";
 import GoalCard from "./GoalCard";
 import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
 import { openGoalModal } from "./GoalModal";
+import { useDeleteGoalsMutation } from "@/domains/account-book/goal/useDeleteGoalsMutation";
+import { toast } from "sonner";
 
 export default function GoalList() {
   const { data: goals } = useGoalsQuery();
+
+  const { mutateAsync: deleteGoal } = useDeleteGoalsMutation();
 
   const handleEdit = (goal: Goal) => {
     openGoalModal(goal);
   };
 
-  const handleDelete = (id: string) => {
-    console.log({
-      id,
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteGoal(id);
+      toast.success("목표가 삭제되었습니다.");
+    } catch (error) {
+      toast.error("목표 삭제에 실패했습니다.");
+      console.error(error);
+    }
   };
 
   if (goals?.length === 0) {
