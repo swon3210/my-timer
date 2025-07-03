@@ -1,4 +1,5 @@
 import { Goal, Priority } from "@/app/api/account-books/goals/types";
+import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 
 const getPriorityColor = (priority: Priority) => {
@@ -31,6 +32,11 @@ interface GoalCardProps {
 
 export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
   const { data: transactions } = useTransactionsQuery();
+  const { data: categories } = useTransactionCategoriesQuery();
+
+  const category = categories?.find(
+    (category) => category.id === goal.categoryId
+  );
 
   const incomeTransactions =
     transactions?.filter(
@@ -96,9 +102,6 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
               >
                 {getPriorityText(goal.priority)}
               </span>
-              <span className="bg-gray-100 px-2 py-1 rounded text-xs text-gray-600">
-                {goal.description}
-              </span>
             </div>
 
             {goal.description && (
@@ -106,8 +109,8 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
             )}
 
             <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span>마감: {goal.endAt}</span>
-              <span>달성률: {progressPercentage}%</span>
+              <span>마감: {Boolean(goal.endAt) ? goal.endAt : "미정"}</span>
+              <span>카테고리: {category?.displayedName}</span>
             </div>
           </div>
         </div>
@@ -160,7 +163,7 @@ export default function GoalCard({ goal, onEdit, onDelete }: GoalCardProps) {
             {goal.targetAmount.toLocaleString()}
           </span>
           <span className="text-sm font-bold text-blue-600">
-            {progress.toFixed(2)}%
+            {progressPercentage}%
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">

@@ -1,21 +1,15 @@
-import { Goal } from "@/types/goal";
+import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
 
-interface GoalStatsCardsProps {
-  goals: Goal[];
-}
+export default function GoalStatsCards() {
+  const { data: goals } = useGoalsQuery();
 
-export default function GoalStatsCards({ goals }: GoalStatsCardsProps) {
-  const inProgressGoals = goals.filter((g) => g.progress < 100);
-  const totalTargetAmount = goals.reduce((sum, goal) => sum + goal.target, 0);
-  const averageProgress =
-    goals.length > 0
-      ? Math.round(
-          goals.reduce((sum, goal) => sum + goal.progress, 0) / goals.length
-        )
-      : 0;
+  if (!goals) return null;
+
+  const inProgressGoals = goals.filter((goal) => goal.status === "ON-GOING");
+  const completedGoals = goals.filter((goal) => goal.status === "COMPLETED");
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div className="bg-white rounded-xl p-4 border border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -34,8 +28,10 @@ export default function GoalStatsCards({ goals }: GoalStatsCardsProps) {
             </svg>
           </div>
           <div>
-            <p className="text-sm text-gray-600">전체 목표</p>
-            <p className="text-xl font-bold text-gray-800">{goals.length}개</p>
+            <p className="text-sm text-gray-600">진행중</p>
+            <p className="text-xl font-bold text-gray-800">
+              {inProgressGoals.length}개
+            </p>
           </div>
         </div>
       </div>
@@ -58,35 +54,9 @@ export default function GoalStatsCards({ goals }: GoalStatsCardsProps) {
             </svg>
           </div>
           <div>
-            <p className="text-sm text-gray-600">진행중</p>
+            <p className="text-sm text-gray-600">완료</p>
             <p className="text-xl font-bold text-gray-800">
-              {inProgressGoals.length}개
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl p-4 border border-gray-200">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-            <svg
-              className="w-5 h-5 text-purple-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-              />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm text-gray-600">목표 총액</p>
-            <p className="text-xl font-bold text-gray-800">
-              ₩{totalTargetAmount.toLocaleString()}
+              {completedGoals.length}개
             </p>
           </div>
         </div>
@@ -110,9 +80,9 @@ export default function GoalStatsCards({ goals }: GoalStatsCardsProps) {
             </svg>
           </div>
           <div>
-            <p className="text-sm text-gray-600">평균 달성률</p>
+            <p className="text-sm text-gray-600">달성률</p>
             <p className="text-xl font-bold text-gray-800">
-              {averageProgress}%
+              {Math.round((completedGoals.length / goals.length) * 100)}%
             </p>
           </div>
         </div>

@@ -5,7 +5,8 @@ import { NextResponse } from "next/server";
 
 export const PATCH = withAuth(async (req, routeInfo) => {
   try {
-    const id = routeInfo?.params.goalId;
+    const id = routeInfo?.params.id;
+
     const {
       priority,
       displayName,
@@ -14,18 +15,11 @@ export const PATCH = withAuth(async (req, routeInfo) => {
       targetAmount,
       startAt,
       endAt,
+      categoryId,
     } = await req.json();
 
-    if (
-      !id ||
-      !priority ||
-      !displayName ||
-      !description ||
-      !imageUrl ||
-      !targetAmount ||
-      !startAt ||
-      !endAt
-    ) {
+    // TODO : zod 검증으로 대체
+    if (!id || !priority || !displayName || !description || !targetAmount) {
       return NextResponse.json(
         { error: "필수 필드가 누락되었습니다." },
         { status: 400 }
@@ -42,6 +36,7 @@ export const PATCH = withAuth(async (req, routeInfo) => {
       targetAmount,
       startAt,
       endAt,
+      categoryId,
     };
     await update(goalRef, updates);
 
