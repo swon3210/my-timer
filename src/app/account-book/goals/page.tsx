@@ -1,21 +1,48 @@
 "use client";
 
-import GoalStatsCards from "@/components/goals/GoalStatsCards";
-import GoalFilters from "@/components/goals/GoalFilters";
-import GoalList from "@/components/goals/GoalList";
-import { useGoals } from "@/components/goals/useGoals";
-import { openGoalModal } from "@/components/goals/GoalModal";
+import GoalStatsCards from "./components/GoalStatsCards";
+import GoalFilters, { GoalFilter } from "./components/GoalFilters";
+import GoalList from "./components/GoalList";
+import { openGoalModal } from "./components/GoalModal";
+import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
+import { useState } from "react";
+import {
+  compareGoalByDueDate,
+  compareGoalByPriority,
+  compareGoalByProgress,
+} from "./helper";
+import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 
 export default function GoalsPage() {
-  const {
-    goals,
-    isLoading,
-    filteredAndSortedGoals,
-    filterPriority,
-    sortBy,
-    setFilterPriority,
-    setSortBy,
-  } = useGoals();
+  const [filter, setFilter] = useState<GoalFilter>({
+    priority: "ALL",
+    sortBy: "DUE_DATE",
+  });
+
+  const { data: goals = [], isLoading } = useGoalsQuery();
+  const { data: transactions = [] } = useTransactionsQuery();
+
+  const filteredGoals = goals.filter((goal) => {
+    if (filter.priority !== "ALL") {
+      return goal.priority === filter.priority;
+    }
+    return true;
+  });
+
+  const filteredAndSortedGoals = filteredGoals.sort((a, b) => {
+    if (filter.sortBy === "DUE_DATE") {
+      return compareGoalByDueDate(a, b);
+    }
+
+    if (filter.sortBy === "PRIORITY") {
+      return compareGoalByPriority(a, b);
+    }
+
+    if (filter.sortBy === "PROGRESS") {
+      return compareGoalByProgress({ a, b, transactions });
+    }
+    return 0;
+  });
 
   if (isLoading) {
     return (
@@ -62,15 +89,13 @@ export default function GoalsPage() {
 
       {/* 필터 및 정렬 */}
       <GoalFilters
-        filterPriority={filterPriority}
-        setFilterPriority={setFilterPriority}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
+        filter={filter}
+        setFilter={setFilter}
         filteredCount={filteredAndSortedGoals.length}
       />
 
       {/* 목표 목록 */}
-      <GoalList />
+      <GoalList goals={filteredAndSortedGoals} />
     </div>
   );
 }

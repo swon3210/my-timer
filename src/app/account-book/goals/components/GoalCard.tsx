@@ -1,8 +1,8 @@
-import { Goal, Priority } from "@/app/api/account-books/goals/types";
+import { Goal, GoalPriority } from "@/app/api/account-books/goals/types";
 import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 
-const getPriorityColor = (priority: Priority) => {
+const getPriorityColor = (priority: GoalPriority) => {
   switch (priority) {
     case "HIGH":
       return "bg-red-100 text-red-800";
@@ -13,7 +13,7 @@ const getPriorityColor = (priority: Priority) => {
   }
 };
 
-const getPriorityText = (priority: Priority) => {
+const getPriorityText = (priority: GoalPriority) => {
   switch (priority) {
     case "HIGH":
       return "높음";

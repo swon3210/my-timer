@@ -2,11 +2,11 @@ import { z } from "zod";
 
 const prioritySchema = z.enum(["HIGH", "MEDIUM", "LOW"]);
 
-export type Priority = z.infer<typeof prioritySchema>;
+export type GoalPriority = z.infer<typeof prioritySchema>;
 
 const statusSchema = z.enum(["ON-GOING", "COMPLETED", "CANCELLED"]);
 
-export type Status = z.infer<typeof statusSchema>;
+export type GoalStatus = z.infer<typeof statusSchema>;
 
 export const goalSchema = z.object({
   categoryId: z.string(),

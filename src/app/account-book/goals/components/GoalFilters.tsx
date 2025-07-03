@@ -1,18 +1,19 @@
-import { Priority } from "@/types/goal";
+import { GoalPriority } from "@/app/api/account-books/goals/types";
+
+export type GoalFilter = {
+  priority: GoalPriority | "ALL";
+  sortBy: "DUE_DATE" | "PRIORITY" | "PROGRESS";
+};
 
 interface GoalFiltersProps {
-  filterPriority: Priority | "all";
-  setFilterPriority: (priority: Priority | "all") => void;
-  sortBy: "dueDate" | "priority" | "progress";
-  setSortBy: (sortBy: "dueDate" | "priority" | "progress") => void;
+  filter: GoalFilter;
+  setFilter: (filter: GoalFilter) => void;
   filteredCount: number;
 }
 
 export default function GoalFilters({
-  filterPriority,
-  setFilterPriority,
-  sortBy,
-  setSortBy,
+  filter,
+  setFilter,
   filteredCount,
 }: GoalFiltersProps) {
   return (
@@ -21,31 +22,37 @@ export default function GoalFilters({
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium text-gray-700">우선순위:</span>
           <select
-            value={filterPriority}
+            value={filter.priority}
             onChange={(e) =>
-              setFilterPriority(e.target.value as Priority | "all")
+              setFilter({
+                ...filter,
+                priority: e.target.value as GoalPriority | "ALL",
+              })
             }
             className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="all">전체</option>
-            <option value="high">높음</option>
-            <option value="medium">보통</option>
-            <option value="low">낮음</option>
+            <option value="ALL">전체</option>
+            <option value="HIGH">높음</option>
+            <option value="MEDIUM">보통</option>
+            <option value="LOW">낮음</option>
           </select>
         </div>
 
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium text-gray-700">정렬:</span>
           <select
-            value={sortBy}
+            value={filter.sortBy}
             onChange={(e) =>
-              setSortBy(e.target.value as "dueDate" | "priority" | "progress")
+              setFilter({
+                ...filter,
+                sortBy: e.target.value as "DUE_DATE" | "PRIORITY" | "PROGRESS",
+              })
             }
             className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="dueDate">마감일순</option>
-            <option value="priority">우선순위순</option>
-            <option value="progress">달성률순</option>
+            <option value="DUE_DATE">마감일순</option>
+            <option value="PRIORITY">우선순위순</option>
+            <option value="PROGRESS">달성률순</option>
           </select>
         </div>
 

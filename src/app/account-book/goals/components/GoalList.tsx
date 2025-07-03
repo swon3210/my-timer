@@ -1,13 +1,14 @@
 import { Goal } from "@/app/api/account-books/goals/types";
 import GoalCard from "./GoalCard";
-import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
 import { openGoalModal } from "./GoalModal";
 import { useDeleteGoalsMutation } from "@/domains/account-book/goal/useDeleteGoalsMutation";
 import { toast } from "sonner";
 
-export default function GoalList() {
-  const { data: goals } = useGoalsQuery();
+interface GoalListProps {
+  goals: Goal[];
+}
 
+export default function GoalList({ goals }: GoalListProps) {
   const { mutateAsync: deleteGoal } = useDeleteGoalsMutation();
 
   const handleEdit = (goal: Goal) => {
@@ -24,7 +25,7 @@ export default function GoalList() {
     }
   };
 
-  if (goals?.length === 0) {
+  if (goals.length === 0) {
     return (
       <div className="text-center py-12">
         <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
@@ -60,7 +61,7 @@ export default function GoalList() {
 
   return (
     <div className="space-y-4">
-      {goals?.map((goal) => (
+      {goals.map((goal) => (
         <GoalCard
           key={goal.id}
           goal={goal}

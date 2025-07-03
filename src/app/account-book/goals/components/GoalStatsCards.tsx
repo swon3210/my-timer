@@ -1,10 +1,10 @@
-import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
+import { Goal } from "@/app/api/account-books/goals/types";
 
-export default function GoalStatsCards() {
-  const { data: goals } = useGoalsQuery();
+interface GoalStatsCardsProps {
+  goals: Goal[];
+}
 
-  if (!goals) return null;
-
+export default function GoalStatsCards({ goals }: GoalStatsCardsProps) {
   const inProgressGoals = goals.filter((goal) => goal.status === "ON-GOING");
   const completedGoals = goals.filter((goal) => goal.status === "COMPLETED");
 

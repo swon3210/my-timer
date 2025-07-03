@@ -48,6 +48,8 @@ export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
     } else {
       addGoal(data);
     }
+
+    onClose();
   });
 
   if (!isOpen) {
