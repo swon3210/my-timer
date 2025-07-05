@@ -1,38 +1,53 @@
 "use client";
 
-import { BudgetCreateModalProps } from "./types";
+import { BudgetCreateModalProps, BudgetFormValues } from "./types";
 import { CategorySelector } from "./components/CategorySelector";
 import { BudgetAmountInput } from "./components/BudgetAmountInput";
-import { useBudgetForm } from "./hooks/useBudgetForm";
 import { mapCategoriesToOptions } from "./utils";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
+import { useAddBudgetMutation } from "@/domains/account-book/budgets/useAddBudgetMutation";
+import { useForm } from "react-hook-form";
 
 export default function BudgetCreateModal({
   isOpen,
   onClose,
-  onSave,
-  period,
-  initialBudget,
-  selectedYear,
-  selectedMonth,
+  defaultValues,
 }: BudgetCreateModalProps) {
   const { data: categories = [] } = useAccountItemCategoriesQuery();
+
+  const { mutateAsync: addBudget } = useAddBudgetMutation();
+
   const categoryOptions = mapCategoriesToOptions(categories);
 
-  const { form, handleSubmit, errors } = useBudgetForm({
-    initialBudget,
-    period,
-    selectedYear,
-    selectedMonth,
-    categoryOptions,
-    onSave,
+  const {
+    register,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<BudgetFormValues>({
+    defaultValues: defaultValues ?? {
+      title: "",
+      amount: 0,
+      categoryId: "",
+    },
   });
 
-  const { register, watch, setValue } = form;
-  const watchedValues = watch();
+  const { amount, categoryId } = watch();
+
+  const handleFormSubmit = handleSubmit(
+    async (formValues: BudgetFormValues) => {
+      // await addBudget({
+      //     description
+      //   amount: formValues.amount,
+      //   categoryId: formValues.selectedCategoryId,
+      // });
+      onClose();
+    }
+  );
 
   const handleCategorySelect = (categoryId: string) => {
-    setValue("selectedCategoryId", categoryId);
+    setValue("categoryId", categoryId);
   };
 
   const handleAmountChange = (amount: number) => {
@@ -48,7 +63,7 @@ export default function BudgetCreateModal({
           {/* 헤더 */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-800">
-              {initialBudget ? "예산 수정" : "예산 설정"}
+              {defaultValues ? "예산 수정" : "예산 설정"}
             </h2>
             <button
               onClick={onClose}
@@ -71,7 +86,7 @@ export default function BudgetCreateModal({
           </div>
 
           {/* 폼 */}
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleFormSubmit}>
             {/* 제목 */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -95,14 +110,14 @@ export default function BudgetCreateModal({
             {/* 카테고리 선택 */}
             <CategorySelector
               categories={categoryOptions}
-              selectedCategoryId={watchedValues.selectedCategoryId}
+              selectedCategoryId={categoryId}
               onCategorySelect={handleCategorySelect}
-              error={errors.selectedCategoryId?.message}
+              error={errors.categoryId?.message}
             />
 
             {/* 예산 금액 */}
             <BudgetAmountInput
-              value={watchedValues.amount}
+              value={amount}
               onChange={handleAmountChange}
               error={errors.amount?.message}
             />
@@ -120,7 +135,7 @@ export default function BudgetCreateModal({
                 type="submit"
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                {initialBudget ? "수정하기" : "생성하기"}
+                {defaultValues ? "수정하기" : "생성하기"}
               </button>
             </div>
           </form>

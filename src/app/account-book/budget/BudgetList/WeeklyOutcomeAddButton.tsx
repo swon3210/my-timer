@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import useOutcomeFormDialogOverlay from "../useOutcomeFormDialogOverlay";
-import { useAddBudgetsMutation } from "@/domains/account-book/budgets/useAddBudgetsMutation";
+import { useAddBudgetMutation } from "@/domains/account-book/budgets/useAddBudgetMutation";
 
 export default function WeeklyOutcomeAddButton() {
   const { openOutcomeFormDialog } = useOutcomeFormDialogOverlay();
 
-  const { mutateAsync: addBudget } = useAddBudgetsMutation();
+  const { mutateAsync: addBudget } = useAddBudgetMutation();
 
   const handleClick = async () => {
     const formValues = await openOutcomeFormDialog();

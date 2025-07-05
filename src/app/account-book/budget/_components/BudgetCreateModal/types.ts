@@ -1,21 +1,15 @@
-import { Budget } from "@/types/budget";
-import { CreateBudgetRequest } from "@/services/budgetService";
+import { Budget } from "@/app/api/budgets/type";
 
 export interface BudgetCreateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (budget: CreateBudgetRequest) => void;
-  period: "weekly" | "monthly" | "yearly";
-  initialBudget?: Budget;
-  selectedYear: number;
-  selectedMonth?: number;
+  defaultValues?: BudgetFormValues;
 }
 
-export interface BudgetFormData {
-  title: string;
-  amount: number;
-  selectedCategoryId: string;
-}
+export type BudgetFormValues = Omit<
+  Budget,
+  "id" | "createdAt" | "updatedAt" | "startAt" | "endAt"
+>;
 
 export interface CategoryOption {
   id: string;

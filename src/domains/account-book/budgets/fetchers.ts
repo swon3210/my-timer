@@ -1,5 +1,5 @@
+import { Budget } from "@/app/api/budgets/type";
 import { axiosInstance } from "@/lib/api";
-import { Budget } from "./types";
 
 export const getBudgets = async () => {
   const response = await axiosInstance.get<Budget[]>(
@@ -9,7 +9,9 @@ export const getBudgets = async () => {
   return response.data;
 };
 
-export const postBudget = async (budget: Omit<Budget, "id">) => {
+export const postBudget = async (
+  budget: Omit<Budget, "id" | "createdAt" | "updatedAt">
+) => {
   const response = await axiosInstance.post(
     "/api/account-books/budget",
     budget

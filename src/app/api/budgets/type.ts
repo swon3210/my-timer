@@ -1,0 +1,26 @@
+import { z } from "zod";
+
+const budgetSchema = z.object({
+  title: z.string(),
+  amount: z.number().positive(),
+  displayedName: z.string(),
+  description: z.string(),
+  categoryId: z.string(),
+  startAt: z.string(),
+  endAt: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const getBudgetsResponseSchema = z.record(z.string(), budgetSchema);
+
+export type Budget = z.infer<typeof budgetSchema> & {
+  id: string;
+};
+
+export const createBudgetRequestParamsSchema = z.object({
+  budget: budgetSchema.omit({
+    createdAt: true,
+    updatedAt: true,
+  }),
+});
