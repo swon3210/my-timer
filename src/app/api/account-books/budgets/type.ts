@@ -3,7 +3,6 @@ import { z } from "zod";
 const budgetSchema = z.object({
   title: z.string(),
   amount: z.number().positive(),
-  displayedName: z.string(),
   description: z.string(),
   categoryId: z.string(),
   startAt: z.string(),

@@ -1,4 +1,5 @@
 import { Budget } from "@/app/api/budgets/type";
+import { UseFormRegister, FieldError } from "react-hook-form";
 
 export interface BudgetCreateModalProps {
   isOpen: boolean;
@@ -19,13 +20,26 @@ export interface CategoryOption {
 
 export interface CategorySelectorProps {
   categories: CategoryOption[];
-  selectedCategoryId: string;
-  onCategorySelect: (categoryId: string) => void;
-  error?: string;
+  register: UseFormRegister<BudgetFormValues>;
+  error?: FieldError;
 }
 
 export interface BudgetAmountInputProps {
-  value: number;
-  onChange: (value: number) => void;
-  error?: string;
+  register: UseFormRegister<BudgetFormValues>;
+  error?: FieldError;
+}
+
+export interface BudgetTitleInputProps {
+  register: UseFormRegister<BudgetFormValues>;
+  error?: FieldError;
+}
+
+export interface BudgetDisplayNameInputProps {
+  register: UseFormRegister<BudgetFormValues>;
+  error?: FieldError;
+}
+
+export interface BudgetDescriptionInputProps {
+  register: UseFormRegister<BudgetFormValues>;
+  error?: FieldError;
 }

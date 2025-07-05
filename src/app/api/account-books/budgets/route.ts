@@ -37,9 +37,11 @@ export const GET = withAuth(async (req: AuthRequest) => {
 export const POST = withAuth(async (req: AuthRequest) => {
   try {
     const body = await req.json();
+
     const { budget } = createBudgetRequestParamsSchema.parse(body);
 
     const now = new Date();
+
     const newBudget = {
       ...budget,
       createdAt: now.toISOString(),

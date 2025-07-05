@@ -3,10 +3,13 @@
 import { BudgetCreateModalProps, BudgetFormValues } from "./types";
 import { CategorySelector } from "./components/CategorySelector";
 import { BudgetAmountInput } from "./components/BudgetAmountInput";
+import { BudgetTitleInput } from "./components/BudgetTitleInput";
+import { BudgetDescriptionInput } from "./components/BudgetDescriptionInput";
 import { mapCategoriesToOptions } from "./utils";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { useAddBudgetMutation } from "@/domains/account-book/budgets/useAddBudgetMutation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function BudgetCreateModal({
   isOpen,
@@ -15,44 +18,49 @@ export default function BudgetCreateModal({
 }: BudgetCreateModalProps) {
   const { data: categories = [] } = useAccountItemCategoriesQuery();
 
-  const { mutateAsync: addBudget } = useAddBudgetMutation();
+  const { mutateAsync: addBudget, isPending } = useAddBudgetMutation();
 
   const categoryOptions = mapCategoriesToOptions(categories);
 
   const {
     register,
-    watch,
-    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<BudgetFormValues>({
     defaultValues: defaultValues ?? {
       title: "",
       amount: 0,
+      description: "",
       categoryId: "",
     },
   });
 
-  const { amount, categoryId } = watch();
-
   const handleFormSubmit = handleSubmit(
     async (formValues: BudgetFormValues) => {
-      // await addBudget({
-      //     description
-      //   amount: formValues.amount,
-      //   categoryId: formValues.selectedCategoryId,
-      // });
-      onClose();
+      try {
+        const now = new Date().toISOString();
+
+        await addBudget({
+          title: formValues.title,
+          amount: formValues.amount,
+          description: formValues.description,
+          categoryId: formValues.categoryId,
+          startAt: now,
+          endAt: now,
+        });
+
+        toast.success(
+          defaultValues
+            ? "예산이 성공적으로 수정되었습니다."
+            : "예산이 성공적으로 생성되었습니다."
+        );
+        onClose();
+      } catch (error) {
+        toast.error("예산 저장에 실패했습니다. 다시 시도해주세요.");
+        console.error("Budget creation error:", error);
+      }
     }
   );
-
-  const handleCategorySelect = (categoryId: string) => {
-    setValue("categoryId", categoryId);
-  };
-
-  const handleAmountChange = (amount: number) => {
-    setValue("amount", amount);
-  };
 
   if (!isOpen) return null;
 
@@ -86,56 +94,46 @@ export default function BudgetCreateModal({
           </div>
 
           {/* 폼 */}
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={handleFormSubmit} className="space-y-4">
             {/* 제목 */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                예산 제목
-              </label>
-              <input
-                type="text"
-                {...register("title")}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.title ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="예산 제목을 입력하세요"
-              />
-              {errors.title && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.title.message}
-                </p>
-              )}
-            </div>
+            <BudgetTitleInput register={register} error={errors.title} />
+
+            {/* 설명 */}
+            <BudgetDescriptionInput
+              register={register}
+              error={errors.description}
+            />
 
             {/* 카테고리 선택 */}
             <CategorySelector
               categories={categoryOptions}
-              selectedCategoryId={categoryId}
-              onCategorySelect={handleCategorySelect}
-              error={errors.categoryId?.message}
+              register={register}
+              error={errors.categoryId}
             />
 
             {/* 예산 금액 */}
-            <BudgetAmountInput
-              value={amount}
-              onChange={handleAmountChange}
-              error={errors.amount?.message}
-            />
+            <BudgetAmountInput register={register} error={errors.amount} />
 
             {/* 버튼 */}
-            <div className="flex space-x-3">
+            <div className="flex space-x-3 pt-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                disabled={isPending}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 취소
               </button>
               <button
                 type="submit"
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={isPending}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {defaultValues ? "수정하기" : "생성하기"}
+                {isPending
+                  ? "저장 중..."
+                  : defaultValues
+                  ? "수정하기"
+                  : "생성하기"}
               </button>
             </div>
           </form>
