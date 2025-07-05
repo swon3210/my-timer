@@ -103,7 +103,9 @@ export default function AccountBookDashboardPage() {
                   <p className="text-green-100 text-xs">이번 달</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-bold">{savingsGrowth}%</p>
+                  <p className="text-lg font-bold">
+                    {(savingsGrowth * 100).toFixed(2)}%
+                  </p>
                   <p className="text-green-100 text-xs">증가율</p>
                 </div>
               </div>
@@ -166,7 +168,7 @@ export default function AccountBookDashboardPage() {
                       savingsGrowth > 0 ? "text-green-500" : "text-red-500"
                     )}
                   >
-                    {savingsGrowth}%
+                    {(savingsGrowth * 100).toFixed(2)}%
                   </span>
                 </div>
               </div>
