@@ -4,7 +4,6 @@ import { useState } from "react";
 import BudgetOverview from "@/components/budget/BudgetOverview";
 import CategoryBudgetList from "@/components/budget/CategoryBudgetList";
 import BudgetCreateModal from "@/components/budget/BudgetCreateModal";
-import { BudgetStatus } from "@/types/budget";
 import {
   useBudgetsByPeriod,
   useBudgetStatus,

@@ -20,8 +20,7 @@ import useDeleteTransactionMutation from "@/domains/account-book/transactions/us
 function IncomeAddButton() {
   // const { date } = useDateAtom();
 
-  const { openExpenseFormDialog, closeExpenseFormDialog } =
-    useExpenseFormDialogOverlay();
+  const { openExpenseFormDialog } = useExpenseFormDialogOverlay();
 
   // const { data: user } = useUserSuspenseQuery();
 
@@ -59,8 +58,7 @@ function IncomeAddButton() {
       //   description: formValues.description,
       //   userId: user.uid,
       // });
-
-      closeExpenseFormDialog();
+      // closeExpenseFormDialog();
     } catch (error) {
       console.error(error);
     }
