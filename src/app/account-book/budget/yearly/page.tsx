@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import BudgetOverview from "@/components/budget/BudgetOverview";
-import CategoryBudgetList from "@/components/budget/CategoryBudgetList";
-import BudgetCreateModal from "@/components/budget/BudgetCreateModal";
+import BudgetOverview from "../_components/BudgetOverview";
+import CategoryBudgetList from "../_components/CategoryBudgetList";
+import BudgetCreateModal from "../_components/BudgetCreateModal";
 import { BudgetStatus } from "@/types/budget";
 import {
   useBudgetsByPeriod,

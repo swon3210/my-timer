@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import BudgetAlerts from "@/components/budget/BudgetAlerts";
+import BudgetAlerts from "../budget/_components/BudgetAlerts";
 import { BudgetAlert } from "@/types/budget";
 
 export default function NotificationsPage() {

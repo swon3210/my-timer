@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import BudgetOverview from "@/components/budget/BudgetOverview";
-import CategoryBudgetList from "@/components/budget/CategoryBudgetList";
-import BudgetCreateModal from "@/components/budget/BudgetCreateModal";
+import BudgetOverview from "../_components/BudgetOverview";
+import CategoryBudgetList from "../_components/CategoryBudgetList";
+import BudgetCreateModal from "../_components/BudgetCreateModal";
 import {
   useBudgetsByPeriod,
   useBudgetStatus,
@@ -121,7 +121,7 @@ export default function MonthlyBudgetPage() {
 
   if (isLoading) {
     return (
-      <div className="grow flex flex-col items-center justify-center">
+      <div className="grow h-full flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <p className="mt-4 text-gray-600">월간 예산 정보를 불러오는 중...</p>
       </div>
