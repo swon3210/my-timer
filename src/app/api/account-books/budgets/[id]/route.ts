@@ -2,37 +2,24 @@ import { NextResponse } from "next/server";
 import { withAuth, AuthRequest } from "@/app/api/firebase-admin";
 import { ref, get, set, remove } from "firebase/database";
 import { database } from "@/app/api/firebase";
-import { z } from "zod";
+import { getBudgetResponseSchema } from "../type";
+import dayjs from "dayjs";
 
-const budgetUpdateSchema = z.object({
-  title: z.string(),
-  amount: z.number().positive(),
-  period: z.enum(["weekly", "monthly", "yearly"]),
-  startDate: z.string().transform((str) => new Date(str)),
-  endDate: z.string().transform((str) => new Date(str)),
-  categories: z.array(
-    z.object({
-      categoryId: z.string(),
-      categoryName: z.string(),
-      allocatedAmount: z.number().min(0),
-      color: z.string(),
-    })
-  ),
-});
+const API_PATH = "account-book-budgets";
 
 // GET: 특정 예산 조회
-export const GET = withAuth(async (req: AuthRequest, context: any) => {
+export const GET = withAuth(async (req: AuthRequest, routeInfo) => {
   try {
-    const budgetId = context.params.budgetId;
+    const id = routeInfo?.params.id;
 
-    if (!budgetId) {
+    if (!id) {
       return NextResponse.json(
         { error: "예산 ID가 필요합니다." },
         { status: 400 }
       );
     }
 
-    const budgetRef = ref(database, `budgets/${req.user.uid}/${budgetId}`);
+    const budgetRef = ref(database, `${API_PATH}/${req.user.uid}/${id}`);
     const snapshot = await get(budgetRef);
 
     if (!snapshot.exists()) {
@@ -43,13 +30,10 @@ export const GET = withAuth(async (req: AuthRequest, context: any) => {
     }
 
     const budgetData = snapshot.val();
+
     const budget = {
-      id: budgetId,
+      id,
       ...budgetData,
-      startDate: new Date(budgetData.startDate),
-      endDate: new Date(budgetData.endDate),
-      createdAt: new Date(budgetData.createdAt),
-      updatedAt: new Date(budgetData.updatedAt),
     };
 
     return NextResponse.json(budget);
@@ -63,22 +47,19 @@ export const GET = withAuth(async (req: AuthRequest, context: any) => {
 });
 
 // PUT: 예산 수정
-export const PUT = withAuth(async (req: AuthRequest, context: any) => {
+export const PUT = withAuth(async (req: AuthRequest, routeInfo) => {
   try {
-    const budgetId = context.params.budgetId;
+    const id = routeInfo?.params.id;
 
-    if (!budgetId) {
+    if (!id) {
       return NextResponse.json(
         { error: "예산 ID가 필요합니다." },
         { status: 400 }
       );
     }
 
-    const body = await req.json();
-    const budgetData = budgetUpdateSchema.parse(body);
-
     // 기존 예산 확인
-    const budgetRef = ref(database, `budgets/${req.user.uid}/${budgetId}`);
+    const budgetRef = ref(database, `${API_PATH}/${req.user.uid}/${id}`);
     const snapshot = await get(budgetRef);
 
     if (!snapshot.exists()) {
@@ -88,28 +69,23 @@ export const PUT = withAuth(async (req: AuthRequest, context: any) => {
       );
     }
 
-    const existingBudget = snapshot.val();
-    const now = new Date();
+    const body = await req.json();
+
+    console.log({ body });
+
+    const budgetData = getBudgetResponseSchema.parse(body);
+    const now = dayjs().toISOString();
 
     const updatedBudget = {
-      ...existingBudget,
-      title: budgetData.title,
-      amount: budgetData.amount,
-      period: budgetData.period,
-      startDate: budgetData.startDate.toISOString(),
-      endDate: budgetData.endDate.toISOString(),
-      categories: budgetData.categories,
-      updatedAt: now.toISOString(),
+      ...budgetData,
+      updatedAt: now,
     };
 
     await set(budgetRef, updatedBudget);
 
     const response = {
-      id: budgetId,
+      id,
       ...updatedBudget,
-      startDate: budgetData.startDate,
-      endDate: budgetData.endDate,
-      createdAt: new Date(existingBudget.createdAt),
       updatedAt: now,
     };
 
@@ -124,11 +100,11 @@ export const PUT = withAuth(async (req: AuthRequest, context: any) => {
 });
 
 // DELETE: 예산 삭제
-export const DELETE = withAuth(async (req: AuthRequest, context: any) => {
+export const DELETE = withAuth(async (req: AuthRequest, routeInfo) => {
   try {
-    const budgetId = context.params.budgetId;
+    const id = routeInfo?.params.id;
 
-    if (!budgetId) {
+    if (!id) {
       return NextResponse.json(
         { error: "예산 ID가 필요합니다." },
         { status: 400 }
@@ -136,7 +112,7 @@ export const DELETE = withAuth(async (req: AuthRequest, context: any) => {
     }
 
     // 기존 예산 확인
-    const budgetRef = ref(database, `budgets/${req.user.uid}/${budgetId}`);
+    const budgetRef = ref(database, `${API_PATH}/${req.user.uid}/${id}`);
     const snapshot = await get(budgetRef);
 
     if (!snapshot.exists()) {

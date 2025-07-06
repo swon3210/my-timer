@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { patchBudget } from "./fetchers";
 
-export const useUpdateBudgetsMutation = () => {
+export const useUpdateBudgetMutation = () => {
   return useMutation({
     mutationFn: patchBudget,
   });

@@ -23,7 +23,12 @@ export const GET = withAuth(async (req: AuthRequest) => {
 
     const budgetsResponse = getBudgetsResponseSchema.parse(budgetsData);
 
-    return NextResponse.json(budgetsResponse);
+    return NextResponse.json(
+      Object.entries(budgetsResponse).map(([id, budget]) => ({
+        id,
+        ...budget,
+      }))
+    );
   } catch (error) {
     console.error("예산 조회 실패:", error);
     return NextResponse.json(

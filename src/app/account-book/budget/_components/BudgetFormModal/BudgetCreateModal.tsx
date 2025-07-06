@@ -7,18 +7,39 @@ import { BudgetTitleInput } from "./components/BudgetTitleInput";
 import { BudgetDescriptionInput } from "./components/BudgetDescriptionInput";
 import { mapCategoriesToOptions } from "./utils";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
-import { useAddBudgetMutation } from "@/domains/account-book/budgets/useAddBudgetMutation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { overlay } from "overlay-kit";
 
-export default function BudgetCreateModal({
+export const useBudgetFormModal = () => {
+  const openBudgetFormModal = (
+    params: {
+      defaultValues?: BudgetFormValues;
+    } | void
+  ) => {
+    return overlay.openAsync<BudgetFormValues | undefined>(
+      ({ close, isOpen }) => {
+        return (
+          <BudgetFormModal
+            isOpen={isOpen}
+            close={close}
+            defaultValues={params?.defaultValues}
+          />
+        );
+      }
+    );
+  };
+
+  return {
+    openBudgetFormModal,
+  };
+};
+
+export default function BudgetFormModal({
   isOpen,
-  onClose,
+  close,
   defaultValues,
 }: BudgetCreateModalProps) {
   const { data: categories = [] } = useAccountItemCategoriesQuery();
-
-  const { mutateAsync: addBudget, isPending } = useAddBudgetMutation();
 
   const categoryOptions = mapCategoriesToOptions(categories);
 
@@ -35,46 +56,23 @@ export default function BudgetCreateModal({
     },
   });
 
-  const handleFormSubmit = handleSubmit(
-    async (formValues: BudgetFormValues) => {
-      try {
-        const now = new Date().toISOString();
-
-        await addBudget({
-          title: formValues.title,
-          amount: formValues.amount,
-          description: formValues.description,
-          categoryId: formValues.categoryId,
-          startAt: now,
-          endAt: now,
-        });
-
-        toast.success(
-          defaultValues
-            ? "예산이 성공적으로 수정되었습니다."
-            : "예산이 성공적으로 생성되었습니다."
-        );
-        onClose();
-      } catch (error) {
-        toast.error("예산 저장에 실패했습니다. 다시 시도해주세요.");
-        console.error("Budget creation error:", error);
-      }
-    }
-  );
+  const handleFormSubmit = handleSubmit((formValues) => close(formValues));
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={() => close()}
+      />
+      <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto relative z-10">
         <div className="p-6">
           {/* 헤더 */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">
-              {defaultValues ? "예산 수정" : "예산 설정"}
-            </h2>
+            <h2 className="text-xl font-bold text-gray-800">예산 설정</h2>
             <button
-              onClick={onClose}
+              onClick={() => close()}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
               <svg
@@ -118,22 +116,16 @@ export default function BudgetCreateModal({
             <div className="flex space-x-3 pt-2">
               <button
                 type="button"
-                onClick={onClose}
-                disabled={isPending}
+                onClick={() => close()}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 취소
               </button>
               <button
                 type="submit"
-                disabled={isPending}
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isPending
-                  ? "저장 중..."
-                  : defaultValues
-                  ? "수정하기"
-                  : "생성하기"}
+                확인
               </button>
             </div>
           </form>

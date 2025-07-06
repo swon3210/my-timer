@@ -1,9 +1,9 @@
-import { Budget } from "@/app/api/budgets/type";
+import { Budget } from "@/app/api/account-books/budgets/type";
 import { UseFormRegister, FieldError } from "react-hook-form";
 
 export interface BudgetCreateModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  close: (values?: BudgetFormValues) => void;
   defaultValues?: BudgetFormValues;
 }
 

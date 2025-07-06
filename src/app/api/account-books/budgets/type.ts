@@ -13,6 +13,8 @@ const budgetSchema = z.object({
 
 export const getBudgetsResponseSchema = z.record(z.string(), budgetSchema);
 
+export const getBudgetResponseSchema = budgetSchema;
+
 export type Budget = z.infer<typeof budgetSchema> & {
   id: string;
 };

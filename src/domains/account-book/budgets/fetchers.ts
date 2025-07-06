@@ -16,7 +16,9 @@ export const postBudget = async (
   return response.data;
 };
 
-export const patchBudget = async (budget: Budget) => {
+export const patchBudget = async (
+  budget: Omit<Budget, "createdAt" | "updatedAt">
+) => {
   const response = await axiosInstance.patch(`${API_PATH}/${budget.id}`, {
     budget,
   });

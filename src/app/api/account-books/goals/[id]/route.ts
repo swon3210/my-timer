@@ -3,6 +3,8 @@ import { withAuth } from "@/app/api/firebase-admin";
 import { ref, remove, update } from "firebase/database";
 import { NextResponse } from "next/server";
 
+const API_PATH = "account-books/goals";
+
 export const PATCH = withAuth(async (req, routeInfo) => {
   try {
     const id = routeInfo?.params.id;
@@ -26,7 +28,7 @@ export const PATCH = withAuth(async (req, routeInfo) => {
       );
     }
 
-    const goalRef = ref(database, `account-book-goals/${req.user.uid}/${id}`);
+    const goalRef = ref(database, `${API_PATH}/${req.user.uid}/${id}`);
 
     const updates = {
       priority,
@@ -61,7 +63,7 @@ export const DELETE = withAuth(async (req, routeInfo) => {
       );
     }
 
-    const goalRef = ref(database, `account-book-goals/${req.user.uid}/${id}`);
+    const goalRef = ref(database, `${API_PATH}/${req.user.uid}/${id}`);
     await remove(goalRef);
 
     return NextResponse.json({ success: true });
