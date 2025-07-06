@@ -14,15 +14,17 @@ export const useBudgetFormModal = () => {
   const openBudgetFormModal = (
     params: {
       defaultValues?: BudgetFormValues;
+      title?: string;
     } | void
   ) => {
     return overlay.openAsync<BudgetFormValues | undefined>(
       ({ close, isOpen }) => {
         return (
           <BudgetFormModal
+            title={params?.title ?? "예산 설정"}
+            defaultValues={params?.defaultValues}
             isOpen={isOpen}
             close={close}
-            defaultValues={params?.defaultValues}
           />
         );
       }
@@ -35,6 +37,7 @@ export const useBudgetFormModal = () => {
 };
 
 export default function BudgetFormModal({
+  title = "예산 설정",
   isOpen,
   close,
   defaultValues,
@@ -70,7 +73,7 @@ export default function BudgetFormModal({
         <div className="p-6">
           {/* 헤더 */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">예산 설정</h2>
+            <h2 className="text-xl font-bold text-gray-800">{title}</h2>
             <button
               onClick={() => close()}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"

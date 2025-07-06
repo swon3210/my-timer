@@ -2,6 +2,7 @@ import { Budget } from "@/app/api/account-books/budgets/type";
 import { UseFormRegister, FieldError } from "react-hook-form";
 
 export interface BudgetCreateModalProps {
+  title: string;
   isOpen: boolean;
   close: (values?: BudgetFormValues) => void;
   defaultValues?: BudgetFormValues;
@@ -9,7 +10,7 @@ export interface BudgetCreateModalProps {
 
 export type BudgetFormValues = Omit<
   Budget,
-  "id" | "createdAt" | "updatedAt" | "startAt" | "endAt"
+  "id" | "createdAt" | "updatedAt" | "startAt" | "endAt" | "targetDate"
 >;
 
 export interface CategoryOption {

@@ -2,7 +2,7 @@
 
 import { Budget } from "@/app/api/account-books/budgets/type";
 import { formatCurrency } from "@/utils/format";
-import { useBudgetFormModal } from "../../_components/BudgetFormModal/BudgetCreateModal";
+import { useBudgetFormModal } from "../../_components/BudgetFormModal";
 import { useDeleteBudgetMutation } from "@/domains/account-book/budgets/useDeleteBudgetsMutation";
 import { useUpdateBudgetMutation } from "@/domains/account-book/budgets/useUpdateBudgetsMutation";
 import { getPeriod } from "../../_components/BudgetFormModal/utils";

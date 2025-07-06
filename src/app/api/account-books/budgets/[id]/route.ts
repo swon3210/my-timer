@@ -47,7 +47,7 @@ export const GET = withAuth(async (req: AuthRequest, routeInfo) => {
 });
 
 // PUT: 예산 수정
-export const PUT = withAuth(async (req: AuthRequest, routeInfo) => {
+export const PATCH = withAuth(async (req: AuthRequest, routeInfo) => {
   try {
     const id = routeInfo?.params.id;
 
@@ -71,13 +71,11 @@ export const PUT = withAuth(async (req: AuthRequest, routeInfo) => {
 
     const body = await req.json();
 
-    console.log({ body });
-
     const budgetData = getBudgetResponseSchema.parse(body);
     const now = dayjs().toISOString();
 
     const updatedBudget = {
-      ...budgetData,
+      ...budgetData.budget,
       updatedAt: now,
     };
 

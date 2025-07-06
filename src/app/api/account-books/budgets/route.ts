@@ -21,6 +21,8 @@ export const GET = withAuth(async (req: AuthRequest) => {
 
     const budgetsData = snapshot.val();
 
+    console.log({ budgetsData });
+
     const budgetsResponse = getBudgetsResponseSchema.parse(budgetsData);
 
     return NextResponse.json(

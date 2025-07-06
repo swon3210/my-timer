@@ -8,14 +8,12 @@ import { toast } from "sonner";
 interface HeaderProps {
   title: string;
   description: string;
-  selectedMonth: number;
   selectedYear: number;
 }
 
 export default function Header({
   title,
   description,
-  selectedMonth,
   selectedYear,
 }: HeaderProps) {
   const { openBudgetFormModal } = useBudgetFormModal();
@@ -23,20 +21,20 @@ export default function Header({
 
   const handleAddBudgetButtonClick = async () => {
     const budgetFormValues = await openBudgetFormModal({
-      title: `${selectedYear}년 ${selectedMonth + 1}월 예산 설정`,
+      title: `${selectedYear}년 예산 설정`,
     });
+
     if (!budgetFormValues) {
       return;
     }
 
-    const { startDate, endDate } = getPeriod(selectedYear, selectedMonth);
+    const { startDate, endDate } = getPeriod(selectedYear);
 
     try {
       await addBudget({
         ...budgetFormValues,
         targetDate: {
           year: selectedYear,
-          month: selectedMonth,
         },
         startAt: startDate.toISOString(),
         endAt: endDate.toISOString(),

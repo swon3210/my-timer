@@ -6,21 +6,17 @@ import { toast } from "sonner";
 import { getPeriod } from "../../_components/BudgetFormModal/utils";
 
 interface EmptyBudgetProps {
-  selectedMonth: number;
   selectedYear: number;
 }
 
-export default function EmptyBudget({
-  selectedMonth,
-  selectedYear,
-}: EmptyBudgetProps) {
+export default function EmptyBudget({ selectedYear }: EmptyBudgetProps) {
   const { mutateAsync: addBudget } = useAddBudgetMutation();
 
   const { openBudgetFormModal } = useBudgetFormModal();
 
   const handleCreateBudgetButtonClick = async () => {
     const budgetFormValues = await openBudgetFormModal({
-      title: `${selectedYear}년 ${selectedMonth + 1}월 예산 설정`,
+      title: `${selectedYear}년 예산 설정`,
     });
 
     if (!budgetFormValues) {
@@ -28,13 +24,12 @@ export default function EmptyBudget({
     }
 
     try {
-      const { startDate, endDate } = getPeriod(selectedYear, selectedMonth);
+      const { startDate, endDate } = getPeriod(selectedYear);
 
       await addBudget({
         ...budgetFormValues,
         targetDate: {
           year: selectedYear,
-          month: selectedMonth,
         },
         startAt: startDate.toISOString(),
         endAt: endDate.toISOString(),
@@ -69,8 +64,7 @@ export default function EmptyBudget({
           월간 예산을 설정해보세요
         </h2>
         <p className="text-gray-600 mb-6">
-          {selectedYear}년 {selectedMonth}월 예산을 설정하여 지출을 체계적으로
-          관리할 수 있습니다.
+          {selectedYear}년 예산을 설정하여 지출을 체계적으로 관리할 수 있습니다.
         </p>
         <button
           onClick={handleCreateBudgetButtonClick}

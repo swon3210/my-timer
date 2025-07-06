@@ -22,9 +22,7 @@ export default function Header({
   const { mutateAsync: addBudget } = useAddBudgetMutation();
 
   const handleAddBudgetButtonClick = async () => {
-    const budgetFormValues = await openBudgetFormModal({
-      title: `${selectedYear}년 ${selectedMonth + 1}월 예산 설정`,
-    });
+    const budgetFormValues = await openBudgetFormModal();
     if (!budgetFormValues) {
       return;
     }
@@ -34,10 +32,6 @@ export default function Header({
     try {
       await addBudget({
         ...budgetFormValues,
-        targetDate: {
-          year: selectedYear,
-          month: selectedMonth,
-        },
         startAt: startDate.toISOString(),
         endAt: endDate.toISOString(),
       });
