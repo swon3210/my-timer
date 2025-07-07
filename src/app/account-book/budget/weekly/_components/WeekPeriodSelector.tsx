@@ -39,7 +39,7 @@ export default function WeekPeriodSelector({
 
         <div className="text-center">
           <h2 className="text-xl font-bold text-gray-800">
-            {selectedYear}년 {selectedMonth}월
+            {selectedYear}년 {selectedMonth + 1}월
           </h2>
           <h3 className="text-lg text-gray-600">
             {selectedWeekPeriod[0]}일 - {selectedWeekPeriod[1]}일

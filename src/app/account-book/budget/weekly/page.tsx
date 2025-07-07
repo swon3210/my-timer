@@ -9,7 +9,7 @@ import EmptyBudget from "../_components/EmptyBudget";
 
 export default function WeeklyBudgetPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedWeekPeriod, setSelectedWeekPeriod] = useState<
     [number, number]
   >(() => {
@@ -36,21 +36,23 @@ export default function WeeklyBudgetPage() {
   const { data: budgets = [], isLoading } = useBudgetsQuery();
 
   const handlePreviousWeekPeriod = () => {
-    const [start, end] = selectedWeekPeriod;
+    const [start] = selectedWeekPeriod;
 
     if (start === 1) {
-      const newMonth = selectedMonth - 1;
+      const newMonth = selectedMonth - 1 < 0 ? 11 : selectedMonth - 1;
+      const newYear = selectedMonth - 1 < 0 ? selectedYear - 1 : selectedYear;
 
-      if (newMonth < 0) {
-        setSelectedMonth(11);
-        setSelectedYear(selectedYear - 1);
-      } else {
-        setSelectedMonth(newMonth);
-      }
+      setSelectedMonth(newMonth);
+      setSelectedYear(newYear);
 
-      const endOfPreviousMonth = dayjs().month(newMonth).endOf("month").date();
+      const endOfPreviousMonth = dayjs()
+        .year(newYear)
+        .month(newMonth)
+        .endOf("month")
+        .date();
 
       setSelectedWeekPeriod([endOfPreviousMonth - 6, endOfPreviousMonth]);
+      return;
     }
 
     if (start - 7 < 1) {
@@ -58,27 +60,24 @@ export default function WeeklyBudgetPage() {
         dayjs().month(selectedMonth).startOf("month").date(),
         start - 1,
       ]);
-    } else {
-      setSelectedWeekPeriod([start - 7, end - 7]);
+      return;
     }
+
+    setSelectedWeekPeriod([start - 7, start - 1]);
   };
 
   const handleNextWeekPeriod = () => {
-    const [start, end] = selectedWeekPeriod;
+    const [, end] = selectedWeekPeriod;
 
     if (end === dayjs().month(selectedMonth).endOf("month").date()) {
-      const newMonth = selectedMonth + 1;
+      const newMonth = selectedMonth + 1 > 11 ? 0 : selectedMonth + 1;
+      const newYear = selectedMonth + 1 > 11 ? selectedYear + 1 : selectedYear;
 
-      if (newMonth > 11) {
-        setSelectedMonth(0);
-        setSelectedYear(selectedYear + 1);
-      } else {
-        setSelectedMonth(newMonth);
-      }
+      setSelectedMonth(newMonth);
+      setSelectedYear(newYear);
 
-      const startOfNextMonth = dayjs().month(newMonth).startOf("month").date();
-
-      setSelectedWeekPeriod([startOfNextMonth, startOfNextMonth + 6]);
+      setSelectedWeekPeriod([1, 7]);
+      return;
     }
 
     if (end + 7 > dayjs().month(selectedMonth).endOf("month").date()) {
@@ -86,9 +85,10 @@ export default function WeeklyBudgetPage() {
         end + 1,
         dayjs().month(selectedMonth).endOf("month").date(),
       ]);
-    } else {
-      setSelectedWeekPeriod([start + 7, end + 7]);
+      return;
     }
+
+    setSelectedWeekPeriod([end + 1, end + 7]);
   };
 
   if (isLoading) {
