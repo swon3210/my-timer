@@ -1,22 +1,27 @@
 "use client";
 
-import { useBudgetFormModal } from "../../_components/BudgetFormModal";
+import { useBudgetFormModal } from "./BudgetFormModal";
 import { useAddBudgetMutation } from "@/domains/account-book/budgets/useAddBudgetMutation";
 import { toast } from "sonner";
-import { getPeriod } from "../../_components/BudgetFormModal/utils";
 
 interface EmptyBudgetProps {
   selectedYear: number;
+  selectedMonth?: number;
+  selectedWeekPeriod?: [number, number];
 }
 
-export default function EmptyBudget({ selectedYear }: EmptyBudgetProps) {
+export default function EmptyBudget({
+  selectedYear,
+  selectedMonth,
+  selectedWeekPeriod,
+}: EmptyBudgetProps) {
   const { mutateAsync: addBudget } = useAddBudgetMutation();
 
   const { openBudgetFormModal } = useBudgetFormModal();
 
   const handleCreateBudgetButtonClick = async () => {
     const budgetFormValues = await openBudgetFormModal({
-      title: `${selectedYear}년 예산 설정`,
+      title: `새로운 예산 설정`,
     });
 
     if (!budgetFormValues) {
@@ -24,15 +29,13 @@ export default function EmptyBudget({ selectedYear }: EmptyBudgetProps) {
     }
 
     try {
-      const { startDate, endDate } = getPeriod(selectedYear);
-
       await addBudget({
         ...budgetFormValues,
         targetDate: {
           year: selectedYear,
+          month: selectedMonth,
+          weekPeriod: selectedWeekPeriod,
         },
-        startAt: startDate.toISOString(),
-        endAt: endDate.toISOString(),
       });
 
       toast.success("예산이 성공적으로 생성되었습니다.");
@@ -61,10 +64,10 @@ export default function EmptyBudget({ selectedYear }: EmptyBudgetProps) {
           </svg>
         </div>
         <h2 className="text-xl font-bold text-gray-800 mb-2">
-          월간 예산을 설정해보세요
+          예산을 설정해보세요
         </h2>
         <p className="text-gray-600 mb-6">
-          {selectedYear}년 예산을 설정하여 지출을 체계적으로 관리할 수 있습니다.
+          예산을 설정하여 지출을 체계적으로 관리할 수 있습니다.
         </p>
         <button
           onClick={handleCreateBudgetButtonClick}

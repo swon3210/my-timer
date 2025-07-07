@@ -4,13 +4,12 @@ const budgetSchema = z.object({
   targetDate: z.object({
     year: z.number(),
     month: z.number().optional(),
+    weekPeriod: z.array(z.number()).optional(), // [number, number]
   }),
   title: z.string(),
   amount: z.number().positive(),
   description: z.string(),
   categoryId: z.string(),
-  startAt: z.string(),
-  endAt: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

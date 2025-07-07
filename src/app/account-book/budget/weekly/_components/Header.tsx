@@ -2,38 +2,43 @@
 
 import { useAddBudgetMutation } from "@/domains/account-book/budgets/useAddBudgetMutation";
 import { useBudgetFormModal } from "../../_components/BudgetFormModal";
-import { getPeriod } from "../../_components/BudgetFormModal/utils";
 import { toast } from "sonner";
 
 interface HeaderProps {
   title: string;
   description: string;
-  selectedMonth: number;
   selectedYear: number;
+  selectedMonth?: number;
+  selectedWeekPeriod?: [number, number];
 }
 
 export default function Header({
   title,
   description,
-  selectedMonth,
   selectedYear,
+  selectedMonth,
+  selectedWeekPeriod,
 }: HeaderProps) {
   const { openBudgetFormModal } = useBudgetFormModal();
   const { mutateAsync: addBudget } = useAddBudgetMutation();
 
   const handleAddBudgetButtonClick = async () => {
-    const budgetFormValues = await openBudgetFormModal();
+    const budgetFormValues = await openBudgetFormModal({
+      title: `${selectedYear}년 ${selectedMonth}월 ${selectedWeekPeriod?.[0]}일 - ${selectedWeekPeriod?.[1]}일 예산 설정`,
+    });
+
     if (!budgetFormValues) {
       return;
     }
 
-    const { startDate, endDate } = getPeriod(selectedYear, selectedMonth);
-
     try {
       await addBudget({
         ...budgetFormValues,
-        startAt: startDate.toISOString(),
-        endAt: endDate.toISOString(),
+        targetDate: {
+          year: selectedYear,
+          month: selectedMonth,
+          weekPeriod: selectedWeekPeriod,
+        },
       });
 
       toast.success("예산이 성공적으로 추가되었습니다.");

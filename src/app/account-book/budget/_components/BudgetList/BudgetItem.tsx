@@ -2,9 +2,8 @@ import { Budget } from "@/app/api/account-books/budgets/type";
 import { useDeleteBudgetMutation } from "@/domains/account-book/budgets/useDeleteBudgetsMutation";
 import { useUpdateBudgetMutation } from "@/domains/account-book/budgets/useUpdateBudgetsMutation";
 import { formatCurrency } from "@/utils/format";
-import { useBudgetFormModal } from "../../../_components/BudgetFormModal";
-import { getBudgetTargetDateText } from "../../../_utils";
-import { getPeriod } from "../../../_components/BudgetFormModal/utils";
+import { useBudgetFormModal } from "../../_components/BudgetFormModal";
+import { getBudgetTargetDateText } from "../../_utils";
 import { toast } from "sonner";
 
 interface BudgetItemProps {
@@ -27,16 +26,9 @@ export default function BudgetItem({ budget }: BudgetItemProps) {
       return;
     }
 
-    const { startDate, endDate } = getPeriod(
-      budget.targetDate.year,
-      budget.targetDate.month
-    );
-
     try {
       await updateBudget({
         id: budget.id,
-        startAt: startDate.toISOString(),
-        endAt: endDate.toISOString(),
         targetDate: budget.targetDate,
         ...budgetFormValues,
       });

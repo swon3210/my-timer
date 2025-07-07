@@ -2,7 +2,6 @@
 
 import { useAddBudgetMutation } from "@/domains/account-book/budgets/useAddBudgetMutation";
 import { useBudgetFormModal } from "../../_components/BudgetFormModal";
-import { getPeriod } from "../../_components/BudgetFormModal/utils";
 import { toast } from "sonner";
 
 interface HeaderProps {
@@ -28,16 +27,12 @@ export default function Header({
       return;
     }
 
-    const { startDate, endDate } = getPeriod(selectedYear);
-
     try {
       await addBudget({
         ...budgetFormValues,
         targetDate: {
           year: selectedYear,
         },
-        startAt: startDate.toISOString(),
-        endAt: endDate.toISOString(),
       });
 
       toast.success("예산이 성공적으로 추가되었습니다.");

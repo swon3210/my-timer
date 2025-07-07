@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { CATEGORY_COLORS, PERIOD_LABELS } from "./constants";
 import { CategoryOption } from "./types";
 
@@ -59,29 +58,4 @@ export const findCategoryById = (
   categoryId: string
 ): CategoryOption | undefined => {
   return categories.find((cat) => cat.id === categoryId);
-};
-
-export const getPeriod = (
-  selectedYear: number,
-  selectedMonth?: number
-): { startDate: Date; endDate: Date } => {
-  if (!selectedMonth) {
-    return {
-      startDate: dayjs().year(selectedYear).startOf("year").toDate(),
-      endDate: dayjs().year(selectedYear).endOf("year").toDate(),
-    };
-  }
-
-  return {
-    startDate: dayjs()
-      .year(selectedYear)
-      .month(selectedMonth)
-      .startOf("month")
-      .toDate(),
-    endDate: dayjs()
-      .year(selectedYear)
-      .month(selectedMonth)
-      .endOf("month")
-      .toDate(),
-  };
 };

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
-import { Header, YearSelector, BudgetList, EmptyBudget } from "./_components";
+import { Header, YearSelector } from "./_components";
+import BudgetList from "../_components/BudgetList/BudgetList";
+import EmptyBudget from "../_components/EmptyBudget";
 
 export default function MonthlyBudgetPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());

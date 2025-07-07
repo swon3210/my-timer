@@ -5,7 +5,7 @@ import { useState } from "react";
 type TabType = "weekly" | "monthly" | "yearly";
 
 const tabs = [
-  { id: "weekly" as TabType, label: "주간 체크" },
+  // { id: "weekly" as TabType, label: "주간 체크" },
   { id: "monthly" as TabType, label: "월간 체크" },
   { id: "yearly" as TabType, label: "연간 체크" },
 ];

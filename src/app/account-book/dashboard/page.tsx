@@ -4,6 +4,7 @@ import { useSavingsQuery } from "@/domains/account-book/dashboard/useSavingsQuer
 import { cn } from "@/lib/utils";
 import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
 import { Goal } from "@/app/api/account-books/goals/types";
+import Link from "next/link";
 
 export default function AccountBookDashboardPage() {
   const { data: savingsData, isLoading } = useSavingsQuery();
@@ -329,8 +330,8 @@ export default function AccountBookDashboardPage() {
       <div className="animate-fade-in delay-200">
         <h3 className="text-lg font-bold text-gray-800 mb-4">관리</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <a
-            href="/account-book/transactions"
+          <Link
+            href="/account-book/budget/weekly"
             className="p-6 bg-white rounded-xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all hover-lift group text-left block"
           >
             <div className="flex items-center justify-between mb-4">
@@ -363,17 +364,19 @@ export default function AccountBookDashboardPage() {
                 />
               </svg>
             </div>
-            <h4 className="text-lg font-bold text-gray-800 mb-2">거래 내역</h4>
+            <h4 className="text-lg font-bold text-gray-800 mb-2">
+              주간 예산 관리
+            </h4>
             <p className="text-gray-600 text-sm mb-3">
-              수입과 지출 내역을 관리하고 분석하세요
+              카테고리별 주간 예산을 설정하고 관리하세요
             </p>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-green-600 font-medium">이번 달 거래</span>
-              <span className="text-gray-800 font-bold">156건</span>
+              <span className="text-green-600 font-medium">이번 주 예산</span>
+              <span className="text-gray-800 font-bold">₩1,000,000</span>
             </div>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/account-book/budget/monthly"
             className="p-6 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all hover-lift group text-left block"
           >
@@ -417,9 +420,9 @@ export default function AccountBookDashboardPage() {
               <span className="text-blue-600 font-medium">이번 달 예산</span>
               <span className="text-gray-800 font-bold">₩2,000,000</span>
             </div>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/account-book/budget/yearly"
             className="p-6 bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all hover-lift group text-left block"
           >
@@ -463,7 +466,7 @@ export default function AccountBookDashboardPage() {
               <span className="text-purple-600 font-medium">올해 예산</span>
               <span className="text-gray-800 font-bold">₩24,000,000</span>
             </div>
-          </a>
+          </Link>
         </div>
       </div>
     </div>
