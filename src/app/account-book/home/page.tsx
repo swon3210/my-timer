@@ -1,7 +1,7 @@
 "use client";
 
-import ExpenseSummary from "./ExpenseSummary";
-import ExpenseTabs from "./ExpenseTabs/ExpenseTabs";
+import ExpenseSummary from "./_components/ExpenseSummary";
+import ExpenseTabs from "./_components/ExpenseTabs";
 import SelectedExpenseList from "./SelectedExpenseList";
 
 export default function AccountBookHomePage() {
