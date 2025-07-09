@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
-type TabType = "weekly" | "monthly" | "yearly";
+export type TabType = "weekly" | "monthly" | "yearly";
 
 const tabs = [
   { id: "weekly" as TabType, label: "주간 체크" },
@@ -10,9 +8,13 @@ const tabs = [
   { id: "yearly" as TabType, label: "연간 체크" },
 ];
 
-export default function ExpenseTabs() {
-  const [activeTab, setActiveTab] = useState<TabType>("weekly");
-
+export default function ExpenseTabs({
+  activeTab,
+  onTabChange,
+}: {
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
+}) {
   return (
     <div className="w-full">
       <div className="relative bg-white rounded-xl p-1 shadow-sm">
@@ -32,7 +34,7 @@ export default function ExpenseTabs() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => onTabChange(tab.id)}
               className={`
                 flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out
                 ${

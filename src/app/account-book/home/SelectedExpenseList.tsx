@@ -1,17 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Utensils,
-  ShoppingBag,
-  Heart,
-  Car,
-  Home,
-  Coffee,
-  Gamepad2,
-  GraduationCap,
-} from "lucide-react";
 import { useState } from "react";
+import { TabType } from "./_components/ExpenseTabs/ExpenseTabs";
+import { formatCurrency } from "@/utils/format";
+import useBudgetStatusCategories from "./_hooks/useBudgetStatusCategories";
 
 interface ExpenseCategory {
   id: string;
@@ -19,62 +12,6 @@ interface ExpenseCategory {
   icon: React.ReactNode;
   actualAmount: number;
   budgetAmount: number;
-  color: string;
-}
-
-const expenseCategories: ExpenseCategory[] = [
-  {
-    id: "food",
-    name: "식비",
-    icon: <Utensils className="w-5 h-5" />,
-    actualAmount: 350000,
-    budgetAmount: 400000,
-    color: "bg-blue-500",
-  },
-  {
-    id: "shopping",
-    name: "쇼핑",
-    icon: <ShoppingBag className="w-5 h-5" />,
-    actualAmount: 280000,
-    budgetAmount: 200000,
-    color: "bg-pink-500",
-  },
-  {
-    id: "date",
-    name: "데이트",
-    icon: <Heart className="w-5 h-5" />,
-    actualAmount: 150000,
-    budgetAmount: 200000,
-    color: "bg-red-500",
-  },
-  {
-    id: "transport",
-    name: "교통비",
-    icon: <Car className="w-5 h-5" />,
-    actualAmount: 120000,
-    budgetAmount: 150000,
-    color: "bg-green-500",
-  },
-  {
-    id: "housing",
-    name: "주거비",
-    icon: <Home className="w-5 h-5" />,
-    actualAmount: 800000,
-    budgetAmount: 900000,
-    color: "bg-yellow-500",
-  },
-  {
-    id: "cafe",
-    name: "카페",
-    icon: <Coffee className="w-5 h-5" />,
-    actualAmount: 80000,
-    budgetAmount: 100000,
-    color: "bg-amber-500",
-  },
-];
-
-function formatCurrency(amount: number) {
-  return `₩${amount.toLocaleString()}`;
 }
 
 function CategoryRow({
@@ -109,7 +46,7 @@ function CategoryRow({
       <div
         className={`
         flex items-center justify-center w-12 h-12 rounded-full
-        ${category.color} text-white shadow-lg
+        text-white shadow-lg
         ${isHovered ? "scale-110" : "scale-100"}
         transition-transform duration-300
       `}
@@ -155,10 +92,7 @@ function CategoryRow({
               className={`h-full rounded-full ${
                 isOverBudget
                   ? "bg-gradient-to-r from-red-400 to-red-600"
-                  : `${category.color.replace(
-                      "bg-",
-                      "bg-gradient-to-r from-"
-                    )}-400 ${category.color.replace("bg-", "to-")}-600`
+                  : `bg-gradient-to-r from-${category.color}-400 to-${category.color}-600`
               }`}
               initial={{ width: 0 }}
               animate={{ width: `${progressPercentage}%` }}
@@ -191,13 +125,19 @@ function CategoryRow({
   );
 }
 
-export default function SelectedExpenseList() {
+export default function SelectedExpenseList({
+  activeTab,
+}: {
+  activeTab: TabType;
+}) {
+  const expenseCategories = useBudgetStatusCategories();
+
   const totalActual = expenseCategories.reduce(
-    (sum, cat) => sum + cat.actualAmount,
+    (sum, cat) => sum + cat.totalExpense,
     0
   );
   const totalBudget = expenseCategories.reduce(
-    (sum, cat) => sum + cat.budgetAmount,
+    (sum, cat) => sum + cat.totalBudget,
     0
   );
   const overallProgress = (totalActual / totalBudget) * 100;
@@ -265,7 +205,17 @@ export default function SelectedExpenseList() {
 
       <div className="space-y-4">
         {expenseCategories.map((category, index) => (
-          <CategoryRow key={category.id} category={category} index={index} />
+          <CategoryRow
+            key={category.id}
+            category={{
+              ...category,
+              name: category.displayedName,
+              icon: category.icon,
+              actualAmount: category.totalExpense,
+              budgetAmount: category.totalBudget,
+            }}
+            index={index}
+          />
         ))}
       </div>
     </motion.div>
