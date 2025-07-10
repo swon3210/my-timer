@@ -8,14 +8,17 @@ import CheckIcon from "@/app/assets/icons/ic_check";
 function ProgressBar({ total, used }: { total: number; used: number }) {
   const remaining = total - used;
 
+  const progressPercentage =
+    total > 0 ? Math.min((used / total) * 100, 100) : 0;
+
   return (
     <div className="flex w-full h-7 bg-primary-heavy rounded-full overflow-hidden">
       <span className="grow flex justify-center items-center text-secondary text-sm font-bold">
-        {((used / total) * 100).toFixed(0)}%
+        {progressPercentage.toFixed(0)}%
       </span>
       <div
         className="h-full bg-white rounded-full flex justify-end items-center pr-4"
-        style={{ width: `${(100 - (used / total) * 100).toFixed(0)}%` }}
+        style={{ width: `${(100 - progressPercentage).toFixed(0)}%` }}
       >
         <span className="text-primary-heavy font-bold text-sm">
           ₩{Math.abs(remaining).toLocaleString()}
@@ -35,15 +38,14 @@ export default function ExpenseTotal() {
   const currentMonth = dayjs().month();
   const currentYear = dayjs().year();
 
-  const totalBudget =
-    budgets
-      .filter((budget) => {
-        return (
-          budget.targetDate.year === currentYear &&
-          budget.targetDate.month === currentMonth
-        );
-      })
-      .reduce((acc, budget) => acc + budget.amount, 0) ?? 0;
+  const totalBudget = budgets
+    .filter((budget) => {
+      return (
+        budget.targetDate.year === currentYear &&
+        budget.targetDate.month === currentMonth
+      );
+    })
+    .reduce((acc, budget) => acc + budget.amount, 0);
 
   const totalExpense = transactions
     .filter((item) => item.type === "EXPENSE" || item.type === "FLEX")
@@ -55,7 +57,14 @@ export default function ExpenseTotal() {
       return acc;
     }, 0);
 
-  const percentage = Math.abs(totalExpense / totalBudget) * 100;
+  const percentage =
+    totalBudget > 0
+      ? Math.min(Math.abs(totalExpense / totalBudget) * 100, 100)
+      : 0;
+
+  console.log({
+    percentage,
+  });
 
   const remainingDays = dayjs().endOf("month").diff(today, "day");
 

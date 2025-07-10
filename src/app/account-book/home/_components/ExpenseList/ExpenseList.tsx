@@ -1,58 +1,42 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { TabType } from "./_components/ExpenseTabs/ExpenseTabs";
+import { TabType } from "../ExpenseTabs/ExpenseTabs";
 import { formatCurrency } from "@/utils/format";
-import useBudgetStatusCategories from "./_hooks/useBudgetStatusCategories";
+import useBudgetStatusCategories, {
+  BudgetStatusCategory,
+} from "../../_hooks/useBudgetStatusCategories";
 import { getIconById } from "@/app/_utils/category";
 
-interface ExpenseCategory {
-  id: string;
-  name: string;
-  icon: string;
-  actualAmount: number;
-  budgetAmount: number;
-}
-
-function CategoryRow({
-  category,
-  index,
-}: {
-  category: ExpenseCategory;
-  index: number;
-}) {
-  const [isHovered, setIsHovered] = useState(false);
+function CategoryRow({ category }: { category: BudgetStatusCategory }) {
   const progressPercentage =
-    category.budgetAmount > 0
-      ? Math.min((category.actualAmount / category.budgetAmount) * 100, 100)
+    category.totalBudget > 0
+      ? Math.min(
+          (Math.abs(category.totalExpense) / category.totalBudget) * 100,
+          100
+        )
       : 0;
 
-  const isOverBudget = category.actualAmount > category.budgetAmount;
+  const isOverBudget = category.totalExpense > category.totalBudget;
 
-  const Icon = getIconById(category.icon).icon;
-  const color = getIconById(category.icon).color;
+  const { icon: Icon, color } = getIconById(category.icon);
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      transition={{ duration: 0.3 }}
       className={`
         relative flex items-center p-4 rounded-xl bg-white/80 backdrop-blur-sm
         border border-gray-200/50 hover:border-gray-300/70
         hover:bg-white/90 transition-all duration-300
         hover:shadow-lg hover:shadow-gray-200/30
-        ${isHovered ? "scale-[1.02]" : ""}
       `}
     >
       <div
         className={`
         flex items-center justify-center w-12 h-12 rounded-full
         text-white shadow-lg
-        ${isHovered ? "scale-110" : "scale-100"}
         transition-transform duration-300
       `}
         style={{ backgroundColor: color }}
@@ -64,13 +48,13 @@ function CategoryRow({
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <h3 className="text-md font-semibold text-gray-800">
-              {category.name}
+              {category.displayedName}
             </h3>
             {isOverBudget && (
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: index * 0.1 + 0.5 }}
+                transition={{ duration: 0.3 }}
                 className="bg-red-100 text-red-700 px-2 py-1 rounded-md text-xs font-medium"
               >
                 예산 초과
@@ -84,10 +68,10 @@ function CategoryRow({
                 isOverBudget ? "text-red-600" : "text-gray-800"
               }`}
             >
-              {formatCurrency(category.actualAmount)}
+              {formatCurrency(category.totalExpense)}
             </div>
             <div className="text-xs text-gray-500">
-              / {formatCurrency(category.budgetAmount)}
+              / {formatCurrency(category.totalBudget)}
             </div>
           </div>
         </div>
@@ -104,7 +88,6 @@ function CategoryRow({
               animate={{ width: `${progressPercentage}%` }}
               transition={{
                 duration: 1,
-                delay: index * 0.1 + 0.3,
                 ease: "easeOut",
               }}
             />
@@ -117,12 +100,15 @@ function CategoryRow({
               isOverBudget ? "text-red-600" : "text-gray-600"
             }`}
           >
-            {progressPercentage.toFixed(1)}% 사용
+            {progressPercentage}% 사용
           </div>
           <div className="text-xs text-gray-500">
             남은 예산:{" "}
             {formatCurrency(
-              Math.max(0, category.budgetAmount - category.actualAmount)
+              Math.max(
+                0,
+                category.totalBudget - Math.abs(category.totalExpense)
+              )
             )}
           </div>
         </div>
@@ -131,14 +117,10 @@ function CategoryRow({
   );
 }
 
-export default function SelectedExpenseList({
-  activeTab,
-}: {
-  activeTab: TabType;
-}) {
+export default function ExpenseList({ activeTab }: { activeTab: TabType }) {
   const expenseCategories = useBudgetStatusCategories();
 
-  const totalActual = expenseCategories.reduce(
+  const totalExpense = expenseCategories.reduce(
     (sum, category) => sum + category.totalExpense,
     0
   );
@@ -148,13 +130,8 @@ export default function SelectedExpenseList({
     0
   );
 
-  const overallProgress = Math.min((totalActual / totalBudget) * 100, 100);
-
-  console.log({
-    totalActual,
-    totalBudget,
-    overallProgress,
-  });
+  const overallProgress =
+    totalBudget > 0 ? Math.min((totalExpense / totalBudget) * 100, 100) : 0;
 
   return (
     <motion.div
@@ -177,7 +154,7 @@ export default function SelectedExpenseList({
           </h2>
           <div className="text-right">
             <div className="text-lg font-bold text-gray-800">
-              {formatCurrency(totalActual)}
+              {formatCurrency(totalExpense)}
             </div>
             <div className="text-sm text-gray-600">
               / {formatCurrency(totalBudget)}
@@ -212,24 +189,14 @@ export default function SelectedExpenseList({
             전체 {overallProgress.toFixed(1)}% 사용
           </span>
           <span className="text-gray-600">
-            남은 예산: {formatCurrency(Math.max(0, totalBudget - totalActual))}
+            남은 예산: {formatCurrency(Math.max(0, totalBudget - totalExpense))}
           </span>
         </motion.div>
       </div>
 
       <div className="space-y-4">
-        {expenseCategories.map((category, index) => (
-          <CategoryRow
-            key={category.id}
-            category={{
-              ...category,
-              name: category.displayedName,
-              icon: category.icon,
-              actualAmount: category.totalExpense,
-              budgetAmount: category.totalBudget,
-            }}
-            index={index}
-          />
+        {expenseCategories.map((category) => (
+          <CategoryRow key={category.id} category={category} />
         ))}
       </div>
     </motion.div>

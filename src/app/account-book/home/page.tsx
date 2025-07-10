@@ -3,7 +3,7 @@
 import { useState } from "react";
 import ExpenseSummary from "./_components/ExpenseSummary";
 import ExpenseTabs from "./_components/ExpenseTabs";
-import SelectedExpenseList from "./SelectedExpenseList";
+import ExpenseList from "./_components/ExpenseList/ExpenseList";
 import { TabType } from "./_components/ExpenseTabs/ExpenseTabs";
 
 export default function AccountBookHomePage() {
@@ -16,7 +16,7 @@ export default function AccountBookHomePage() {
         {/* <SelectedExpenseSummary /> */}
         <div className="flex flex-col gap-4">
           <ExpenseTabs activeTab={activeTab} onTabChange={setActiveTab} />
-          <SelectedExpenseList activeTab={activeTab} />
+          <ExpenseList activeTab={activeTab} />
         </div>
       </div>
     </div>

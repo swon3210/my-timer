@@ -1,11 +1,17 @@
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
 import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
+import { Category } from "@/app/api/account-books/categories/types";
 
-export default function useBudgetStatusCategories() {
-  const { data: transactionCategories } = useTransactionCategoriesQuery();
-  const { data: transactions } = useTransactionsQuery();
-  const { data: budgets } = useBudgetsQuery();
+export type BudgetStatusCategory = Category & {
+  totalExpense: number;
+  totalBudget: number;
+};
+
+export default function useBudgetStatusCategories(): BudgetStatusCategory[] {
+  const { data: transactionCategories = [] } = useTransactionCategoriesQuery();
+  const { data: transactions = [] } = useTransactionsQuery();
+  const { data: budgets = [] } = useBudgetsQuery();
 
   const expenseCategories = transactionCategories?.filter(
     (category) => category.type === "EXPENSE"

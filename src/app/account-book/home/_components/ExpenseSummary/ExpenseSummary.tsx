@@ -13,7 +13,6 @@ function ExpenseSummaryContent() {
       transition={{ duration: 0.5 }}
     >
       <ExpenseTotal />
-      {/* <ExpenseTable /> */}
     </motion.div>
   );
 }
