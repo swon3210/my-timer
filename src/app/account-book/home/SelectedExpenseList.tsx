@@ -5,11 +5,12 @@ import { useState } from "react";
 import { TabType } from "./_components/ExpenseTabs/ExpenseTabs";
 import { formatCurrency } from "@/utils/format";
 import useBudgetStatusCategories from "./_hooks/useBudgetStatusCategories";
+import { getIconById } from "@/app/_utils/category";
 
 interface ExpenseCategory {
   id: string;
   name: string;
-  icon: React.ReactNode;
+  icon: string;
   actualAmount: number;
   budgetAmount: number;
 }
@@ -22,11 +23,15 @@ function CategoryRow({
   index: number;
 }) {
   const [isHovered, setIsHovered] = useState(false);
-  const progressPercentage = Math.min(
-    (category.actualAmount / category.budgetAmount) * 100,
-    100
-  );
+  const progressPercentage =
+    category.budgetAmount > 0
+      ? Math.min((category.actualAmount / category.budgetAmount) * 100, 100)
+      : 0;
+
   const isOverBudget = category.actualAmount > category.budgetAmount;
+
+  const Icon = getIconById(category.icon).icon;
+  const color = getIconById(category.icon).color;
 
   return (
     <motion.div
@@ -50,8 +55,9 @@ function CategoryRow({
         ${isHovered ? "scale-110" : "scale-100"}
         transition-transform duration-300
       `}
+        style={{ backgroundColor: color }}
       >
-        {category.icon}
+        {Icon && <Icon className="w-6 h-6" />}
       </div>
 
       <div className="flex-1 ml-4">
@@ -92,7 +98,7 @@ function CategoryRow({
               className={`h-full rounded-full ${
                 isOverBudget
                   ? "bg-gradient-to-r from-red-400 to-red-600"
-                  : `bg-gradient-to-r from-${category.color}-400 to-${category.color}-600`
+                  : `bg-gradient-to-r`
               }`}
               initial={{ width: 0 }}
               animate={{ width: `${progressPercentage}%` }}
@@ -133,14 +139,22 @@ export default function SelectedExpenseList({
   const expenseCategories = useBudgetStatusCategories();
 
   const totalActual = expenseCategories.reduce(
-    (sum, cat) => sum + cat.totalExpense,
+    (sum, category) => sum + category.totalExpense,
     0
   );
+
   const totalBudget = expenseCategories.reduce(
-    (sum, cat) => sum + cat.totalBudget,
+    (sum, category) => sum + category.totalBudget,
     0
   );
-  const overallProgress = (totalActual / totalBudget) * 100;
+
+  const overallProgress = Math.min((totalActual / totalBudget) * 100, 100);
+
+  console.log({
+    totalActual,
+    totalBudget,
+    overallProgress,
+  });
 
   return (
     <motion.div
@@ -179,7 +193,7 @@ export default function SelectedExpenseList({
                 : "bg-gradient-to-r from-green-400 to-emerald-600"
             }`}
             initial={{ width: 0 }}
-            animate={{ width: `${Math.min(overallProgress, 100)}%` }}
+            animate={{ width: `${overallProgress}%` }}
             transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
           />
         </div>
