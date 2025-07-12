@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import useUpdateAccountItemCategoryMutation from "@/domains/account-book/categories/useUpdateTransactionCategoryMutation";
 import { getTransactionCategoriesQueryKey } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import InlineIconSelector from "@/components/ui/InlineIconSelector";
-import { getIconById } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+import { getIconById } from "@/app/_utils/category";
 import { Category } from "@/app/api/account-books/categories/types";
 
 interface CategoryEditModalProps {

@@ -6,7 +6,7 @@ import {
   TransactionPaymentMethod,
 } from "@/app/api/account-books/transactions/types";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
-import { getIconById } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+import { getIconById } from "@/app/_utils/category";
 
 const getPaymentMethodDisplayedName = (
   paymentMethod: TransactionPaymentMethod

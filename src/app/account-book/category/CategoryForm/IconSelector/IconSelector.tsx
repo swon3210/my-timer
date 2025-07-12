@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
-import {
-  getIconsByType,
-  getIconById,
-} from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+import { getIconsByType, getIconById } from "@/app/_utils/category";
 import { CategoryIcon } from "@/app/api/account-books/categories/types";
 import { TransactionType } from "@/app/api/account-books/transactions/types";
 

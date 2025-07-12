@@ -13,8 +13,8 @@ import { useForm } from "react-hook-form";
 import { useAddTransactionCategoryMutation } from "@/domains/account-book/categories/useAddTransactionCategoryMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTransactionCategoriesQueryKey } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
-import IconSelector from "@/app/account-book/category/CategoryForm/IconSelector/IconSelector";
-import { DEFAULT_ICONS } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+import IconSelector from "@/components/ui/InlineIconSelector";
+import { DEFAULT_ICONS } from "@/app/_utils/category";
 import { useUserQuery } from "@/domains/users/useUserQuery";
 import { CategoryIcon } from "@/app/api/account-books/categories/types";
 import { TransactionType } from "@/app/api/account-books/transactions/types";
@@ -88,7 +88,7 @@ export default function CategoryForm() {
           카테고리 아이콘
         </label>
         <IconSelector
-          selectedIcon={selectedIcon}
+          selectedIconId={selectedIcon}
           categoryType={type}
           onIconSelect={handleIconChange}
         />

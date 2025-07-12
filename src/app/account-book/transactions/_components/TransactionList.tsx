@@ -3,14 +3,18 @@
 import { TransactionFilter, TransactionSort } from "@/types/transaction";
 import TransactionItem from "./TransactionItem";
 import EmptyTransactionList from "./EmptyTransactionList";
-import { useTransactionsQuery } from "@/domains/account-book/useTransactionsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 import { Transaction } from "@/app/api/account-books/transactions/types";
+import dayjs from "dayjs";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
 
 interface TransactionListProps {
   filter: TransactionFilter;
   sort: TransactionSort;
   onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => void;
+  onAddTransaction: (transaction: Transaction) => void;
 }
 
 export default function TransactionList({
@@ -18,6 +22,7 @@ export default function TransactionList({
   sort,
   onEdit,
   onDelete,
+  onAddTransaction,
 }: TransactionListProps) {
   const { data: transactions = [], isLoading } = useTransactionsQuery();
   // 필터링 함수
@@ -96,22 +101,50 @@ export default function TransactionList({
     return <EmptyTransactionList />;
   }
 
-  return (
-    <div className="space-y-4">
-      {/* 거래 내역 목록 */}
-      {filteredAndSortedTransactions.map((transaction, index) => (
+  const items: JSX.Element[] = [];
+  let currentDate: string | null = null;
+
+  filteredAndSortedTransactions.forEach((transaction, index) => {
+    const transactionDate = dayjs(transaction.date).format("YYYY년 MM월 DD일");
+
+    // 날짜가 변경되면 구분자를 추가
+    if (currentDate !== transactionDate) {
+      currentDate = transactionDate;
+      items.push(
         <div
-          key={transaction.id}
-          className="animate-fade-in"
-          style={{ animationDelay: `${(index % 10) * 50}ms` }}
+          key={`divider-${currentDate}`}
+          className="date-divider flex items-center justify-between"
         >
-          <TransactionItem
-            transaction={transaction}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
+          <span>{currentDate}</span>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-lg"
+            onClick={() => {
+              onAddTransaction(transaction);
+            }}
+          >
+            <PlusIcon className="w-4 h-4 text-primary-heavy" />
+          </Button>
         </div>
-      ))}
-    </div>
-  );
+      );
+    }
+
+    items.push(
+      <div
+        key={transaction.id}
+        className="animate-fade-in"
+        style={{ animationDelay: `${(index % 10) * 50}ms` }}
+      >
+        <TransactionItem
+          transaction={transaction}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      </div>
+    );
+  });
+
+  return <div className="space-y-4">{items}</div>;
 }

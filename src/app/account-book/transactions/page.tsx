@@ -7,7 +7,7 @@ import TransactionForm from "./_components/TransactionForm";
 import TransactionFilterComponent from "./_components/TransactionFilter";
 import DeleteConfirmModal from "./_components/DeleteConfirmModal";
 import { Transaction } from "@/app/api/account-books/transactions/types";
-import { useTransactionsQuery } from "@/domains/account-book/useTransactionsQuery";
+import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 
 export default function TransactionsPage() {
   // 상태 관리
@@ -76,7 +76,7 @@ export default function TransactionsPage() {
 
             <button
               onClick={handleAddTransaction}
-              className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all hover:shadow-lg transform hover:scale-105 flex items-center justify-center space-x-2"
+              className="w-full md:w-auto px-6 py-3 bg-primary-heavy text-white rounded-xl font-medium hover:bg-primary-heavy/80 transition-all hover:shadow-lg transform hover:scale-105 flex items-center justify-center space-x-2"
             >
               <svg
                 className="w-5 h-5"
@@ -91,7 +91,7 @@ export default function TransactionsPage() {
                   d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                 />
               </svg>
-              <span>새 거래 추가</span>
+              <span>내역 추가</span>
             </button>
           </div>
         </div>
@@ -181,6 +181,7 @@ export default function TransactionsPage() {
                   sort={sort}
                   onEdit={handleEditTransaction}
                   onDelete={handleDeleteTransaction}
+                  onAddTransaction={handleAddTransaction}
                 />
               </div>
             </div>

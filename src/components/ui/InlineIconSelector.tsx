@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { TransactionType } from "@/app/api/account-books/transactions/types";
 import {
-  getIconsByType,
-  getIconById,
   DEFAULT_ICONS,
-} from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+  getIconById,
+  getIconsByType,
+} from "@/app/_utils/category";
 
 interface InlineIconSelectorProps {
   selectedIconId?: string;

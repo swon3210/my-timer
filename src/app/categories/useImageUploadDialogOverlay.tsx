@@ -1,4 +1,4 @@
-import { useOverlay } from "@toss/use-overlay";
+import { overlay } from "overlay-kit";
 import ImageUploadDialog, {
   ImageGroup,
   ImageUploadDialogRef,
@@ -6,8 +6,6 @@ import ImageUploadDialog, {
 import { RefObject } from "react";
 
 const useImageUploadDialogOverlay = () => {
-  const overlay = useOverlay();
-
   const openImageUploadDialog = ({
     ref,
     onImagesUploaded,

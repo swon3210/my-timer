@@ -7,7 +7,7 @@ import { TransactionType } from "@/app/api/account-books/transactions/types";
 import { useAddTransactionCategoryMutation } from "@/domains/account-book/categories/useAddTransactionCategoryMutation";
 import { getTransactionCategoriesQueryKey } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import InlineIconSelector from "@/components/ui/InlineIconSelector";
-import { DEFAULT_ICONS } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+import { DEFAULT_ICONS } from "@/app/_utils/category";
 
 interface CategoryAddModalProps {
   isOpen: boolean;

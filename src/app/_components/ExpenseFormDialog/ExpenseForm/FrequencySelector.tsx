@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Frequency } from "@/domains/account-book/types";
+import { Frequency } from "@/domains/account-book/transactions/types";
 import { cn } from "@/lib/utils";
 
 type FrequencySelectorProps = {

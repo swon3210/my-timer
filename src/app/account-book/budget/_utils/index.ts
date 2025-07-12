@@ -1,10 +1,9 @@
-import dayjs from "dayjs";
+import { Budget } from "@/app/api/account-books/budgets/type";
 
-export function getWeekOfMonth(date: dayjs.Dayjs): number {
-  const startOfMonth = date.startOf("month");
-  const firstDayWeekday = startOfMonth.day();
-  const offset = firstDayWeekday === 0 ? 0 : 7 - firstDayWeekday;
-  const adjustedStart = startOfMonth.add(offset, "day");
+export const getBudgetTargetDateText = (targetDate: Budget["targetDate"]) => {
+  if (targetDate.month) {
+    return `${targetDate.year}년 ${targetDate.month + 1}월`;
+  }
 
-  return Math.ceil(date.diff(adjustedStart, "day") / 7) + 1;
-}
+  return `${targetDate.year}년`;
+};

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useSetTransactionCategories } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { useDeleteTransactionCategoryMutation } from "@/domains/account-book/categories/useDeleteTransactionCategoryMutation";
 import { Button } from "@/components/ui/button";
-import { getIconById } from "@/app/account-book/category/CategoryForm/IconSelector/categoryIcons";
+import { getIconById } from "@/app/_utils/category";
 import CategoryEditModal from "@/app/account-book/category/CategoryEditModal/CategoryEditModal";
 import { Category } from "@/app/api/account-books/categories/types";
 
