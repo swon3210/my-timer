@@ -50,10 +50,10 @@ export default function InlineIconSelector({
       </div>
 
       {/* 아이콘 그리드 */}
-      <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
+      <div className="border-2 border-gray-200 rounded-xl p-2 bg-gray-50">
         {filteredIcons.length > 0 ? (
           <>
-            <div className="grid grid-cols-6 gap-3 max-h-32 overflow-y-auto">
+            <div className="grid grid-cols-6 gap-2 max-h-32 overflow-y-auto p-2">
               {filteredIcons.slice(0, 24).map((iconItem) => {
                 const IconComponent = iconItem.icon;
                 const isSelected = selectedIconId === iconItem.id;
@@ -63,7 +63,7 @@ export default function InlineIconSelector({
                     key={iconItem.id}
                     type="button"
                     onClick={() => handleIconSelect(iconItem.id)}
-                    className={`p-3 rounded-xl border-2 transition-all hover:scale-105 ${
+                    className={`p-2 rounded-xl border-2 m-auto transition-all hover:scale-105 ${
                       isSelected
                         ? categoryType === "INCOME"
                           ? "border-green-400 bg-green-100 text-green-600"
