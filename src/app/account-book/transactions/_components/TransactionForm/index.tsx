@@ -7,6 +7,7 @@ import useAddTransactionMutation from "@/domains/account-book/transactions/useAd
 import useUpdateTransactionMutation from "@/domains/account-book/transactions/useUpdateTransactionMutation";
 import TransactionCategorySelector from "./TransactionCategorySelector";
 import TransactionTypeSelector from "./TransactionTypeSelector";
+import { isEmpty } from "@/utils/text";
 
 interface TransactionFormProps {
   isOpen: boolean;
@@ -49,13 +50,25 @@ export default function TransactionForm({
     if (defaultValues) {
       updateTransaction({
         id: defaultValues.id,
-        transaction: formValues,
+        transaction: {
+          ...formValues,
+          paymentMethod: isEmpty(formValues.paymentMethod)
+            ? undefined
+            : formValues.paymentMethod,
+        },
       });
     } else {
       addTransaction({
-        transaction: formValues,
+        transaction: {
+          ...formValues,
+          paymentMethod: isEmpty(formValues.paymentMethod)
+            ? undefined
+            : formValues.paymentMethod,
+        },
       });
     }
+
+    form.reset();
 
     onClose();
   });
@@ -120,26 +133,6 @@ export default function TransactionForm({
             {/* 카테고리 */}
             <TransactionCategorySelector />
 
-            {/* 설명 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                설명 *
-              </label>
-              <input
-                type="text"
-                {...register("description")}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.description ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="거래 내역 설명"
-              />
-              {errors.description && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.description.message || "설명을 입력해주세요"}
-                </p>
-              )}
-            </div>
-
             {/* 날짜 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -155,6 +148,26 @@ export default function TransactionForm({
               {errors.date && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.date.message || "날짜를 선택해주세요"}
+                </p>
+              )}
+            </div>
+
+            {/* 설명 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                설명
+              </label>
+              <input
+                type="text"
+                {...register("description")}
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.description ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="거래 내역 설명"
+              />
+              {errors.description && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.description.message || "설명을 입력해주세요"}
                 </p>
               )}
             </div>

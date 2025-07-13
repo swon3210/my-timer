@@ -76,7 +76,7 @@ export default function TransactionsPage() {
 
             <button
               onClick={handleAddTransaction}
-              className="w-full md:w-auto px-6 py-3 bg-primary-heavy text-white rounded-xl font-medium hover:bg-primary-heavy/80 transition-all hover:shadow-lg transform hover:scale-105 flex items-center justify-center space-x-2"
+              className="w-full md:w-auto px-6 py-3 bg-primary-heavy text-white rounded-xl font-medium hover:bg-primary-heavy/80 transition-all hover:shadow-lg transform hover:scale-[102%] flex items-center justify-center space-x-2"
             >
               <svg
                 className="w-5 h-5"

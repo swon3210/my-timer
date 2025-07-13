@@ -127,13 +127,13 @@ export default function TransactionItem({
                 {formatAmount(transaction.amount)}
               </span>
 
-              <div className="relative size-4">
+              <div className="relative size-5">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="rounded-full hover:bg-gray-100 text-gray-400"
+                  className="rounded-full text-gray-400"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="size-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
