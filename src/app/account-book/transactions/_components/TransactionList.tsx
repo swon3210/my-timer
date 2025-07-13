@@ -8,6 +8,8 @@ import { Transaction } from "@/app/api/account-books/transactions/types";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
+import { useIntersectionObserver } from "@uidotdev/usehooks";
+import { useEffect, useState } from "react";
 
 interface TransactionListProps {
   filter: TransactionFilter;
@@ -25,6 +27,10 @@ export default function TransactionList({
   onAddTransaction,
 }: TransactionListProps) {
   const { data: transactions = [], isLoading } = useTransactionsQuery();
+
+  const [ref, entry] = useIntersectionObserver();
+  const [page, setPage] = useState(1);
+
   // 필터링 함수
   const applyFilters = (transactions: Transaction[]): Transaction[] => {
     return transactions.filter((transaction) => {
@@ -89,6 +95,12 @@ export default function TransactionList({
     applyFilters(transactions)
   );
 
+  useEffect(() => {
+    if (entry?.isIntersecting) {
+      setPage((prev) => prev + 1);
+    }
+  }, [entry]);
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-4">
@@ -104,47 +116,56 @@ export default function TransactionList({
   const items: JSX.Element[] = [];
   let currentDate: string | null = null;
 
-  filteredAndSortedTransactions.forEach((transaction, index) => {
-    const transactionDate = dayjs(transaction.date).format("YYYY년 MM월 DD일");
+  filteredAndSortedTransactions
+    .slice(0, page * 30)
+    .forEach((transaction, index) => {
+      const transactionDate = dayjs(transaction.date).format(
+        "YYYY년 MM월 DD일"
+      );
 
-    // 날짜가 변경되면 구분자를 추가
-    if (currentDate !== transactionDate) {
-      currentDate = transactionDate;
+      // 날짜가 변경되면 구분자를 추가
+      if (currentDate !== transactionDate) {
+        currentDate = transactionDate;
+        items.push(
+          <div
+            key={`divider-${currentDate}`}
+            className="date-divider flex items-center justify-between"
+          >
+            <span>{currentDate}</span>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-lg"
+              onClick={() => {
+                onAddTransaction(transaction);
+              }}
+            >
+              <PlusIcon className="w-4 h-4 text-primary-heavy" />
+            </Button>
+          </div>
+        );
+      }
+
       items.push(
         <div
-          key={`divider-${currentDate}`}
-          className="date-divider flex items-center justify-between"
+          key={transaction.id}
+          className="animate-fade-in"
+          style={{ animationDelay: `${(index % 10) * 50}ms` }}
         >
-          <span>{currentDate}</span>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-lg"
-            onClick={() => {
-              onAddTransaction(transaction);
-            }}
-          >
-            <PlusIcon className="w-4 h-4 text-primary-heavy" />
-          </Button>
+          <TransactionItem
+            transaction={transaction}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
         </div>
       );
-    }
+    });
 
-    items.push(
-      <div
-        key={transaction.id}
-        className="animate-fade-in"
-        style={{ animationDelay: `${(index % 10) * 50}ms` }}
-      >
-        <TransactionItem
-          transaction={transaction}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      </div>
-    );
-  });
-
-  return <div className="space-y-4">{items}</div>;
+  return (
+    <div className="space-y-4">
+      {items}
+      <div ref={ref} />
+    </div>
+  );
 }

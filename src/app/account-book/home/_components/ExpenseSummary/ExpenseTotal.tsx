@@ -4,6 +4,7 @@ import { useTransactionsQuery } from "@/domains/account-book/transactions/useTra
 import IncomeIcon from "@/app/assets/icons/ic_income";
 import ExpenseIcon from "@/app/assets/icons/ic_expense";
 import CheckIcon from "@/app/assets/icons/ic_check";
+import Link from "next/link";
 
 function ProgressBar({ total, used }: { total: number; used: number }) {
   const remaining = total - used;
@@ -67,7 +68,10 @@ export default function ExpenseTotal() {
   return (
     <div className="flex flex-col gap-[10px]">
       <div className="flex items-center px-4">
-        <div className="flex-1 flex flex-col">
+        <Link
+          href="/account-book/budget/monthly"
+          className="flex-1 flex flex-col"
+        >
           <p className="text-sm flex items-center gap-2">
             <IncomeIcon />
             {currentMonth + 1}월 예산
@@ -75,8 +79,11 @@ export default function ExpenseTotal() {
           <p className="text-lg font-bold text-white">
             ₩ {totalBudget.toLocaleString()}
           </p>
-        </div>
-        <div className="flex-1 flex flex-col">
+        </Link>
+        <Link
+          href="/account-book/transactions"
+          className="flex-1 flex flex-col"
+        >
           <p className="text-sm flex items-center gap-2">
             <ExpenseIcon />
             {currentMonth + 1}월 지출
@@ -84,7 +91,7 @@ export default function ExpenseTotal() {
           <p className="text-lg font-bold text-blue-600">
             ₩ {Math.abs(totalExpense).toLocaleString()}
           </p>
-        </div>
+        </Link>
       </div>
 
       <ProgressBar total={totalBudget} used={totalExpense} />

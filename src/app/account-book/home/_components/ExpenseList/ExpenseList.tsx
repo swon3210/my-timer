@@ -30,6 +30,7 @@ export default function ExpenseList({ activeTab }: { activeTab: TabType }) {
         totalExpense={totalExpense}
         totalBudget={totalBudget}
         overallProgress={positiveOverallProgress}
+        activeTab={activeTab}
       />
       <div className="space-y-4">
         {/* {expenseCategories.map((category) => (
