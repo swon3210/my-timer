@@ -3,27 +3,20 @@
 import { TransactionFormData } from "@/types/transaction";
 import { FormProvider, useForm } from "react-hook-form";
 import PaymentMethodSelector from "./PaymentMethodSelector";
-import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";
-import useUpdateTransactionMutation from "@/domains/account-book/transactions/useUpdateTransactionMutation";
 import TransactionCategorySelector from "./TransactionCategorySelector";
 import TransactionTypeSelector from "./TransactionTypeSelector";
-import { isEmpty } from "@/utils/text";
 
-interface TransactionFormProps {
+type TransactionFormModalProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (data: TransactionFormData | undefined) => void;
   defaultValues?: TransactionFormData;
-}
+};
 
-export default function TransactionForm({
+export default function TransactionFormModal({
   isOpen,
   onClose,
   defaultValues,
-}: TransactionFormProps) {
-  const { mutate: addTransaction } = useAddTransactionMutation();
-
-  const { mutate: updateTransaction } = useUpdateTransactionMutation();
-
+}: TransactionFormModalProps) {
   const form = useForm<TransactionFormData>({
     defaultValues: defaultValues ?? {
       id: "",
@@ -47,30 +40,31 @@ export default function TransactionForm({
   const formData = watch();
 
   const handleFormSubmit = handleSubmit(async (formValues) => {
-    if (defaultValues) {
-      updateTransaction({
-        id: defaultValues.id,
-        transaction: {
-          ...formValues,
-          paymentMethod: isEmpty(formValues.paymentMethod)
-            ? undefined
-            : formValues.paymentMethod,
-        },
-      });
-    } else {
-      addTransaction({
-        transaction: {
-          ...formValues,
-          paymentMethod: isEmpty(formValues.paymentMethod)
-            ? undefined
-            : formValues.paymentMethod,
-        },
-      });
-    }
+    onClose(formValues);
+    // if (defaultValues) {
+    //   updateTransaction({
+    //     id: defaultValues.id,
+    //     transaction: {
+    //       ...formValues,
+    //       paymentMethod: isEmpty(formValues.paymentMethod)
+    //         ? undefined
+    //         : formValues.paymentMethod,
+    //     },
+    //   });
+    // } else {
+    //   addTransaction({
+    //     transaction: {
+    //       ...formValues,
+    //       paymentMethod: isEmpty(formValues.paymentMethod)
+    //         ? undefined
+    //         : formValues.paymentMethod,
+    //     },
+    //   });
+    // }
 
-    form.reset();
+    // form.reset();
 
-    onClose();
+    // onClose();
   });
 
   if (!isOpen) {
@@ -83,10 +77,10 @@ export default function TransactionForm({
         {/* 헤더 */}
         <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200">
           <h2 className="text-lg md:text-xl font-bold text-gray-900">
-            {defaultValues ? "거래 내역 수정" : "새 거래 내역"}
+            거래 내역
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => onClose(undefined)}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
           >
             <svg
@@ -178,7 +172,7 @@ export default function TransactionForm({
             <div className="flex space-x-3 pt-4">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={() => onClose(undefined)}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 취소

@@ -44,7 +44,7 @@ export default function AccountBookDashboardPage() {
             이번 달 예산 현황을 확인하고 관리하세요
           </p>
         </div>
-        <a
+        {/* <a
           href="/account-book/notifications"
           className="px-4 py-2 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors flex items-center space-x-2"
         >
@@ -62,7 +62,7 @@ export default function AccountBookDashboardPage() {
             />
           </svg>
           <span>알림 2</span>
-        </a>
+        </a> */}
       </div>
 
       {/* 저축 현황 */}

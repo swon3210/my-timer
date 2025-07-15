@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { TransactionFilter, TransactionSort } from "@/types/transaction";
 import TransactionList from "./_components/TransactionList";
-import TransactionForm from "./_components/TransactionForm";
 import TransactionFilterComponent from "./_components/TransactionFilter";
-import DeleteConfirmModal from "./_components/DeleteConfirmModal";
 import { Transaction } from "@/app/api/account-books/transactions/types";
-import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
+import useTransactionFormModal from "./_components/TransactionFormModal/useTransactionFormModal";
+import useTransactionDeleteModal from "./_components/TransactionDeleteModal/useTransactionDeleteModal";
+import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";
+import useUpdateTransactionMutation from "@/domains/account-book/transactions/useUpdateTransactionMutation";
+import { isEmpty } from "@/utils/text";
 
 export default function TransactionsPage() {
   // 상태 관리
@@ -18,46 +20,63 @@ export default function TransactionsPage() {
   });
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // 모달 상태
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState<Transaction>();
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deleteTransactionId, setDeleteTransactionId] = useState<string | null>(
-    null
-  );
+  const { openTransactionFormModal } = useTransactionFormModal();
+  const { openTransactionDeleteModal } = useTransactionDeleteModal();
 
-  const { data: transactions = [] } = useTransactionsQuery();
-
-  const targetTransaction = transactions.find(
-    (transaction) => transaction.id === deleteTransactionId
-  );
+  const { mutateAsync: addTransaction } = useAddTransactionMutation();
+  const { mutateAsync: updateTransaction } = useUpdateTransactionMutation();
 
   // 거래 내역 수정 처리
-  const handleEditTransaction = useCallback((transaction: Transaction) => {
-    setEditingTransaction(transaction);
-    setIsFormOpen(true);
-  }, []);
+  const handleEditTransaction = async (transaction: Transaction) => {
+    const transactionFormValues = await openTransactionFormModal({
+      defaultValues: transaction,
+    });
 
+    if (!transactionFormValues) {
+      return;
+    }
+
+    await updateTransaction({
+      id: transaction.id,
+      transaction: {
+        ...transactionFormValues,
+        paymentMethod: isEmpty(transactionFormValues.paymentMethod)
+          ? undefined
+          : transactionFormValues.paymentMethod,
+      },
+    });
+  };
   // 거래 내역 삭제 처리
-  const handleDeleteTransaction = useCallback((id: string) => {
-    setIsDeleteModalOpen(true);
-    setDeleteTransactionId(id);
-  }, []);
+  const handleDeleteTransaction = (id: string) => {
+    openTransactionDeleteModal(id);
+  };
 
   // 필터 초기화
-  const handleResetFilter = useCallback(() => {
+  const handleResetFilter = () => {
     setFilter({});
     setSort({
       field: "date",
       direction: "desc",
     });
-  }, []);
+  };
 
   // 새 거래 내역 추가
-  const handleAddTransaction = useCallback(() => {
-    setEditingTransaction(undefined);
-    setIsFormOpen(true);
-  }, []);
+  const handleAddTransaction = async () => {
+    const transactionFormValues = await openTransactionFormModal({});
+
+    if (!transactionFormValues) {
+      return;
+    }
+
+    await addTransaction({
+      transaction: {
+        ...transactionFormValues,
+        paymentMethod: isEmpty(transactionFormValues.paymentMethod)
+          ? undefined
+          : transactionFormValues.paymentMethod,
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -188,35 +207,6 @@ export default function TransactionsPage() {
           </div>
         </div>
       </div>
-
-      {/* 거래 내역 폼 모달 */}
-      <TransactionForm
-        isOpen={isFormOpen}
-        onClose={() => {
-          setIsFormOpen(false);
-          setEditingTransaction(undefined);
-        }}
-        defaultValues={
-          editingTransaction
-            ? {
-                id: editingTransaction.id,
-                amount: editingTransaction.amount,
-                type: editingTransaction.type,
-                categoryId: editingTransaction.categoryId,
-                description: editingTransaction.description,
-                date: editingTransaction.date,
-              }
-            : undefined
-        }
-      />
-
-      {targetTransaction && (
-        <DeleteConfirmModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          targetTransaction={targetTransaction}
-        />
-      )}
     </div>
   );
 }

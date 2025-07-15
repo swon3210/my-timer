@@ -1,4 +1,4 @@
-import Header from "./_components/Header";
+// import Header from "./_components/Header";
 
 export default function DashboardLayout({
   children,
@@ -7,7 +7,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="min-h-full flex flex-col max-w-app-container mx-auto bg-primary md:px-5">
-      <Header />
+      {/* <Header /> */}
       {children}
     </div>
   );

@@ -1,24 +1,23 @@
 "use client";
 
-import { Transaction } from "@/app/api/account-books/transactions/types";
 import useDeleteTransactionMutation from "@/domains/account-book/transactions/useDeleteTransactionMutation";
 
-interface DeleteConfirmModalProps {
+interface TransactionDeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  targetTransaction: Transaction;
+  targetTransactionId: string;
 }
 
-export default function DeleteConfirmModal({
+export default function TransactionDeleteModal({
   isOpen,
   onClose,
-  targetTransaction,
-}: DeleteConfirmModalProps) {
+  targetTransactionId,
+}: TransactionDeleteModalProps) {
   const { mutateAsync: deleteTransaction, isPending } =
     useDeleteTransactionMutation();
 
   const handleConfirm = async () => {
-    await deleteTransaction(targetTransaction.id);
+    await deleteTransaction(targetTransactionId);
     onClose();
   };
 
@@ -60,11 +59,11 @@ export default function DeleteConfirmModal({
         <div className="p-6">
           <p className="text-gray-700 mb-4">정말 삭제하시겠습니까?</p>
 
-          <div className="bg-gray-50 rounded-lg p-4 mb-4">
+          {/* <div className="bg-gray-50 rounded-lg p-4 mb-4">
             <p className="font-medium text-gray-900">
               {targetTransaction.description}
             </p>
-          </div>
+          </div> */}
 
           <p className="text-sm text-gray-600">
             삭제된 거래 내역은 복구할 수 없습니다.
