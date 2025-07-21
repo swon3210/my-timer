@@ -13,6 +13,7 @@ import { isEmpty } from "@/utils/text";
 import AddTransactionByChatButton from "./_components/AddTransactionByChatButton";
 import { Pen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import dayjs from "dayjs";
 
 export default function TransactionsPage() {
   // 상태 관리
@@ -64,10 +65,10 @@ export default function TransactionsPage() {
   };
 
   // 새 거래 내역 추가
-  const handleAddTransaction = async (transaction: Transaction) => {
+  const handleAddTransaction = async (transaction?: Transaction) => {
     const transactionFormValues = await openTransactionFormModal({
       defaultValues: {
-        date: transaction.date,
+        date: transaction?.date ?? dayjs().format("YYYY-MM-DD"),
         amount: 0,
         categoryId: "",
         description: "",
@@ -107,7 +108,7 @@ export default function TransactionsPage() {
 
             <div className="flex items-center space-x-2">
               <AddTransactionByChatButton />
-              <Button type="button" onClick={handleAddTransaction}>
+              <Button type="button" onClick={() => handleAddTransaction()}>
                 <Pen />
               </Button>
             </div>
