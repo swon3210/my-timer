@@ -23,7 +23,7 @@ export interface TransactionSort {
 
 export type TransactionFormData = Omit<
   Transaction,
-  "createdAt" | "updatedAt" | "userId"
+  "createdAt" | "updatedAt" | "userId" | "id"
 >;
 
 export interface TransactionStats {

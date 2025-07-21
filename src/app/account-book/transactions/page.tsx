@@ -10,6 +10,9 @@ import useTransactionDeleteModal from "./_components/TransactionDeleteModal/useT
 import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";
 import useUpdateTransactionMutation from "@/domains/account-book/transactions/useUpdateTransactionMutation";
 import { isEmpty } from "@/utils/text";
+import AddTransactionByChatButton from "./_components/AddTransactionByChatButton";
+import { Pen } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function TransactionsPage() {
   // 상태 관리
@@ -61,8 +64,17 @@ export default function TransactionsPage() {
   };
 
   // 새 거래 내역 추가
-  const handleAddTransaction = async () => {
-    const transactionFormValues = await openTransactionFormModal({});
+  const handleAddTransaction = async (transaction: Transaction) => {
+    const transactionFormValues = await openTransactionFormModal({
+      defaultValues: {
+        date: transaction.date,
+        amount: 0,
+        categoryId: "",
+        description: "",
+        type: "EXPENSE",
+        paymentMethod: undefined,
+      },
+    });
 
     if (!transactionFormValues) {
       return;
@@ -83,7 +95,7 @@ export default function TransactionsPage() {
       <div className="max-w-7xl mx-auto">
         {/* 모바일 친화적 헤더 */}
         <div className="px-4 py-6 md:px-6">
-          <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+          <div className="flex items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                 거래 내역
@@ -93,25 +105,12 @@ export default function TransactionsPage() {
               </p>
             </div>
 
-            <button
-              onClick={handleAddTransaction}
-              className="w-full md:w-auto px-6 py-3 bg-primary-heavy text-white rounded-xl font-medium hover:bg-primary-heavy/80 transition-all hover:shadow-lg transform hover:scale-[102%] flex items-center justify-center space-x-2"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              <span>내역 추가</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              <AddTransactionByChatButton />
+              <Button type="button" onClick={handleAddTransaction}>
+                <Pen />
+              </Button>
+            </div>
           </div>
         </div>
 

@@ -128,7 +128,7 @@ export default function TransactionList({
         currentDate = transactionDate;
         items.push(
           <div
-            key={`divider-${currentDate}`}
+            key={`divider-${transaction.id}`}
             className="date-divider flex items-center justify-between"
           >
             <span>{currentDate}</span>

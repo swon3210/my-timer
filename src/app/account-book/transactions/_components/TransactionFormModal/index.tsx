@@ -19,7 +19,6 @@ export default function TransactionFormModal({
 }: TransactionFormModalProps) {
   const form = useForm<TransactionFormData>({
     defaultValues: defaultValues ?? {
-      id: "",
       amount: 0,
       type: "EXPENSE",
       categoryId: "",
@@ -41,30 +40,6 @@ export default function TransactionFormModal({
 
   const handleFormSubmit = handleSubmit(async (formValues) => {
     onClose(formValues);
-    // if (defaultValues) {
-    //   updateTransaction({
-    //     id: defaultValues.id,
-    //     transaction: {
-    //       ...formValues,
-    //       paymentMethod: isEmpty(formValues.paymentMethod)
-    //         ? undefined
-    //         : formValues.paymentMethod,
-    //     },
-    //   });
-    // } else {
-    //   addTransaction({
-    //     transaction: {
-    //       ...formValues,
-    //       paymentMethod: isEmpty(formValues.paymentMethod)
-    //         ? undefined
-    //         : formValues.paymentMethod,
-    //     },
-    //   });
-    // }
-
-    // form.reset();
-
-    // onClose();
   });
 
   if (!isOpen) {
@@ -135,6 +110,7 @@ export default function TransactionFormModal({
               <input
                 type="date"
                 {...register("date")}
+                defaultValue={defaultValues?.date}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                   errors.date ? "border-red-500" : "border-gray-300"
                 }`}
@@ -182,7 +158,7 @@ export default function TransactionFormModal({
                 disabled={isSubmitting}
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isSubmitting ? "저장 중..." : defaultValues ? "수정" : "추가"}
+                {isSubmitting ? "저장 중..." : "확인"}
               </button>
             </div>
           </FormProvider>

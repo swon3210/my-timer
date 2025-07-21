@@ -7,6 +7,7 @@ import {
 } from "@/app/api/account-books/transactions/types";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { getIconById } from "@/app/_utils/category";
+import { isEmpty } from "@/utils/text";
 
 const getPaymentMethodDisplayedName = (
   paymentMethod: TransactionPaymentMethod
@@ -174,9 +175,11 @@ export default function TransactionItem({
           </div>
 
           <div className="flex items-center space-x-2 flex-wrap">
-            <span className="bg-gray-100 px-2 py-1 rounded-full text-xs">
-              {getCategoryDisplayedName(transaction.categoryId)}
-            </span>
+            {!isEmpty(transaction.categoryId) && (
+              <span className="bg-gray-100 px-2 py-1 rounded-full text-xs">
+                {getCategoryDisplayedName(transaction.categoryId)}
+              </span>
+            )}
             {transaction.paymentMethod && (
               <span className="text-xs text-gray-500">
                 {getPaymentMethodDisplayedName(transaction.paymentMethod)}
