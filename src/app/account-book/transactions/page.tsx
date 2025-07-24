@@ -14,6 +14,7 @@ import AddTransactionByChatButton from "./_components/AddTransactionByChatButton
 import { Pen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
+import AddTransactionByImageButton from "./_components/AddTransactionByImageButton";
 
 export default function TransactionsPage() {
   // 상태 관리
@@ -107,6 +108,7 @@ export default function TransactionsPage() {
             </div>
 
             <div className="flex items-center space-x-2">
+              <AddTransactionByImageButton />
               <AddTransactionByChatButton />
               <Button type="button" onClick={() => handleAddTransaction()}>
                 <Pen />

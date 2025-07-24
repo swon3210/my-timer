@@ -1,8 +1,7 @@
-export const imageFileToBase64 = (file: File) => {
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  return new Promise((resolve, reject) => {
-    reader.onload = () => resolve(reader.result);
+export const imageFileToBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
-};

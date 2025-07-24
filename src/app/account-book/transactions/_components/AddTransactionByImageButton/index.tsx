@@ -3,10 +3,11 @@ import useTransactionFormModal from "../TransactionFormModal/useTransactionFormM
 import { requestChatCompletion } from "@/domains/AI/openAI/request";
 import { TransactionFormData } from "@/types/transaction";
 import { Category } from "@/app/api/account-books/categories/types";
-import { MessageCircle } from "lucide-react";
+import { ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";
 import { isEmpty } from "@/utils/text";
+import { imageFileToBase64 } from "@/utils/image";
 
 const parseTransactionData = (
   message: string,
@@ -53,13 +54,13 @@ const parseTransactionData = (
 };
 
 const requestTransactionAddCompletion = async (
-  inputText: string,
+  base64EncodedImage: string,
   categories: Category[]
 ) => {
   const systemContent = `당신은 유저의 지출 내역을 정해준 포맷으로 추출해줘야 합니다.`;
 
   const userContent = `
-    다음 정보를 기반으로 응답해 주세요: ${inputText}.
+    이미지에서 일정한 형식의 내용을 추출해주세요.
     답변 형식은 "금액:[금액]|카테고리:[카테고리]|설명:[설명]|날짜:[날짜]|결재수단:[결재수단]"입니다. 
     답변은 반드시 정해진 형식으로만 해야합니다.
     여러 답변이 있다면 줄바꿈(\n)으로 구분해주세요.
@@ -77,29 +78,48 @@ const requestTransactionAddCompletion = async (
     model: "gpt-4.1",
     messages: [
       { role: "system", content: systemContent },
-      { role: "user", content: userContent },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: userContent },
+          {
+            type: "image_url",
+            image_url: { url: base64EncodedImage },
+          },
+        ],
+      },
     ],
-    max_tokens: 150,
+    max_tokens: 4096,
   });
 
   return parseTransactionData(message, categories);
 };
 
-export default function AddTransactionByChatButton() {
+export default function AddTransactionByImageButton() {
   const { data: categories = [] } = useTransactionCategoriesQuery();
 
   const { mutateAsync: addTransaction } = useAddTransactionMutation();
   const { openTransactionFormModal } = useTransactionFormModal();
 
-  const handleClick = async () => {
-    const inputText = prompt("거래 내역을 설명해주세요");
+  const handleImageInput = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const [file] = Array.from(event.target.files ?? []);
 
-    if (!inputText) {
+    console.log({
+      file,
+    });
+
+    if (!file) {
       return;
     }
 
+    event.target.value = "";
+
+    const base64EncodedImage = await imageFileToBase64(file);
+
     const transactionData = await requestTransactionAddCompletion(
-      inputText,
+      base64EncodedImage,
       categories
     );
 
@@ -122,8 +142,16 @@ export default function AddTransactionByChatButton() {
   };
 
   return (
-    <Button variant="outline" type="button" onClick={handleClick}>
-      <MessageCircle className="w-4 h-4" />
+    <Button asChild variant="outline" type="button">
+      <label>
+        <input
+          className="hidden"
+          type="file"
+          accept="image/*"
+          onChange={handleImageInput}
+        />
+        <ImagePlus className="w-4 h-4" />
+      </label>
     </Button>
   );
 }
