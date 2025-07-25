@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";
 import { isEmpty } from "@/utils/text";
 import { imageFileToBase64 } from "@/utils/image";
+import { toast } from "sonner";
 
 const parseTransactionData = (
   message: string,
@@ -106,39 +107,40 @@ export default function AddTransactionByImageButton() {
   ) => {
     const [file] = Array.from(event.target.files ?? []);
 
-    console.log({
-      file,
-    });
-
     if (!file) {
       return;
     }
 
     event.target.value = "";
 
-    const base64EncodedImage = await imageFileToBase64(file);
+    try {
+      const base64EncodedImage = await imageFileToBase64(file);
 
-    const transactionData = await requestTransactionAddCompletion(
-      base64EncodedImage,
-      categories
-    );
+      const transactionData = await requestTransactionAddCompletion(
+        base64EncodedImage,
+        categories
+      );
 
-    const transactionFormValues = await openTransactionFormModal({
-      defaultValues: transactionData,
-    });
+      const transactionFormValues = await openTransactionFormModal({
+        defaultValues: transactionData,
+      });
 
-    if (!transactionFormValues) {
-      return;
+      if (!transactionFormValues) {
+        return;
+      }
+
+      await addTransaction({
+        transaction: {
+          ...transactionFormValues,
+          paymentMethod: isEmpty(transactionFormValues.paymentMethod)
+            ? undefined
+            : transactionFormValues.paymentMethod,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("거래 내역 추가에 실패했습니다.");
     }
-
-    await addTransaction({
-      transaction: {
-        ...transactionFormValues,
-        paymentMethod: isEmpty(transactionFormValues.paymentMethod)
-          ? undefined
-          : transactionFormValues.paymentMethod,
-      },
-    });
   };
 
   return (

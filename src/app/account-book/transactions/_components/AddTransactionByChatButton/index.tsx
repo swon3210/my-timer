@@ -7,6 +7,7 @@ import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";
 import { isEmpty } from "@/utils/text";
+import { toast } from "sonner";
 
 const parseTransactionData = (
   message: string,
@@ -98,27 +99,32 @@ export default function AddTransactionByChatButton() {
       return;
     }
 
-    const transactionData = await requestTransactionAddCompletion(
-      inputText,
-      categories
-    );
+    try {
+      const transactionData = await requestTransactionAddCompletion(
+        inputText,
+        categories
+      );
 
-    const transactionFormValues = await openTransactionFormModal({
-      defaultValues: transactionData,
-    });
+      const transactionFormValues = await openTransactionFormModal({
+        defaultValues: transactionData,
+      });
 
-    if (!transactionFormValues) {
-      return;
+      if (!transactionFormValues) {
+        return;
+      }
+
+      await addTransaction({
+        transaction: {
+          ...transactionFormValues,
+          paymentMethod: isEmpty(transactionFormValues.paymentMethod)
+            ? undefined
+            : transactionFormValues.paymentMethod,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("거래 내역 추가에 실패했습니다.");
     }
-
-    await addTransaction({
-      transaction: {
-        ...transactionFormValues,
-        paymentMethod: isEmpty(transactionFormValues.paymentMethod)
-          ? undefined
-          : transactionFormValues.paymentMethod,
-      },
-    });
   };
 
   return (
