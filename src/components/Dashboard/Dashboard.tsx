@@ -44,7 +44,7 @@ const apps = [
     name: "가계부",
     icon: <Wallet size={36} />,
     color: "text-pink-500",
-    url: "/account-book/dashboard",
+    url: "/account-book/home",
   },
   {
     name: "출퇴근\n기록부",

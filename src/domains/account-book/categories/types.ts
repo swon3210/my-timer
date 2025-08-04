@@ -1,13 +1,3 @@
-import { TransactionType } from "../types";
-
-export type Category = {
-  id: string;
-  displayedName: string;
-  type: TransactionType;
-  createdAt: string;
-  updatedAt: string;
-};
-
 // 기본 카테고리 상수 정의
 export const DEFAULT_EXPENSE_CATEGORIES = [
   "FOOD",

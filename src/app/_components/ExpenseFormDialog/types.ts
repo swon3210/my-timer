@@ -1,7 +1,8 @@
-import { Frequency, TransactionType } from "@/domains/account-book/types";
+import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { Frequency } from "@/domains/account-book/transactions/types";
 
 export type ExpenseFormValues = {
-  type: Exclude<TransactionType, "INVESTMENT">;
+  type: TransactionType;
   categoryId: string | undefined;
   amount: number;
   description: string;

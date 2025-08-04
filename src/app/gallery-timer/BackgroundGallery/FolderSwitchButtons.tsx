@@ -2,7 +2,11 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
 import { useAtom, useAtomValue } from "jotai";
-import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
+import {
+  categoryNameAtom,
+  folderNameAtom,
+  imageUrlIndexAtom,
+} from "@/lib/atoms";
 import { cn } from "@/lib/utils";
 
 type FolderSwitchButtonsProps = {
@@ -16,6 +20,7 @@ const FolderSwitchButtons = ({
 }: FolderSwitchButtonsProps) => {
   const categoryName = useAtomValue(categoryNameAtom);
   const [folderName, setFolderName] = useAtom(folderNameAtom);
+  const [, setImageUrlIndex] = useAtom(imageUrlIndexAtom);
 
   const { data: folderNames } = useImageFolderNamesQuery({
     categoryName,
@@ -36,6 +41,8 @@ const FolderSwitchButtons = ({
     } else {
       setFolderName(folderNames[newIndex]);
     }
+
+    setImageUrlIndex(0);
 
     onFolderSwitch(direction);
   };

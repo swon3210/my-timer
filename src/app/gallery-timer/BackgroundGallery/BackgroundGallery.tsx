@@ -1,13 +1,17 @@
 import useImagesQuery from "@/domains/images/useImagesQuery";
-import { categoryNameAtom, folderNameAtom } from "@/lib/atoms";
-import { useAtom, useAtomValue } from "jotai";
+import {
+  bookMarksAtom,
+  categoryNameAtom,
+  folderNameAtom,
+  imageUrlIndexAtom,
+} from "@/lib/atoms";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
-  useState,
 } from "react";
 import ImageShuffleButton from "./ImageShuffleButton";
 import { cn } from "@/lib/utils";
@@ -15,7 +19,6 @@ import FolderSwitchButtons from "./FolderSwitchButtons";
 import ImageIndexIndicator from "./ImageIndexIndicator";
 import NavigateToFolderButton from "./NavigateToFolderButton";
 import NavigateToCategoryButton from "./NavigateToCategoryButton";
-import { useSearchParams } from "next/navigation";
 import useImageFolderNamesQuery from "@/domains/folders/useImageFolderNamesQuery";
 import FullPageCarousel from "./FullPageCarousel";
 import Z_INDEX from "@/app/_constants/z-index";
@@ -36,8 +39,6 @@ const BackgroundGallery = forwardRef<
   BackgroundGalleryHandle,
   BackgroundGalleryProps
 >(({ className }, ref) => {
-  const searchParams = useSearchParams();
-
   const categoryName = useAtomValue(categoryNameAtom);
   const [folderName, setFolderName] = useAtom(folderNameAtom);
 
@@ -47,18 +48,15 @@ const BackgroundGallery = forwardRef<
 
   const nextImageUrlIndexRef = useRef<number>();
 
-  const [imageUrlIndex, setImageUrlIndex] = useState(() => {
-    const imageUrlIndexParams = searchParams.get("image-url-index");
-    return imageUrlIndexParams ? parseInt(imageUrlIndexParams) : 0;
-  });
+  const [imageUrlIndex, setImageUrlIndex] = useAtom(imageUrlIndexAtom);
+
+  const setBookMarks = useSetAtom(bookMarksAtom);
 
   // TODO : decodeURIComponent 제거
   const { data: imageUrls = [] } = useImagesQuery({
     categoryName: decodeURIComponent(categoryName ?? ""),
     folderName: decodeURIComponent(folderName ?? ""),
   });
-
-  // const selectedImageUrl = imageUrls[imageUrlIndex] as string | undefined;
 
   const setPrevImageUrlIndex = useCallback(() => {
     const currentFolderIndex = imageFolderNames.findIndex(
@@ -121,6 +119,7 @@ const BackgroundGallery = forwardRef<
     imageUrlIndex,
     imageUrls.length,
     setFolderName,
+    setImageUrlIndex,
   ]);
 
   const handleBackgroundGalleryClick = (
@@ -156,7 +155,7 @@ const BackgroundGallery = forwardRef<
     }
 
     nextImageUrlIndexRef.current = getRandomIndex(imageUrls.length);
-  }, [imageUrls]);
+  }, [imageUrls, setImageUrlIndex]);
 
   useImperativeHandle(ref, () => ({
     changeImage: chageImage,
@@ -183,6 +182,35 @@ const BackgroundGallery = forwardRef<
     };
   }, [imageUrls.length, setPrevImageUrlIndex, setNextImageUrlIndex]);
 
+  useEffect(() => {
+    if (categoryName == null || folderName == null) {
+      return;
+    }
+
+    setBookMarks((prev) => {
+      const newBookMarks = [...prev];
+
+      const targetBookMark = newBookMarks.find(
+        (bookMark) =>
+          bookMark.categoryName === categoryName &&
+          bookMark.folderName === folderName
+      );
+
+      if (targetBookMark) {
+        targetBookMark.imageUrlIndex = imageUrlIndex;
+      } else {
+        newBookMarks.push({
+          categoryName,
+          folderName,
+          imageUrlIndex,
+        });
+      }
+
+      return newBookMarks;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageUrlIndex]);
+
   return (
     <div
       className={cn(
@@ -203,7 +231,7 @@ const BackgroundGallery = forwardRef<
         <div className="absolute bottom-2 left-2 z-10 flex items-center gap-3">
           <div className="flex items-center gap-1">
             <NavigateToCategoryButton />
-            <NavigateToFolderButton selectedImageIndex={imageUrlIndex} />
+            <NavigateToFolderButton />
           </div>
           <ImageIndexIndicator
             currentIndex={imageUrlIndex}

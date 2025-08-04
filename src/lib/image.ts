@@ -1,7 +1,9 @@
 import { axiosInstance } from "./api";
 
+const OPTIMIZE_TARGET_SIZE = 2 * 1024 * 1024; // 2MB
+
 export const optimizeImage = async (file: File): Promise<Blob> => {
-  if (file.size === 350 * 1024) {
+  if (file.size < OPTIMIZE_TARGET_SIZE) {
     return file;
   }
 
@@ -31,6 +33,10 @@ export const optimizeImage = async (file: File): Promise<Blob> => {
   let newHeight = image.height;
   const MAX_SIZE = 1980;
 
+  if (Math.max(image.width, image.height) < MAX_SIZE) {
+    return file;
+  }
+
   if (image.width > image.height) {
     if (image.width > MAX_SIZE) {
       newWidth = MAX_SIZE;
@@ -57,7 +63,12 @@ export const optimizeImage = async (file: File): Promise<Blob> => {
     canvas.toBlob(
       (blob) => {
         if (blob) {
-          resolve(blob);
+          // 원본 파일과 변환된 파일의 크기를 비교
+          if (blob.size < file.size) {
+            resolve(blob);
+          } else {
+            resolve(file); // 변환된 파일이 더 크면 원본 반환
+          }
         } else {
           resolve(file); // 실패시 원본 반환
         }

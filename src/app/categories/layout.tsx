@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtom, useAtomValue } from "jotai";
-import { Check, FolderPlus, Trash, Upload, X } from "lucide-react";
+import { Bookmark, Check, FolderPlus, Trash, Upload, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -30,10 +30,14 @@ import { useFirebase } from "@/app/_providers/FirebaseProvider";
 import { getUserStoragePath } from "../api/firebase";
 
 import useImageUploadDialogOverlay from "./useImageUploadDialogOverlay";
-import { ImageGroup, useSetImagesUploadProgress } from "./ImageUploadDialog";
+import {
+  ImageGroup,
+  useImageUploadDialogRef,
+} from "./components/ImageUploadDialog/ImageUploadDialog";
 import { cn } from "@/lib/utils";
 import Z_INDEX from "../_constants/z-index";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const AddFolderButton = () => {
   const { data: folderNames } = useFolderNamesQuery();
@@ -76,13 +80,12 @@ const AddFolderButton = () => {
 const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
   const { data: imageFolderNames } = useImageFolderNamesQuery({ categoryName });
   const { data: user } = useUserQuery();
+  const imageUploadDialogRef = useImageUploadDialogRef();
 
   const { addImages } = useFirebase();
   const invalidateQuery = useInvalidateQuery();
 
   const { openImageUploadDialog } = useImageUploadDialogOverlay();
-
-  const setImagesUploadProgress = useSetImagesUploadProgress();
 
   const handleImagesUploaded = async (imageGroups: ImageGroup[]) => {
     if (imageGroups.length === 0 || !user) {
@@ -117,12 +120,21 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       )
     );
 
-    setImagesUploadProgress(0);
-
-    let uploadedImagesFolderCount = 0;
-
     for (let index = 0; index < imageGroups.length; index++) {
       const imageGroup = imageGroups[index];
+
+      imageUploadDialogRef.current?.setAttachedFiles((prev) => {
+        return prev.map((attachedFile) => {
+          if (attachedFile.folderName === imageGroup.folderName) {
+            return {
+              ...attachedFile,
+              status: "uploading" as const,
+            };
+          }
+          return attachedFile;
+        });
+      });
+
       await addImages(
         getUserStoragePath(
           user,
@@ -131,10 +143,17 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
         imageGroup.files
       );
 
-      uploadedImagesFolderCount += 1;
-      setImagesUploadProgress(
-        (uploadedImagesFolderCount / imageGroups.length) * 100
-      );
+      imageUploadDialogRef.current?.setAttachedFiles((prev) => {
+        return prev.map((attachedFile) => {
+          if (attachedFile.folderName === imageGroup.folderName) {
+            return {
+              ...attachedFile,
+              status: "uploaded" as const,
+            };
+          }
+          return attachedFile;
+        });
+      });
     }
 
     toast(
@@ -147,17 +166,16 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
     );
 
     void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
-
-    setTimeout(() => {
-      setImagesUploadProgress(undefined);
-    }, 1000);
   };
 
   return (
     <Button
       variant="outline"
       onClick={() =>
-        openImageUploadDialog({ onImagesUploaded: handleImagesUploaded })
+        openImageUploadDialog({
+          ref: imageUploadDialogRef,
+          onImagesUploaded: handleImagesUploaded,
+        })
       }
       className="size-10"
     >
@@ -173,28 +191,51 @@ const AddImagesToFolderButton = ({
   categoryName: string;
   imageFolderName: string;
 }) => {
+  const imageUploadDialogRef = useImageUploadDialogRef();
+
   const invalidateQuery = useInvalidateQuery();
   const { addImages } = useFirebase();
   const { data: user } = useUserQuery();
 
   const { openImageUploadDialog } = useImageUploadDialogOverlay();
-  const setImagesUploadProgress = useSetImagesUploadProgress();
   const handleImagesUploaded = async (imageGroups: ImageGroup[]) => {
     if (!user) {
       return;
     }
 
-    setImagesUploadProgress(0);
+    for (let index = 0; index < imageGroups.length; index++) {
+      const imageGroup = imageGroups[index];
 
-    await addImages(
-      getUserStoragePath(
-        user,
-        `images/${categoryName}/${imageFolderName.trim()}`
-      ),
-      imageGroups.flatMap((imageGroup) => imageGroup.files)
-    );
+      imageUploadDialogRef.current?.setAttachedFiles((prev) => {
+        return prev.map((attachedFile) => {
+          if (attachedFile.folderName === imageGroup.folderName) {
+            return { ...attachedFile, status: "uploading" as const };
+          }
+          return attachedFile;
+        });
+      });
 
-    setImagesUploadProgress(100);
+      await addImages(
+        getUserStoragePath(
+          user,
+          `images/${categoryName}/${imageFolderName.trim()}`
+        ),
+        imageGroup.files
+      );
+
+      imageUploadDialogRef.current?.setAttachedFiles((prev) => {
+        return prev.map((attachedFile) => {
+          if (attachedFile.folderName === imageFolderName) {
+            return {
+              ...attachedFile,
+              isOptimized: true,
+              isUploadedToServer: true,
+            };
+          }
+          return attachedFile;
+        });
+      });
+    }
 
     toast(
       `${imageGroups.reduce(
@@ -203,10 +244,6 @@ const AddImagesToFolderButton = ({
       )}개의 이미지를 업로드하였습니다.`
     );
 
-    setTimeout(() => {
-      setImagesUploadProgress(undefined);
-    }, 1000);
-
     void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
   };
 
@@ -214,7 +251,10 @@ const AddImagesToFolderButton = ({
     <Button
       variant="outline"
       onClick={() =>
-        openImageUploadDialog({ onImagesUploaded: handleImagesUploaded })
+        openImageUploadDialog({
+          ref: imageUploadDialogRef,
+          onImagesUploaded: handleImagesUploaded,
+        })
       }
       className="size-10"
     >
@@ -327,6 +367,16 @@ const XButton = ({ target }: SelectionModeButtonProps) => {
   );
 };
 
+const BookMarkButton = () => {
+  return (
+    <Link href="/bookmarks">
+      <Button variant="outline" size="icon" className="size-10">
+        <Bookmark className="w-4 h-4 text-gray-700" />
+      </Button>
+    </Link>
+  );
+};
+
 const SelectionModeButton = () => {
   const [isSelectionMode, setIsSelectionMode] = useAtom(isSelectionModeAtom);
 
@@ -384,7 +434,7 @@ const ItemCount = ({
 
   return (
     <>
-      <h3 className="text-lg font-semibold text-gray-500">
+      <h3 className="text-sm md:text-lg font-semibold text-gray-500">
         ({imageFolderNames.length}개 폴더)
       </h3>
       {imageFolderName && (
@@ -435,11 +485,11 @@ export default function RootLayout({
               target={imageFolderName && categoryName ? "images" : "folders"}
             />
           ) : imageFolderName ? (
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-sm md:text-lg font-semibold">
               {decodeURIComponent(imageFolderName)}
             </h3>
           ) : (
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-sm md:text-lg font-semibold">
               {decodeURIComponent(categoryName ?? "")}
             </h3>
           )}
@@ -470,6 +520,7 @@ export default function RootLayout({
           ) : (
             <AddFolderButton />
           )}
+          <BookMarkButton />
         </div>
       </div>
 

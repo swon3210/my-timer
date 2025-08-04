@@ -2,15 +2,16 @@ import { NextResponse } from "next/server";
 import { withAuth, AuthRequest } from "@/app/api/firebase-admin";
 import { ref, get, set, push } from "firebase/database";
 import { database } from "@/app/api/firebase";
-import { Category } from "@/domains/account-book/categories/types";
 import dayjs from "dayjs";
 import { z } from "zod";
+import { Category } from "./types";
 
 const getCategoriesResponseSchema = z.record(
   z.string(),
   z.object({
     displayedName: z.string(),
     type: z.enum(["INCOME", "EXPENSE", "INVESTMENT", "FLEX"]),
+    icon: z.string().optional(),
     createdAt: z.string(),
     updatedAt: z.string(),
   })
@@ -51,11 +52,12 @@ export const GET = withAuth(async (req: AuthRequest) => {
 // POST: 새 카테고리 추가
 export const POST = withAuth(async (req: AuthRequest) => {
   try {
-    const { displayedName, type } = await req.json();
+    const { displayedName, type, icon } = await req.json();
 
     const newCategory: Omit<Category, "id"> = {
       displayedName,
       type,
+      icon,
       createdAt: dayjs().toISOString(),
       updatedAt: dayjs().toISOString(),
     };

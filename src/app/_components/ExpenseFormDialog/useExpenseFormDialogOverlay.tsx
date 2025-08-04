@@ -1,11 +1,9 @@
-import useOverlay from "@/hooks/useOverlay";
+import { overlay } from "overlay-kit";
 import ExpenseFormDialog from "../../_components/ExpenseFormDialog";
 import { ExpenseFormValues } from "./types";
-import { TransactionType } from "@/domains/account-book/types";
+import { TransactionType } from "@/app/api/account-books/transactions/types";
 
 const useExpenseFormDialogOverlay = () => {
-  const overlay = useOverlay();
-
   const openExpenseFormDialog = (
     params: {
       defaultValues?: Partial<ExpenseFormValues>;

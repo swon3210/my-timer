@@ -11,10 +11,20 @@ export const folderNameAtom = atomWithStorage<string | null>(
   null
 );
 
+export const imageUrlIndexAtom = atomWithStorage<number>("imageUrlIndex", 0);
+
 export const gridLayoutColumnNumberAtom = atomWithStorage<number | null>(
   "gridLayout",
   null
 );
+
+export type BookMark = {
+  categoryName: string;
+  folderName: string;
+  imageUrlIndex: number;
+};
+
+export const bookMarksAtom = atomWithStorage<BookMark[]>("bookMarks", []);
 
 export const platformAtom = atomWithStorage<
   "IOS" | "AOS" | "WEB-PC" | "WEB-MOBILE" | null
