@@ -4,7 +4,7 @@ import { useState } from "react";
 import BudgetOverview from "@/components/budget/BudgetOverview";
 import CategoryBudgetList from "@/components/budget/CategoryBudgetList";
 import BudgetCreateModal from "@/components/budget/BudgetCreateModal";
-import { BudgetStatus } from "@/types/budget";
+
 import {
   useBudgetsByPeriod,
   useBudgetStatus,
@@ -21,7 +21,8 @@ export default function MonthlyBudgetPage() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingBudget, setEditingBudget] = useState<any>(null);
+  const [editingBudget, setEditingBudget] =
+    useState<CreateBudgetRequest | null>(null);
 
   const months = [
     "1월",

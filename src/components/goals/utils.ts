@@ -1,4 +1,4 @@
-import { Goal, Priority } from "@/types/goal";
+import { Goal, Priority, GoalFormData } from "@/types/goal";
 
 export function filterAndSortGoals(
   goals: Goal[],
@@ -24,7 +24,7 @@ export function filterAndSortGoals(
     });
 }
 
-export function createNewGoal(goalData: any): Goal {
+export function createNewGoal(goalData: GoalFormData): Goal {
   return {
     id: Date.now(),
     ...goalData,
@@ -35,7 +35,7 @@ export function createNewGoal(goalData: any): Goal {
   };
 }
 
-export function updateGoal(existingGoal: Goal, goalData: any): Goal {
+export function updateGoal(existingGoal: Goal, goalData: GoalFormData): Goal {
   return {
     ...existingGoal,
     ...goalData,

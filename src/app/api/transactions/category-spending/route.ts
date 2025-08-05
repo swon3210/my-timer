@@ -1,13 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { withAuth, AuthRequest } from "@/app/api/firebase-admin";
-import {
-  ref,
-  get,
-  query,
-  orderByChild,
-  startAt,
-  endAt,
-} from "firebase/database";
+import { ref, get } from "firebase/database";
 import { database } from "@/app/api/firebase";
 import { z } from "zod";
 
@@ -42,7 +35,7 @@ export const GET = withAuth(async (req: AuthRequest) => {
     const end = new Date(endDate);
 
     // 모든 계정 항목을 순회하면서 조건에 맞는 것들의 금액을 합산
-    Object.values(accountItems).forEach((item: any) => {
+    Object.values(accountItems).forEach((item: unknown) => {
       const itemDate = new Date(item.date);
       const isExpense = item.type === "EXPENSE";
       const matchesCategory = item.categoryId === categoryId;

@@ -1,16 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Utensils,
-  ShoppingBag,
-  Heart,
-  Car,
-  Home,
-  Coffee,
-  Gamepad2,
-  GraduationCap,
-} from "lucide-react";
+import { Utensils, ShoppingBag, Heart, Car, Home, Coffee } from "lucide-react";
 import { useState } from "react";
 
 interface ExpenseCategory {

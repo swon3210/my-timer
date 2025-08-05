@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { withAuth, AuthRequest } from "@/app/api/firebase-admin";
 import { ref, get, set, push } from "firebase/database";
 import { database } from "@/app/api/firebase";
@@ -45,7 +45,7 @@ export const GET = withAuth(async (req: AuthRequest) => {
 
     const budgetsData = snapshot.val();
     const budgets = Object.entries(budgetsData).map(
-      ([id, data]: [string, any]) => ({
+      ([id, data]: [string, unknown]) => ({
         id,
         ...data,
         startDate: new Date(data.startDate),

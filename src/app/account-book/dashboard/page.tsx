@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import BudgetOverview from "@/components/budget/BudgetOverview";
-import CategoryBudgetList from "@/components/budget/CategoryBudgetList";
+
 import { BudgetStatus } from "@/types/budget";
 
 export default function AccountBookDashboardPage() {
@@ -10,14 +9,14 @@ export default function AccountBookDashboardPage() {
   const [budgetStatus, setBudgetStatus] = useState<BudgetStatus | null>(null);
 
   // 샘플 데이터 - 실제로는 API에서 불러올 데이터
-  const [savingsData, setSavingsData] = useState({
+  const [savingsData] = useState({
     totalSavings: 15500000, // 총 저축금액
     thisMonthSavings: 450000, // 이번 달 저축금액
     lastMonthSavings: 380000, // 지난 달 저축금액
     savingsGrowth: 18.4, // 전월 대비 증가율,
   });
 
-  const [goalsData, setGoalsData] = useState({
+  const [goalsData] = useState({
     activeGoals: 3,
     completedGoals: 7,
     recentGoals: [

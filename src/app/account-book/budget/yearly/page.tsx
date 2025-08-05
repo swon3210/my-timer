@@ -4,7 +4,7 @@ import { useState } from "react";
 import BudgetOverview from "@/components/budget/BudgetOverview";
 import CategoryBudgetList from "@/components/budget/CategoryBudgetList";
 import BudgetCreateModal from "@/components/budget/BudgetCreateModal";
-import { BudgetStatus } from "@/types/budget";
+
 import {
   useBudgetsByPeriod,
   useBudgetStatus,
@@ -20,7 +20,8 @@ import {
 export default function YearlyBudgetPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingBudget, setEditingBudget] = useState<any>(null);
+  const [editingBudget, setEditingBudget] =
+    useState<CreateBudgetRequest | null>(null);
 
   // 데이터 조회
   const {

@@ -5,13 +5,10 @@ import {
   getBudgetById,
   updateBudget,
   deleteBudget,
-  getBudgetStatus,
   calculateBudgetStatus,
-  CreateBudgetRequest,
-  UpdateBudgetRequest,
   BudgetPeriodFilter,
 } from "@/services/budgetService";
-import { Budget, BudgetStatus } from "@/types/budget";
+import { Budget } from "@/types/budget";
 // Note: Replace with your preferred toast library or remove toast notifications
 
 // Query keys
@@ -59,7 +56,7 @@ export const useCreateBudget = () => {
 
   return useMutation({
     mutationFn: createBudget,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // 관련된 쿼리들 무효화
       queryClient.invalidateQueries({ queryKey: budgetKeys.all });
       console.log("예산이 성공적으로 생성되었습니다.");

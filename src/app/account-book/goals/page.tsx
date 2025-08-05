@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Goal } from "@/types/goal";
+import { Goal, GoalFormData } from "@/types/goal";
 import GoalStatsCards from "@/components/goals/GoalStatsCards";
 import GoalFilters from "@/components/goals/GoalFilters";
 import GoalList from "@/components/goals/GoalList";
@@ -29,7 +29,7 @@ export default function GoalsPage() {
     setEditingGoal(goal);
   };
 
-  const handleSave = (goalData: any) => {
+  const handleSave = (goalData: GoalFormData) => {
     if (editingGoal) {
       editGoal(editingGoal.id, goalData);
     } else {

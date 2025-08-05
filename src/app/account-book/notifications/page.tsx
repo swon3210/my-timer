@@ -190,7 +190,7 @@ export default function NotificationsPage() {
         ].map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setFilter(tab.key as any)}
+            onClick={() => setFilter(tab.key as "all" | "danger" | "warning")}
             className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
               filter === tab.key
                 ? "bg-blue-100 text-blue-700"
