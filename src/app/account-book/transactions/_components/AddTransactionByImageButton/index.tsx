@@ -9,6 +9,7 @@ import useAddTransactionMutation from "@/domains/account-book/transactions/useAd
 import { isEmpty } from "@/utils/text";
 import { imageFileToBase64 } from "@/utils/image";
 import { toast } from "sonner";
+import dayjs from "dayjs";
 
 const parseTransactionData = (
   message: string,
@@ -72,7 +73,9 @@ const requestTransactionAddCompletion = async (
       .join(",")} 중 하나여야 합니다.
     결재수단은 정확히 CASH,CREDIT_CARD,DEBIT_CARD,TRANSFER 중 하나여야 합니다.
     날짜는 YYYY-MM-DD 형식으로만 작성해 주세요. 
-    오늘 날짜는 ${new Date().toISOString().split("T")[0]} 입니다.
+    오늘 날짜는 ${dayjs().format(
+      "YYYY-MM-DD"
+    )}입니다. 이 날짜를 기준으로 날짜를 추론해주세요.
   `;
 
   const message = await requestChatCompletion({
