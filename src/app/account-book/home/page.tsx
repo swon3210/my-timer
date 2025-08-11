@@ -5,6 +5,7 @@ import ExpenseSummary from "./_components/ExpenseSummary";
 import ExpenseTabs from "./_components/ExpenseTabs";
 import ExpenseList from "./_components/ExpenseList/ExpenseList";
 import { TabType } from "./_components/ExpenseTabs/ExpenseTabs";
+import PeriodNavigator from "./_components/PeriodNavigator";
 
 export default function AccountBookHomePage() {
   const [activeTab, setActiveTab] = useState<TabType>("weekly");
@@ -15,6 +16,7 @@ export default function AccountBookHomePage() {
       <div className="flex flex-col grow rounded-t-3xl overflow-hidden bg-mint-light p-5 gap-6">
         <div className="flex flex-col gap-4">
           <ExpenseTabs activeTab={activeTab} onTabChange={setActiveTab} />
+          <PeriodNavigator activeTab={activeTab} />
           <ExpenseList activeTab={activeTab} />
         </div>
       </div>

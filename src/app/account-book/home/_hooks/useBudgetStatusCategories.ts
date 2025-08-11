@@ -5,6 +5,7 @@ import { Category } from "@/app/api/account-books/categories/types";
 import { TabType } from "../_components/ExpenseTabs/ExpenseTabs";
 import dayjs from "dayjs";
 import { useMemo } from "react";
+import useDateAtom from "../_atom/useDateAtom";
 
 export type BudgetStatusCategory = Category & {
   totalExpense: number;
@@ -17,9 +18,10 @@ export default function useBudgetStatusCategories(
   const { data: transactionCategories = [] } = useTransactionCategoriesQuery();
   const { data: transactions = [] } = useTransactionsQuery();
   const { data: budgets = [] } = useBudgetsQuery();
+  const { date } = useDateAtom();
 
   const filteredBudgets = useMemo(() => {
-    const today = dayjs();
+    const baseDate = dayjs(date);
 
     if (activeTab === "yearly") {
       const yearlyBudgets = budgets?.filter(
@@ -30,7 +32,7 @@ export default function useBudgetStatusCategories(
       );
 
       return yearlyBudgets?.filter(
-        (budget) => budget.targetDate.year === today.year()
+        (budget) => budget.targetDate.year === baseDate.year()
       );
     }
 
@@ -44,8 +46,8 @@ export default function useBudgetStatusCategories(
 
       return monthlyBudgets?.filter(
         (budget) =>
-          budget.targetDate.year === today.year() &&
-          budget.targetDate.month === today.month()
+          budget.targetDate.year === baseDate.year() &&
+          budget.targetDate.month === baseDate.month()
       );
     }
 
@@ -61,10 +63,10 @@ export default function useBudgetStatusCategories(
         const [start, end] = budget.targetDate.weekPeriod ?? [];
 
         return (
-          budget.targetDate.year === today.year() &&
-          budget.targetDate.month === today.month() &&
-          today.date() >= start &&
-          today.date() <= end
+          budget.targetDate.year === baseDate.year() &&
+          budget.targetDate.month === baseDate.month() &&
+          baseDate.date() >= start &&
+          baseDate.date() <= end
         );
       });
     }
@@ -73,26 +75,26 @@ export default function useBudgetStatusCategories(
   }, [budgets, activeTab]);
 
   const filteredTransactions = useMemo(() => {
-    const today = dayjs();
+    const baseDate = dayjs(date);
 
     if (activeTab === "yearly") {
       return transactions?.filter(
-        (transaction) => dayjs(transaction.date).year() === today.year()
+        (transaction) => dayjs(transaction.date).year() === baseDate.year()
       );
     }
 
     if (activeTab === "monthly") {
       return transactions?.filter(
         (transaction) =>
-          dayjs(transaction.date).year() === today.year() &&
-          dayjs(transaction.date).month() === today.month()
+          dayjs(transaction.date).year() === baseDate.year() &&
+          dayjs(transaction.date).month() === baseDate.month()
       );
     }
 
     if (activeTab === "weekly") {
       return transactions?.filter((transaction) => {
-        const firstDayOfWeek = today.startOf("week");
-        const lastDayOfWeek = today.endOf("week");
+        const firstDayOfWeek = baseDate.startOf("week");
+        const lastDayOfWeek = baseDate.endOf("week");
 
         return (
           dayjs(transaction.date).isAfter(firstDayOfWeek) &&
@@ -100,7 +102,7 @@ export default function useBudgetStatusCategories(
         );
       });
     }
-  }, [transactions, activeTab]);
+  }, [transactions, activeTab, date]);
 
   const expenseCategories = transactionCategories?.filter(
     (category) => category.type === "EXPENSE"

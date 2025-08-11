@@ -1,44 +1,18 @@
 import { formatCurrency } from "@/utils/format";
-import dayjs from "dayjs";
-import { TabType } from "../ExpenseTabs/ExpenseTabs";
-
-const getDateString = (activeTab: TabType) => {
-  const today = dayjs();
-  const startDate = today.subtract(1, "week").add(1, "day");
-  const endDate = today;
-
-  if (activeTab === "yearly") {
-    return `${startDate.format("YYYY년")}`;
-  }
-  if (activeTab === "monthly") {
-    return `${startDate.format("M월")}`;
-  }
-  if (activeTab === "weekly") {
-    return `${startDate.format("M월 D일")} - ${endDate.format("M월 D일")}`;
-  }
-};
 
 function SummaryItem({
   totalExpense,
   totalBudget,
   overallProgress,
-  activeTab,
 }: {
   totalExpense: number;
   totalBudget: number;
   overallProgress: number;
-  activeTab: TabType;
 }) {
   return (
     <div className="">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-800">
-          지출 현황
-          <br />
-          <span className="text-sm text-gray-600">
-            {getDateString(activeTab)}
-          </span>
-        </h2>
+        <h2 className="text-lg font-bold text-gray-800">지출 현황</h2>
         <div className="text-right">
           <div className="text-lg font-bold text-gray-800">
             {formatCurrency(totalExpense)}

@@ -30,18 +30,14 @@ export default function ExpenseList({ activeTab }: { activeTab: TabType }) {
         totalExpense={totalExpense}
         totalBudget={totalBudget}
         overallProgress={positiveOverallProgress}
-        activeTab={activeTab}
       />
       <div className="space-y-4">
         {/* {expenseCategories.map((category) => (
           <ExpenseItem key={category.id} category={category} />
         ))} */}
-        {expenseCategories.map(
-          (category) =>
-            category.totalBudget > 0 && (
-              <ExpenseItem key={category.id} category={category} />
-            )
-        )}
+        {expenseCategories.map((category) => (
+          <ExpenseItem key={category.id} category={category} />
+        ))}
       </div>
     </div>
   );
