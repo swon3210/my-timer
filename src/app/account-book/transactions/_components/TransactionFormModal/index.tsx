@@ -5,6 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import PaymentMethodSelector from "./PaymentMethodSelector";
 import TransactionCategorySelector from "./TransactionCategorySelector";
 import TransactionTypeSelector from "./TransactionTypeSelector";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 type TransactionFormModalProps = {
   isOpen: boolean;
@@ -42,39 +43,13 @@ export default function TransactionFormModal({
     onClose(formValues);
   });
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 z-50">
-      <div className="bg-white rounded-xl max-w-md w-full max-h-[95vh] md:max-h-[90vh] overflow-y-auto">
-        {/* 헤더 */}
-        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200">
-          <h2 className="text-lg md:text-xl font-bold text-gray-900">
-            거래 내역
-          </h2>
-          <button
-            onClick={() => onClose(undefined)}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <svg
-              className="w-5 h-5 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+    <Dialog open={isOpen} onOpenChange={() => onClose(undefined)}>
+      <DialogContent className="p-0 md:p-0">
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <DialogTitle className="text-lg md:text-xl">거래 내역</DialogTitle>
         </div>
 
-        {/* 폼 */}
         <form onSubmit={handleFormSubmit} className="p-4 md:p-6 space-y-4">
           <FormProvider {...form}>
             <TransactionTypeSelector />
@@ -163,7 +138,7 @@ export default function TransactionFormModal({
             </div>
           </FormProvider>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import useDeleteTransactionMutation from "@/domains/account-book/transactions/useDeleteTransactionMutation";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface TransactionDeleteModalProps {
   isOpen: boolean;
@@ -21,12 +22,9 @@ export default function TransactionDeleteModal({
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl max-w-md w-full">
-        {/* 헤더 */}
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="p-0 md:p-0">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
@@ -45,9 +43,7 @@ export default function TransactionDeleteModal({
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">
-                거래 내역 삭제
-              </h3>
+              <DialogTitle className="text-lg">거래 내역 삭제</DialogTitle>
               <p className="text-sm text-gray-500">
                 이 작업은 되돌릴 수 없습니다
               </p>
@@ -55,22 +51,13 @@ export default function TransactionDeleteModal({
           </div>
         </div>
 
-        {/* 내용 */}
         <div className="p-6">
           <p className="text-gray-700 mb-4">정말 삭제하시겠습니까?</p>
-
-          {/* <div className="bg-gray-50 rounded-lg p-4 mb-4">
-            <p className="font-medium text-gray-900">
-              {targetTransaction.description}
-            </p>
-          </div> */}
-
           <p className="text-sm text-gray-600">
             삭제된 거래 내역은 복구할 수 없습니다.
           </p>
         </div>
 
-        {/* 버튼 */}
         <div className="flex space-x-3 p-6 pt-0">
           <button
             onClick={onClose}
@@ -94,7 +81,7 @@ export default function TransactionDeleteModal({
             )}
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

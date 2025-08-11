@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useAddGoalsMutation } from "@/domains/account-book/goal/useAddGoalsMutation";
 import { useUpdateGoalsMutation } from "@/domains/account-book/goal/useUpdateBudgetsMutation";
 import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 type GoalFormData = Omit<Goal, "id">;
 
@@ -52,38 +53,16 @@ export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
     onClose();
   });
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl max-w-md w-full p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="p-0 md:p-0">
+        <div className="p-6 border-b border-gray-200">
+          <DialogTitle className="text-xl">
             {goal ? "목표 편집" : "새 목표 추가"}
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+          </DialogTitle>
         </div>
 
-        <form onSubmit={handleFormSubmit} className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="space-y-4 p-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               카테고리 *
@@ -202,7 +181,7 @@ export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
