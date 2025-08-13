@@ -50,7 +50,7 @@ const apps = [
     name: "출퇴근\n기록부",
     icon: <BookMarked size={36} />,
     color: "text-blue-500",
-    url: "/account-book/board",
+    url: "/job-tracker",
   },
 ];
 
