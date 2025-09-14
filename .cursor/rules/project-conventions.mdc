@@ -1,0 +1,78 @@
+---
+alwaysApply: true
+---
+## My Timer 프로젝트 컨벤션
+
+이 문서는 코드 탐색과 구현 일관성을 위한 공통 규칙을 정의합니다. 세부 예시는 다음 파일들을 참고하세요: [package.json](mdc:package.json), [next.config.mjs](mdc:next.config.mjs), [tailwind.config.ts](mdc:tailwind.config.ts), [src/app/layout.tsx](mdc:src/app/layout.tsx), [src/app/account-book/goals/page.tsx](mdc:src/app/account-book/goals/page.tsx), [src/app/account-book/goals/components/GoalModal.tsx](mdc:src/app/account-book/goals/components/GoalModal.tsx), [src/app/account-book/goals/helper.ts](mdc:src/app/account-book/goals/helper.ts).
+
+## Building Blocks
+
+- **App Router 페이지**: `src/app/**/page.tsx` 에 페이지를 정의합니다. 클라이언트 상호작용이 필요한 경우 페이지 또는 컴포넌트 최상단에 `"use client"` 지시어를 둡니다. 예: [src/app/account-book/goals/page.tsx](mdc:src/app/account-book/goals/page.tsx)
+- **도메인 계층(React Query)**: 데이터 접근/캐시/동기화를 `src/domains/**`의 커스텀 훅으로 구성합니다. 컴포넌트에서는 네트워크 호출을 직접 하지 않고 `use*Query`, `use*Mutation` 훅을 사용합니다. 예: `useGoalsQuery`, `useTransactionsQuery`, `useAddGoalsMutation`.
+- **UI 컴포넌트**: 공용 UI는 `src/components` (특히 `src/components/ui`)에 배치하고, 페이지 전용 컴포넌트는 라우트 하위의 `components` 디렉터리에 둡니다. Radix UI + shadcn 패턴과 Tailwind 클래스를 사용합니다. 예: [src/app/account-book/goals/components/GoalModal.tsx](mdc:src/app/account-book/goals/components/GoalModal.tsx)
+- **오버레이/모달**: 모달은 `overlay-kit`을 사용해 `openXxxModal()` 팩토리 함수를 통해 엽니다. 상태와 제출 로직은 도메인 훅에 위임합니다. 예: `openGoalModal()`.
+- **헬퍼(순수 함수)**: 정렬/집계/파생 계산은 페이지와 분리해 순수 함수 파일에 둡니다. 예: [src/app/account-book/goals/helper.ts](mdc:src/app/account-book/goals/helper.ts)
+- **프로바이더 구성**: 전역 `RootLayout`에서 Query/Firebase/Overlay Provider를 주입합니다. 예: [src/app/layout.tsx](mdc:src/app/layout.tsx)
+- **API 라우트**: 서버 로직은 `src/app/api/**`에 위치하며 Firebase와 통신합니다. 타입은 `app/api/**/types`에 정의해 클라이언트와 공유합니다.
+- **스타일 시스템**: Tailwind + `tailwind-merge` + `tailwindcss-animate`. 사용자 정의 색/토큰은 CSS 변수 기반으로 확장합니다. 예: [tailwind.config.ts](mdc:tailwind.config.ts)
+- **PWA**: `next-pwa`로 서비스워커/매니페스트를 구성합니다. 예: [next.config.mjs](mdc:next.config.mjs), `public/manifest.json`, `public/sw.js`.
+
+## Directory Structure
+
+- **src/app**: 라우트/레이아웃/서버 액션/서버 API (`app/api/**`).
+  - **_providers**: 전역 프로바이더 컴포넌트.
+  - **_components**: 라우트 간 재사용되는 페이지-스코프 컴포넌트.
+  - **account-book/**: 가계부 도메인 라우트군(예: `goals`, `budget`, `transactions`).
+  - 각 라우트의 **components/**, **_atom/**, **_hooks/** 등은 해당 페이지 전용 구현을 포함합니다.
+- **src/domains**: 서버/클라이언트 데이터 접근, React Query 훅, 스키마, 페처를 도메인 기준으로 구성합니다. 예: `account-book/goal/useGoalsQuery.ts`, `account-book/transactions/useTransactionsQuery.ts`.
+- **src/components**: 앱 전반에서 사용하는 프리미티브/공용 컴포넌트. 예: `components/ui/*`, `components/Timer/*`.
+- **src/lib**: 프레임워크/플랫폼 레벨 유틸리티(프로바이더, api 래퍼, 공용 훅, 스타일 토큰 등).
+- **src/types**: 앱 전반 공유 타입(예: `budget.ts`, `goal.ts`).
+- **public**: 정적 자산(PWA 매니페스트/아이콘/서비스워커 등).
+
+> 신규 기능은 `src/app/account-book/goals`의 구조와 역할 분리를 모범 사례로 삼아, 페이지-도메인-UI-헬퍼 계층을 분명히 나눕니다.
+
+## Code Guidelines
+
+- **단방향 데이터 흐름**: 페이지는 상태/이벤트 조합과 도메인 훅 호출에 집중하고, 계산/정렬은 헬퍼로 분리합니다. 예: `compareGoalBy*` 계열.
+- **도메인 훅 우선**: `fetch/axios` 호출은 도메인 훅 내부에서만 수행합니다. 컴포넌트는 `useXxxQuery/useXxxMutation`만 사용합니다.
+- **타입 우선**: API와 공유되는 엔티티 타입(`Goal`, `Transaction` 등)은 `app/api/**/types`에서 가져와 재정의하지 않습니다.
+- **컴포넌트 책임 최소화**: 폼 상태는 `react-hook-form`을 사용하고, 비즈니스 처리(등록/수정/삭제)는 뮤테이션 훅에 위임합니다.
+- **스타일 규칙**: Tailwind 유틸리티 클래스를 기본으로 사용합니다. 동적 길이/각도 등 필요한 최소한의 인라인 스타일만 허용합니다.
+- **접근성/프리미티브**: Radix UI 기반의 shadcn 컴포넌트를 사용하고 의미 있는 텍스트/레이블을 제공합니다. 예: `Dialog`, `DialogContent`, `DialogTitle`.
+- **정렬/필터링**: `Array.prototype.sort/filter/reduce`를 사용할 때, 가독성을 위해 의미 있는 중간 변수와 보조 함수를 사용합니다. 불변성 유지(원본 컬렉션을 변형하지 않음)를 권장합니다.
+- **날짜/숫자 처리**: `dayjs`로 날짜 변환/비교, 통화 표시는 `toLocaleString()`을 사용합니다. 서버/클라이언트 간 포맷을 섞지 않습니다.
+- **PWA 고려**: 로딩/오프라인 처리 UX를 고려하고, 서비스워커 업데이트 시 즉시 적용(`skipWaiting: true`) 정책을 유지합니다.
+
+## Naming Convention
+
+- **파일/폴더**
+  - 라우트 디렉터리: 소문자 케밥케이스(`account-book`, `goals`, `transactions`).
+  - 컴포넌트 파일: 파스칼케이스(`GoalCard.tsx`, `GoalModal.tsx`).
+  - 훅 파일: 카멜케이스(`useGoalsQuery.ts`, `useAddGoalsMutation.ts`).
+  - API 라우트 파일: `route.ts`, 타입은 `types.ts`.
+  - 페이지 파일: `page.tsx`, 레이아웃은 `layout.tsx`.
+- **타입/인터페이스**: 파스칼케이스(`Goal`, `GoalPriority`, `Transaction`).
+- **함수**
+  - 훅: `use<Noun><Query|Mutation>`(복수 데이터는 복수형, 예: `useGoalsQuery`).
+  - 모달 오프너: `open<Noun>Modal`(예: `openGoalModal`).
+  - 정렬 비교자: `compare<Noun>By<Property>`(예: `compareGoalByProgress`).
+  - 파생 계산/접두사: `get*`, 변환/매핑은 `map*`, 필터는 `filter*`.
+- **변수**
+  - 불리언: `is*`, `has*`, `should*` 접두사.
+  - 이벤트 핸들러: `handle*`(예: `handleFormSubmit`, `handleDeleteClick`).
+  - 컬렉션: 복수형 명명(`goals`, `transactions`, `categoryOptions`).
+
+## Implementation Notes (from @goals Best Practice)
+
+- `page.tsx`는 필터 상태만 관리하고, 실제 목록/통계/필터 UI는 하위 컴포넌트로 위임합니다.
+- 도메인 데이터는 `src/domains/account-book/**` 훅을 통해 일관되게 접근합니다.
+- 비교/정렬/진행률 계산은 헬퍼로 추출하여 테스트와 재사용 가능성을 높입니다.
+- 모달은 `overlay-kit`으로 개방/종료 사이클을 단순화하고, 제출 시 뮤테이션 훅만 호출합니다.
+
+## Tech Stack Snapshot
+
+- Next.js 14(App Router), React 18, TypeScript(Strict), Tailwind CSS, Radix UI/shadcn
+- TanStack React Query v5, React Hook Form, Jotai(일부), dayjs, lodash
+- Firebase(Client/Admin), Next API Routes, next-pwa(PWA), axios
+
