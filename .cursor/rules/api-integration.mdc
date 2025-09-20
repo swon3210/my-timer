@@ -1,0 +1,124 @@
+## 공통 API 연동 규칙 (React Query v5)
+
+적용 범위: 전역. 컴포넌트(`src/app/**`)와 도메인 훅(`src/domains/**`).
+참고: 예시는 `@goal`/`@goals` 구현에서 발췌했으나 규칙은 모든 도메인에 적용됩니다.
+
+### 핵심 원칙
+- 컴포넌트에서 `fetch/axios` 직접 호출 금지. 도메인 훅(`use*Query`, `use*Mutation`)만 사용.
+- 서버 타입 공유 원칙 준수: `app/api/**/types`의 타입 사용.
+- 파생 계산/정렬은 순수 함수 파일(예: `helper.ts`)에 위임.
+- 로딩/에러/빈 상태는 페이지/컴포넌트에서 명시적 분기 처리.
+
+### 쿼리 키/쿼리 훅 스펙 (예시)
+```4:11:src/domains/account-book/goal/useGoalsQuery.ts
+export const getGoalsQueryKey = () => ["goals"];
+export const useGoalsQuery = () => useQuery({ queryKey: getGoalsQueryKey(), queryFn: getGoals });
+```
+
+### 패처 설계 가이드 (예시)
+```1:8:src/domains/account-book/goal/fetchers.ts
+import { axiosInstance } from "@/lib/api";
+import { Goal } from "@/app/api/account-books/goals/types";
+export const getGoals = async () => {
+  const response = await axiosInstance.get<Goal[]>("/api/account-books/goals");
+  return response.data;
+};
+```
+```10:26:src/domains/account-book/goal/fetchers.ts
+export const postGoals = async (goal: Omit<Goal, "id">) => {
+  const response = await axiosInstance.post("/api/account-books/goals", goal);
+  return response.data;
+};
+export const patchGoals = async (goal: Goal) => {
+  const response = await axiosInstance.patch(`/api/account-books/goals/${goal.id}`, goal);
+  return response.data;
+};
+export const deleteGoals = async (id: string) => {
+  const response = await axiosInstance.delete(`/api/account-books/goals/${id}`);
+  return response.data;
+};
+```
+
+### 뮤테이션/캐시 무효화 (예시)
+```1:14:src/domains/account-book/goal/useAddGoalsMutation.ts
+export const useAddGoalsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: postGoals,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: getGoalsQueryKey() }),
+  });
+};
+```
+```1:14:src/domains/account-book/goal/useDeleteGoalsMutation.ts
+export const useDeleteGoalsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteGoals,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: getGoalsQueryKey() }),
+  });
+};
+```
+```1:14:src/domains/account-book/goal/useUpdateBudgetsMutation.ts
+export const useUpdateGoalsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: patchGoals,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: getGoalsQueryKey() }),
+  });
+};
+```
+
+### 옵티미스틱 업데이트 (선택, 예시)
+```5:22:src/domains/account-book/goal/useSetGoalsQuery.ts
+export function useSetGoalsQuery() {
+  const queryClient = useQueryClient();
+  const setGoals = (mutate: (goals: Goal[]) => Goal[]) => {
+    queryClient.setQueryData(getGoalsQueryKey(), (oldData: Goal[] | undefined) => {
+      if (!oldData) return oldData;
+      return mutate(oldData);
+    });
+  };
+  return { setGoals };
+}
+```
+
+### 컴포넌트 사용 패턴 (예시)
+```22:45:src/app/account-book/goals/page.tsx
+const { data: goals = [], isLoading } = useGoalsQuery();
+const { data: transactions = [] } = useTransactionsQuery();
+const filteredGoals = goals.filter((goal) => (filter.priority !== "ALL" ? goal.priority === filter.priority : true));
+const filteredAndSortedGoals = filteredGoals.sort((a, b) => {
+  if (filter.sortBy === "DUE_DATE") return compareGoalByDueDate(a, b);
+  if (filter.sortBy === "PRIORITY") return compareGoalByPriority(a, b);
+  if (filter.sortBy === "PROGRESS") return compareGoalByProgress({ a, b, transactions });
+  return 0;
+});
+```
+```42:55:src/app/account-book/goals/components/GoalModal.tsx
+const { mutate: addItem, isPending: isAdding } = useAddGoalsMutation();
+const { mutate: updateItem, isPending: isUpdating } = useUpdateGoalsMutation();
+const handleFormSubmit = handleSubmit((data) => { goal ? updateItem({ ...data, id: goal.id }) : addItem(data); onClose(); });
+```
+
+### 네이밍/구현 규칙
+- 쿼리 키 팩토리: `get<Noun>QueryKey`(예: `getGoalsQueryKey`).
+- 쿼리 훅: `use<Noun>Query`(+ `use<Noun>SuspenseQuery` 필요 시).
+- 뮤테이션 훅: `use<Noun><Action>Mutation`(예: Add/Update/Delete 등).
+- 파일/심볼명이 다를 수 있으므로 import 시 실제 파일 경로 확인. 예) `useUpdateGoalsMutation`은 현재 `useUpdateBudgetsMutation.ts`에서 export.
+
+### 상태/에러 처리 정책
+- 로딩: `isLoading`일 때 전역 스피너 또는 스켈레톤 표시.
+- 성공: `onSuccess`에서 쿼리 무효화 후 UI 갱신, 필요 시 토스트.
+- 실패: `onError`에서 토스트 표시, 필요 시 `useSet*Query`로 롤백.
+
+### 작업 순서(가이드)
+1) 필요한 도메인 훅 import: `use*Query`, `use*Mutation`.
+2) 데이터 후처리: 필터/정렬은 헬퍼 비교자 사용.
+3) 뮤테이션 성공 시: `invalidateQueries`로 캐시 동기화.
+4) 옵티미스틱(선택): `useSet*Query`로 리스트 항목 조작 후 실패 시 롤백.
+5) 상태/에러/빈 상태 UI 분기 구현.
+
+### 마지막 단계(필수)
+- `pnpm tsc --noEmit`와 `pnpm lint`를 실행해 타입/린트 오류가 0인지 확인합니다.
+- 오류가 있으면 수정 후 다시 `pnpm tsc --noEmit`, `pnpm lint`를 반복 실행합니다. 오류가 모두 해결될 때까지 반복합니다.
+

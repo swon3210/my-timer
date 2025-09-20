@@ -1,0 +1,57 @@
+## 공통 Floating UI 규칙 (Modal/Snackbar)
+
+적용 범위: 전역. 모달/스낵바/오버레이가 필요한 컴포넌트.
+참고: 예시는 `@goals`의 `GoalModal`, `GoalCard`에서 발췌.
+
+### 원칙
+- 모달 오프너는 `overlay-kit` 팩토리 사용: `open<Noun>Modal` 네이밍.
+- 모달은 shadcn `Dialog`, `DialogContent`, `DialogTitle` 사용.
+- 제출 성공 시 즉시 닫기, 실패 시 유지하며 에러 피드백(토스트).
+- 파괴적 액션(삭제)은 확인 흐름 유지. 임시 `confirm()` 가능, 대체시 확인 `Dialog` 권장.
+
+### 예시 코드
+오프너/모달:
+```17:21:src/app/account-book/goals/components/GoalModal.tsx
+export const openGoalModal = (goal?: Goal) => {
+  overlay.open(({ isOpen, close }) => (
+    <GoalModal isOpen={isOpen} goal={goal} onClose={close} />
+  ));
+};
+```
+
+shadcn Dialog:
+```56:66:src/app/account-book/goals/components/GoalModal.tsx
+<Dialog open={isOpen} onOpenChange={onClose}>
+  <DialogContent className="p-0 md:p-0">
+    <div className="p-6 border-b border-gray-200">
+      <DialogTitle className="text-xl">{goal ? "목표 편집" : "새 목표 추가"}</DialogTitle>
+    </div>
+    <form onSubmit={handleFormSubmit} className="space-y-4 p-6">...
+```
+
+삭제 확인(임시):
+```57:61:src/app/account-book/goals/components/GoalCard.tsx
+const handleDeleteClick = () => {
+  if (confirm("이 목표를 삭제하시겠습니까?")) {
+    onDelete(goal.id);
+  }
+};
+```
+
+토스트 가이드(권장):
+```tsx
+import { toast } from "@/components/ui/sonner";
+updateGoal(payload, { onSuccess: () => { toast.success("수정되었습니다"); onClose(); }, onError: () => toast.error("수정에 실패했습니다") });
+```
+
+### 작업 순서
+1. `open<Noun>Modal` 팩토리 함수 작성 및 export.
+2. 모달 컴포넌트에 shadcn `Dialog` 골격 추가(`open`/`onOpenChange`).
+3. 내부 폼/버튼 배치 및 제출 핸들러 연결.
+4. 성공/실패 피드백(토스트) 및 닫기 타이밍 처리.
+5. 파괴적 액션 경고 흐름 정비(임시 `confirm` → 확인 Dialog로 교체 가능).
+
+### 마지막 단계(필수)
+- `pnpm tsc --noEmit`와 `pnpm lint`를 실행해 타입/린트 오류가 0인지 확인합니다.
+- 오류가 있으면 수정 후 다시 `pnpm tsc --noEmit`, `pnpm lint`를 반복 실행합니다. 오류가 모두 해결될 때까지 반복합니다.
+

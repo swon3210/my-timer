@@ -1,0 +1,21 @@
+## 작업 분류별 커서룰 (도메인-비의존 공통 규칙)
+
+이 문서는 특정 도메인에 한정되지 않은 전역 규칙입니다. 예시 코드는 `@goals` 구현에서 발췌되었지만, 모든 라우트/도메인에 동일하게 적용됩니다.
+
+공통 원칙:
+- **도메인 훅 우선**: 컴포넌트는 `use*Query`/`use*Mutation`만 사용. 네트워크 호출은 훅 내부.
+- **역할 분리**: 페이지는 얕은 상태와 조립, 계산/정렬은 헬퍼, 입력/오버레이는 컴포넌트로 분리.
+- **타입 우선**: 엔티티 타입은 `app/api/**/types`에서 import. 재정의 금지.
+
+### 마크업, 스타일링 → `.cursor/rules/ui-markup-styling.mdc`
+핵심: Tailwind 유틸리티, 의미 기반 색 매핑, 인라인 스타일 최소화, 접근성/반응형.
+
+### 폼 상태 관리 → `.cursor/rules/form-state.mdc`
+핵심: `react-hook-form`, 타입 안전, 값 변환 옵션, 제출 핸들러, 에러/대기 UI.
+
+### Floating UI(Modal/Snackbar) → `.cursor/rules/floating-ui.mdc`
+핵심: `overlay-kit` 오프너, shadcn `Dialog`, 성공 닫기/실패 토스트, 파괴적 액션 확인.
+
+### API 연동 → `.cursor/rules/api-integration.mdc`
+핵심: 도메인 훅 전용, 쿼리 키/패처/뮤테이션 패턴, 캐시 무효화, 옵티미스틱 업데이트.
+

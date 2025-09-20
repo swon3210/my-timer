@@ -1,0 +1,58 @@
+## 공통 폼 상태 관리 규칙 (react-hook-form)
+
+적용 범위: 전역. 폼이 있는 모든 컴포넌트(`src/app/**`).
+참고: 예시는 `@goals`의 `GoalModal`에서 발췌.
+
+### 원칙
+- `react-hook-form` 사용. 로컬 `useState`로 개별 폼 값 관리 지양.
+- 엔티티 타입 재사용: 가능한 경우 API 타입을 Omit/Partial로 조합.
+- 변환/파생은 RHF 옵션으로 처리(숫자 `valueAsNumber`, 날짜 문자열 유지).
+- 제출은 `handleSubmit`로 래핑한 핸들러 사용. 성공 시 모달 닫기/리셋은 규칙적으로 처리.
+- 비동기 중 버튼 상태/라벨을 `isPending`으로 관리.
+
+### 예시 코드
+```23:35:src/app/account-book/goals/components/GoalModal.tsx
+type GoalFormData = Omit<Goal, "id">;
+
+export default function GoalModal({ isOpen, goal, onClose }: GoalModalProps) {
+  const { register, handleSubmit } = useForm<GoalFormData>({
+    defaultValues: goal ?? {
+      categoryId: undefined,
+      displayName: "",
+      description: "",
+      imageUrl: "",
+      targetAmount: 0,
+      startAt: "",
+      endAt: "",
+      priority: "MEDIUM",
+    },
+  });
+```
+
+```98:106:src/app/account-book/goals/components/GoalModal.tsx
+<input type="number" {...register("targetAmount", { valueAsNumber: true })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+```
+
+```46:55:src/app/account-book/goals/components/GoalModal.tsx
+const handleFormSubmit = handleSubmit((data) => {
+  if (goal) { updateGoal({ ...data, id: goal.id }); }
+  else { addGoal(data); }
+  onClose();
+});
+```
+
+### 유효성/에러 표시
+- 필수 값은 RHF `required`/`validate` 옵션 사용. 에러 메시지는 입력 하단 `text-xs text-red-600`.
+- API 오류는 토스트로 표시하고 폼은 유지.
+
+### 작업 순서
+1. API 타입 import 후 폼 타입 선언(`Omit/Partial` 활용).
+2. `useForm` 생성 및 `defaultValues` 설정(생성/수정 모두 커버).
+3. 입력에 `register` 바인딩, 숫자/날짜 변환 옵션 지정.
+4. `handleSubmit` 제출 핸들러 구현, 성공 시 닫기/리셋 결정.
+5. `isPending` 기반 버튼 라벨/disabled 제어, 에러 토스트 처리.
+
+### 마지막 단계(필수)
+- `pnpm tsc --noEmit`와 `pnpm lint`를 실행해 타입/린트 오류가 0인지 확인합니다.
+- 오류가 있으면 수정 후 다시 `pnpm tsc --noEmit`, `pnpm lint`를 반복 실행합니다. 오류가 모두 해결될 때까지 반복합니다.
+

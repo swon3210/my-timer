@@ -76,3 +76,8 @@ alwaysApply: true
 - TanStack React Query v5, React Hook Form, Jotai(일부), dayjs, lodash
 - Firebase(Client/Admin), Next API Routes, next-pwa(PWA), axios
 
+## 마지막 단계(필수)
+
+- `pnpm tsc --noEmit`와 `pnpm lint`를 실행해 타입/린트 오류가 0인지 확인합니다.
+- 오류가 발견되면 수정 후 다시 `pnpm tsc --noEmit`와 `pnpm lint`를 실행합니다. 모든 오류가 사라질 때까지 이 과정을 반복합니다.
+
