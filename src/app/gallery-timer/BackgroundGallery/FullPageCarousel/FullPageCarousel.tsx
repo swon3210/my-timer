@@ -81,7 +81,7 @@ const FullPageCarousel = forwardRef<
           }}
           backgroundImage={backgroundImage}
           onImageClick={onImageClick}
-          className="snap-center flex-none w-full h-full"
+          className="snap-center snap-always flex-none w-full h-full"
         />
       ))}
       {/* <CarouselControls onPrevClick={() => {}} onNextClick={() => {}} /> */}
