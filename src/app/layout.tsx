@@ -4,6 +4,7 @@ import { QueryProvider } from "@/lib/providers";
 import { Toaster } from "sonner";
 import FirebaseProvider from "@/app/_providers/FirebaseProvider";
 import OverlayProvider from "./_providers/OverlayProvider";
+import LoginGuard from "./_guard/LoginGuard";
 
 export const metadata: Metadata = {
   title: "My Timer",
@@ -32,7 +33,9 @@ export default async function RootLayout({
         <QueryProvider>
           <Toaster />
           <FirebaseProvider>
-            <OverlayProvider>{children}</OverlayProvider>
+            <OverlayProvider>
+              <LoginGuard>{children}</LoginGuard>
+            </OverlayProvider>
           </FirebaseProvider>
         </QueryProvider>
       </body>
