@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/api";
+import { axiosInstance } from "@/app/api/fetcher";
 import { getSettingsResponseSchema, getUserResponseSchema } from "../schemes";
 
 export const getSettings = async () => {

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { saveAppSettings } from "../../firebase";
+import { saveAppSettings } from "../../../../lib/firebase";
 import { AppSettings } from "@/lib/types";
-import { signUp } from "../../firebase-auth";
+import { signUp } from "../../../../lib/firebase/auth";
 
 const SignUpRequestParams = z.object({
   email: z.string(),

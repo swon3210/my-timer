@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/api";
+import { axiosInstance } from "@/app/api/fetcher";
 import { Goal } from "@/app/api/account-books/goals/types";
 
 export const getGoals = async () => {

@@ -27,7 +27,7 @@ if (!admin.apps.length) {
 
 export type AuthRequest = NextRequest & { user: User };
 
-export const hasAuth = async (req: NextRequest) => {
+const hasAuth = async (req: NextRequest) => {
   const sessionCookie = cookies().get("session")?.value;
 
   if (!sessionCookie) {

@@ -1,5 +1,5 @@
 import { Category } from "@/app/api/account-books/categories/types";
-import { axiosInstance } from "@/lib/api";
+import { axiosInstance } from "@/app/api/fetcher";
 
 export const getTransactionCategories = async () => {
   const response = await axiosInstance.get<Category[]>(

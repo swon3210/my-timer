@@ -1,8 +1,7 @@
 "use client";
 
-import { FirebaseConfig } from "@/app/api/firebase";
+import { firebaseConfig } from "@/lib/firebase";
 import { optimizeImage } from "@/lib/image";
-import { useQuery } from "@tanstack/react-query";
 import { initializeApp } from "firebase/app";
 import {
   getStorage,
@@ -37,20 +36,13 @@ export const useFirebase = () => {
 };
 
 const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: { firebaseConfig } = {} } = useQuery<{
-    firebaseConfig: FirebaseConfig;
-  }>({
-    queryKey: ["firebaseConfig"],
-    queryFn: () => fetch("/api/auth/firebase").then((res) => res.json()),
-  });
-
   const firebaseApp = useMemo(() => {
     if (!firebaseConfig) {
       return undefined;
     }
 
     return initializeApp(firebaseConfig);
-  }, [firebaseConfig]);
+  }, []);
 
   const storage = useMemo(() => {
     if (!firebaseApp) {

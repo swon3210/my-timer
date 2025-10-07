@@ -4,7 +4,7 @@ import {
   deleteImage,
   getImageListFromFolder,
   getUserStoragePath,
-} from "../../firebase";
+} from "../../../../lib/firebase";
 import { AuthRequest, withAuth } from "../../firebase-admin";
 import { NextResponse } from "next/server";
 

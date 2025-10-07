@@ -1,5 +1,5 @@
 import { Budget } from "@/app/api/account-books/budgets/type";
-import { axiosInstance } from "@/lib/api";
+import { axiosInstance } from "@/app/api/fetcher";
 
 const API_PATH = "/api/account-books/budgets";
 

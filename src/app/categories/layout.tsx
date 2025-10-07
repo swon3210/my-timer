@@ -27,7 +27,7 @@ import { useAddFolderMutation } from "@/lib/mutations";
 import { useInvalidateQuery } from "@/lib/queries";
 import { useFirebase } from "@/app/_providers/FirebaseProvider";
 
-import { getUserStoragePath } from "../api/firebase";
+import { getUserStoragePath } from "../../lib/firebase";
 
 import useImageUploadDialogOverlay from "./useImageUploadDialogOverlay";
 import {

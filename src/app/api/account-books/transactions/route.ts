@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ref, get, set, push } from "firebase/database";
 import { AuthRequest, withAuth } from "../../firebase-admin";
-import { database } from "../../firebase";
+import { database } from "../../../../lib/firebase";
 import {
   createTransactionRequestParamsSchema,
   getTransactionsResponseSchema,

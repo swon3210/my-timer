@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { withAuth, AuthRequest } from "@/app/api/firebase-admin";
 import { ref, get, set, push } from "firebase/database";
-import { database } from "@/app/api/firebase";
+import { database } from "@/lib/firebase";
 import { z } from "zod";
 import { Goal, goalSchema } from "./types";
 

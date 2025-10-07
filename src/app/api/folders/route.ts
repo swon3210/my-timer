@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { addFolder, deleteFolders, getFolderList } from "../firebase";
-import { getUserStoragePath } from "../firebase";
+import { addFolder, deleteFolders, getFolderList } from "../../../lib/firebase";
+import { getUserStoragePath } from "../../../lib/firebase";
 import { NextResponse } from "next/server";
 import { AuthRequest, withAuth } from "../firebase-admin";
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { signIn } from "../../firebase-auth";
+import { signIn } from "../../../../lib/firebase/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "../../firebase-admin";
 import { cookies } from "next/headers";

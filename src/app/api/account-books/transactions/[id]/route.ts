@@ -1,5 +1,5 @@
 import { ref, remove, update } from "firebase/database";
-import { database } from "../../../firebase";
+import { database } from "../../../../../lib/firebase";
 import { withAuth } from "../../../firebase-admin";
 import { NextResponse } from "next/server";
 import dayjs from "dayjs";

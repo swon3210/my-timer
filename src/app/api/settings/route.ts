@@ -1,4 +1,4 @@
-import { getAppSettings, saveAppSettings } from "../firebase";
+import { getAppSettings, saveAppSettings } from "../../../lib/firebase";
 import { appSettingsSchema } from "@/lib/types";
 import { AuthRequest, withAuth } from "../firebase-admin";
 import { NextRequest, NextResponse } from "next/server";

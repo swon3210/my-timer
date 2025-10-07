@@ -3,9 +3,7 @@ import {
   getAuth,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import firebaseApp from "./firebase";
-
-const auth = getAuth(firebaseApp);
+import firebaseApp from ".";
 
 export const signUp = async ({
   email,
@@ -14,14 +12,14 @@ export const signUp = async ({
   email: string;
   password: string;
 }) => {
+  const auth = getAuth(firebaseApp);
+
   try {
-    const userCredential = await createUserWithEmailAndPassword(
+    const { user } = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
-    const user = userCredential.user;
-    console.log("회원가입 성공:", user);
     return user;
   } catch (error) {
     console.error("회원가입 실패:", error);
@@ -37,14 +35,10 @@ export const signIn = async ({
   email: string;
   password: string;
 }) => {
+  const auth = getAuth(firebaseApp);
+
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-    console.log("로그인 성공:", user);
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
     return user;
   } catch (error) {
     console.error("로그인 실패:", error);

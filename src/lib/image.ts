@@ -1,4 +1,4 @@
-import { axiosInstance } from "./api";
+import { axiosInstance } from "../app/api/fetcher";
 
 const OPTIMIZE_TARGET_SIZE = 2 * 1024 * 1024; // 2MB
 

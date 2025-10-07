@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/api";
+import { axiosInstance } from "@/app/api/fetcher";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 

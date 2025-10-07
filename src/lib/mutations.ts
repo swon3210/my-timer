@@ -1,6 +1,6 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { AppSettings } from "./types";
-import { axiosInstance } from "./api";
+import { axiosInstance } from "../app/api/fetcher";
 
 export const useSaveAppSettingsMutation = (
   options?: UseMutationOptions<AppSettings, unknown, AppSettings>

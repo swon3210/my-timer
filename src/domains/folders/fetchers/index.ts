@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/api";
+import { axiosInstance } from "@/app/api/fetcher";
 import { getFolderNamesResponseSchema } from "../schema";
 
 export const getImageFolderNames = async ({
