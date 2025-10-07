@@ -1,0 +1,1 @@
+componentGenerator mcp 를 이용해서 UI 컴포넌트를 작성한다.
