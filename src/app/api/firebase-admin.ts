@@ -27,6 +27,7 @@ if (!admin.apps.length) {
 
 export type AuthRequest = NextRequest & { user: User };
 
+// TODO : hasAuth 가 user 정보도 같이 담는 사이드이펙트가 있음. 수정해야함.
 const hasAuth = async (req: NextRequest) => {
   const sessionCookie = cookies().get("session")?.value;
 

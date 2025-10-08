@@ -4,13 +4,22 @@ import { Button } from "@/components/ui/button";
 import SettingsForm from "./SettingsForm";
 import { SSRSafeSuspense } from "@/lib/providers";
 import { useRouter } from "next/navigation";
-import { signOut } from "@/domains/users/fetchers";
+import useSignOutMutation from "@/domains/users/signOut/useSignOutMutation";
 
 export default function SettingsPage() {
   const router = useRouter();
 
+  const { mutateAsync: signOut } = useSignOutMutation();
+
   const handleSignOutButtonClick = async () => {
-    await signOut();
+    if (!confirm("로그아웃 하시겠습니까?")) {
+      return;
+    }
+
+    // TODO : 별도의 Floating UI 로 처리해야함.
+    const shouldRevokeAllSessions = confirm("모든 기기에서 로그아웃할까요?");
+
+    await signOut({ shouldRevokeAllSessions });
     router.push("/sign-in");
   };
 

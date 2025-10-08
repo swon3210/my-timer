@@ -16,9 +16,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import axios from "axios";
 import { cn } from "@/lib/utils";
 import { PRIMARY_GRADIENT_CLASSNAMES } from "@/lib/styles";
+import usePostSignInMutation from "@/domains/users/signIn/usePostSignInMutation";
 
 type SignInFormValues = {
   email: string;
@@ -26,21 +26,11 @@ type SignInFormValues = {
   password: string;
 };
 
-const requestSignIn = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
-  const response = await axios.post("/api/auth/sign-in", { email, password });
-
-  return response.data;
-};
-
 export default function SignInPage() {
   const { register, watch, setValue, handleSubmit } =
     useForm<SignInFormValues>();
+
+  const { mutateAsync: signIn } = usePostSignInMutation();
 
   const showPassword = watch("showPassword");
 
@@ -51,7 +41,7 @@ export default function SignInPage() {
 
   const handleFormSubmit = handleSubmit(async (formValues) => {
     try {
-      await requestSignIn({
+      await signIn({
         email: formValues.email,
         password: formValues.password,
       });

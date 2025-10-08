@@ -1,8 +1,4 @@
-import {
-  QueryOptions,
-  useQuery,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getUser } from "./fetchers";
 import { User } from "@/lib/types";
 
@@ -18,7 +14,12 @@ export const useUserSuspenseQuery = () => {
   });
 };
 
-export const useUserQuery = (options?: QueryOptions<User>) => {
+type UserQueryOptions = Omit<
+  NonNullable<Parameters<typeof useQuery<User>>[0]>,
+  "queryKey" | "queryFn"
+>;
+
+export const useUserQuery = (options?: UserQueryOptions) => {
   const USER_QUERY_KEY = ["user"] as const;
 
   return useQuery({

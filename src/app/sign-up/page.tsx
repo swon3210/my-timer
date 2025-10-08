@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import useSignUpMutation from "@/domains/users/signUp/useSignUpMutation";
 
 type SignUpFormValues = {
   email: string;
@@ -25,20 +25,11 @@ type SignUpFormValues = {
   confirmPassword: string;
 };
 
-const requestSignUp = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
-  const response = await axios.post("/api/auth/sign-up", { email, password });
-  return response.data;
-};
-
 export default function SignUpPage() {
   const { formState, register, watch, setValue, setError, handleSubmit } =
     useForm<SignUpFormValues>();
+
+  const { mutateAsync: signUp } = useSignUpMutation();
 
   const showPassword = watch("showPassword");
 
@@ -57,7 +48,7 @@ export default function SignUpPage() {
     }
 
     try {
-      await requestSignUp({
+      await signUp({
         email: formValues.email,
         password: formValues.password,
       });

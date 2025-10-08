@@ -11,11 +11,12 @@ export default function LoginGuard({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const isRouteGuardException = exceptionPages.includes(pathname);
+
   const { data: user, isLoading } = useUserQuery({
     retry: false,
+    enabled: !isRouteGuardException,
   });
-
-  const isRouteGuardException = exceptionPages.includes(pathname);
 
   useEffect(() => {
     const shouldRedirect = !isLoading && !user && !isRouteGuardException;

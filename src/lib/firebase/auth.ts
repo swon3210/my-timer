@@ -5,15 +5,15 @@ import {
 } from "firebase/auth";
 import firebaseApp from ".";
 
-export const signUp = async ({
+const auth = getAuth(firebaseApp);
+
+export const signUpByFirebase = async ({
   email,
   password,
 }: {
   email: string;
   password: string;
 }) => {
-  const auth = getAuth(firebaseApp);
-
   try {
     const { user } = await createUserWithEmailAndPassword(
       auth,
@@ -28,20 +28,27 @@ export const signUp = async ({
 };
 
 // 로그인 함수
-export const signIn = async ({
+export const signInByFirebase = async ({
   email,
   password,
 }: {
   email: string;
   password: string;
 }) => {
-  const auth = getAuth(firebaseApp);
-
   try {
     const { user } = await signInWithEmailAndPassword(auth, email, password);
     return user;
   } catch (error) {
     console.error("로그인 실패:", error);
+    throw error;
+  }
+};
+
+export const signOutByFirebase = async () => {
+  try {
+    await auth.signOut();
+  } catch (error) {
+    console.error("로그아웃 실패:", error);
     throw error;
   }
 };
