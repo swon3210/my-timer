@@ -13,8 +13,10 @@ export async function POST(request: NextRequest) {
 
     await adminAuth.verifyIdToken(idToken);
 
-    // 1일 유효 기간 설정
-    const expiresIn = 60 * 60 * 24 * 1000;
+    const expiresIn = 5 * 60 * 1000;
+
+    // // 1일 유효 기간 설정
+    // const expiresIn = 60 * 60 * 24 * 1000;
 
     const sessionCookie = await adminAuth.createSessionCookie(idToken, {
       expiresIn,
@@ -37,6 +39,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.error("로그인 실패 : ", error);
-    return NextResponse.json({ success: false }, { status: 401 });
+    return NextResponse.json(
+      { message: "로그인 실패", success: false },
+      { status: 401 }
+    );
   }
 }

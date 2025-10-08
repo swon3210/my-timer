@@ -7,6 +7,14 @@ import firebaseApp from ".";
 
 const auth = getAuth(firebaseApp);
 
+export const getRefreshToken = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    const idToken = await user.getIdToken(true);
+    return idToken;
+  }
+};
+
 export const signUpByFirebase = async ({
   email,
   password,
