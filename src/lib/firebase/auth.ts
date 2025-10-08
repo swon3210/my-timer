@@ -7,8 +7,14 @@ import firebaseApp from ".";
 
 const auth = getAuth(firebaseApp);
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const getRefreshToken = async () => {
+  // TODO : 토큰 리프레시가 auth 초기화 이후 수행되는 로직 고도화
+  await wait(1000);
+
   const user = auth.currentUser;
+
   if (user) {
     const idToken = await user.getIdToken(true);
     return idToken;

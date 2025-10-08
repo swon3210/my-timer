@@ -23,6 +23,7 @@ export const useUserQuery = (options?: UserQueryOptions) => {
   const USER_QUERY_KEY = ["user"] as const;
 
   return useQuery({
+    refetchOnWindowFocus: "always",
     queryKey: USER_QUERY_KEY,
     queryFn: getUser,
     ...options,

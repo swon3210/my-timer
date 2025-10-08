@@ -1,5 +1,6 @@
 import { axiosInstance } from "@/app/api/fetcher";
 import { getSettingsResponseSchema, getUserResponseSchema } from "../schemes";
+import api from "@/domains/api";
 
 export const getSettings = async () => {
   const response = await axiosInstance.get("/api/settings");
@@ -10,7 +11,7 @@ export const getSettings = async () => {
 };
 
 export const getUser = async () => {
-  const response = await axiosInstance.get("/api/users");
+  const response = await api.get("/api/users");
 
   const { user } = getUserResponseSchema.parse(response.data);
 
