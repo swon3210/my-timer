@@ -46,7 +46,7 @@ const ImageFolderItem = ({
   const [, setFolderName] = useAtom(folderNameAtom);
   const [, setImageUrlIndex] = useAtom(imageUrlIndexAtom);
 
-  const { data: imageUrls } = useImagesQuery({
+  const { data: imageUrls = [] } = useImagesQuery({
     categoryName,
     folderName,
   });

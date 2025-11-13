@@ -38,6 +38,7 @@ import { cn } from "@/lib/utils";
 import Z_INDEX from "../_constants/z-index";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import UserProvider from "../_providers/UserProvider";
 
 const AddFolderButton = () => {
   const { data: folderNames } = useFolderNamesQuery();
@@ -470,61 +471,63 @@ export default function RootLayout({
   }, []);
 
   return (
-    <main className="w-full max-w-app-container mx-auto min-h-full">
-      <div
-        className={cn(
-          "sticky top-0 flex items-center justify-between h-16 pl-2 pr-4 bg-white transition-all duration-300",
-          isScrolled && "shadow-md",
-          Z_INDEX.HEADER
-        )}
-      >
-        <div className="flex items-center gap-2">
-          <BackButton />
-          {isSelectionMode ? (
-            <TrashCanButton
-              target={imageFolderName && categoryName ? "images" : "folders"}
-            />
-          ) : imageFolderName ? (
-            <h3 className="text-sm md:text-lg font-semibold">
-              {decodeURIComponent(imageFolderName)}
-            </h3>
-          ) : (
-            <h3 className="text-sm md:text-lg font-semibold">
-              {decodeURIComponent(categoryName ?? "")}
-            </h3>
+    <UserProvider>
+      <main className="w-full max-w-app-container mx-auto min-h-full">
+        <div
+          className={cn(
+            "sticky top-0 flex items-center justify-between h-16 pl-2 pr-4 bg-white transition-all duration-300",
+            isScrolled && "shadow-md",
+            Z_INDEX.HEADER
           )}
-          {categoryName && (
-            <ItemCount
-              isSelectionMode={isSelectionMode}
-              categoryName={categoryName}
-              imageFolderName={imageFolderName}
-            />
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {isSelectionMode ? (
-            <XButton
-              target={imageFolderName && categoryName ? "images" : "folders"}
-            />
-          ) : (
-            <SelectionModeButton />
-          )}
+        >
+          <div className="flex items-center gap-2">
+            <BackButton />
+            {isSelectionMode ? (
+              <TrashCanButton
+                target={imageFolderName && categoryName ? "images" : "folders"}
+              />
+            ) : imageFolderName ? (
+              <h3 className="text-sm md:text-lg font-semibold">
+                {decodeURIComponent(imageFolderName)}
+              </h3>
+            ) : (
+              <h3 className="text-sm md:text-lg font-semibold">
+                {decodeURIComponent(categoryName ?? "")}
+              </h3>
+            )}
+            {categoryName && (
+              <ItemCount
+                isSelectionMode={isSelectionMode}
+                categoryName={categoryName}
+                imageFolderName={imageFolderName}
+              />
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            {isSelectionMode ? (
+              <XButton
+                target={imageFolderName && categoryName ? "images" : "folders"}
+              />
+            ) : (
+              <SelectionModeButton />
+            )}
 
-          {imageFolderName && categoryName ? (
-            <AddImagesToFolderButton
-              categoryName={categoryName}
-              imageFolderName={imageFolderName}
-            />
-          ) : categoryName ? (
-            <AddImageFolderButton categoryName={categoryName} />
-          ) : (
-            <AddFolderButton />
-          )}
-          <BookMarkButton />
+            {imageFolderName && categoryName ? (
+              <AddImagesToFolderButton
+                categoryName={categoryName}
+                imageFolderName={imageFolderName}
+              />
+            ) : categoryName ? (
+              <AddImageFolderButton categoryName={categoryName} />
+            ) : (
+              <AddFolderButton />
+            )}
+            <BookMarkButton />
+          </div>
         </div>
-      </div>
 
-      {children}
-    </main>
+        {children}
+      </main>
+    </UserProvider>
   );
 }

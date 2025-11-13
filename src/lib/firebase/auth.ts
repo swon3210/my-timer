@@ -5,7 +5,7 @@ import {
 } from "firebase/auth";
 import firebaseApp from ".";
 
-const auth = getAuth(firebaseApp);
+export const auth = getAuth(firebaseApp);
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
