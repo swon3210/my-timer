@@ -25,9 +25,8 @@ import {
 } from "@/lib/atoms";
 import { useAddFolderMutation } from "@/lib/mutations";
 import { useInvalidateQuery } from "@/lib/queries";
-import { useFirebase } from "@/app/_providers/FirebaseProvider";
 
-import { getUserStoragePath } from "../../lib/firebase";
+import { getUserStoragePath, uploadImages } from "../../lib/firebase";
 
 import useImageUploadDialogOverlay from "./useImageUploadDialogOverlay";
 import {
@@ -83,7 +82,6 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
   const { data: user } = useUserQuery();
   const imageUploadDialogRef = useImageUploadDialogRef();
 
-  const { addImages } = useFirebase();
   const invalidateQuery = useInvalidateQuery();
 
   const { openImageUploadDialog } = useImageUploadDialogOverlay();
@@ -136,7 +134,7 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
         });
       });
 
-      await addImages(
+      await uploadImages(
         getUserStoragePath(
           user,
           `images/${categoryName}/${folderNameInputs[index]?.trim()}`
@@ -195,7 +193,6 @@ const AddImagesToFolderButton = ({
   const imageUploadDialogRef = useImageUploadDialogRef();
 
   const invalidateQuery = useInvalidateQuery();
-  const { addImages } = useFirebase();
   const { data: user } = useUserQuery();
 
   const { openImageUploadDialog } = useImageUploadDialogOverlay();
@@ -216,7 +213,7 @@ const AddImagesToFolderButton = ({
         });
       });
 
-      await addImages(
+      await uploadImages(
         getUserStoragePath(
           user,
           `images/${categoryName}/${imageFolderName.trim()}`

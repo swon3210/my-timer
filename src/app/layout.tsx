@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers";
 import { Toaster } from "sonner";
-import FirebaseProvider from "@/app/_providers/FirebaseProvider";
 import OverlayProvider from "./_providers/OverlayProvider";
 import LoginGuard from "./_guard/LoginGuard";
 
@@ -32,11 +31,9 @@ export default async function RootLayout({
       <body className="antialiased">
         <QueryProvider>
           <Toaster />
-          <FirebaseProvider>
-            <OverlayProvider>
-              <LoginGuard>{children}</LoginGuard>
-            </OverlayProvider>
-          </FirebaseProvider>
+          <OverlayProvider>
+            <LoginGuard>{children}</LoginGuard>
+          </OverlayProvider>
         </QueryProvider>
       </body>
     </html>
