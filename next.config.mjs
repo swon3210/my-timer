@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 
 import NextPWA from "next-pwa";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
 
 const withPWA = NextPWA({
   dest: "public",
@@ -15,6 +18,40 @@ const nextConfig = withPWA({
   },
   images: {
     domains: ["firebasestorage.googleapis.com"],
+  },
+  experimental: {
+    serverComponentsExternalPackages: ["firebase-admin"],
+  },
+  webpack: (config, { isServer, webpack }) => {
+    if (isServer) {
+      config.externals = [...(config.externals || []), "firebase-admin"];
+      // 서버 사이드에서도 Buffer를 제공 (빌드 타임 분석을 위해)
+      const bufferPath = require.resolve("buffer");
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        buffer: bufferPath,
+      };
+      config.plugins = [
+        ...(config.plugins || []),
+        new webpack.ProvidePlugin({
+          Buffer: ["buffer", "Buffer"],
+        }),
+      ];
+    } else {
+      // 클라이언트 사이드에서 Buffer polyfill 제공
+      const bufferPath = require.resolve("buffer");
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        buffer: bufferPath,
+      };
+      config.plugins = [
+        ...(config.plugins || []),
+        new webpack.ProvidePlugin({
+          Buffer: ["buffer", "Buffer"],
+        }),
+      ];
+    }
+    return config;
   },
   redirects: async () => {
     return [

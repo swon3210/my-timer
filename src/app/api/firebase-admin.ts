@@ -1,4 +1,3 @@
-import admin from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { User } from "@/lib/types";
@@ -19,10 +18,27 @@ const serviceAccount = {
   universe_domain: process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT_UNIVERSE_DOMAIN,
 };
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-  });
+// 동적 import를 사용하여 빌드 타임에 로드되지 않도록 함
+let adminInstance: typeof import("firebase-admin") | null = null;
+let adminAuthInstance: ReturnType<
+  typeof import("firebase-admin")["auth"]
+> | null = null;
+
+async function getAdminAuth() {
+  if (!adminInstance) {
+    adminInstance = await import("firebase-admin");
+    if (!adminInstance.apps.length) {
+      adminInstance.initializeApp({
+        credential: adminInstance.credential.cert(
+          serviceAccount as Parameters<
+            typeof adminInstance.credential.cert
+          >[0]
+        ),
+      });
+    }
+    adminAuthInstance = adminInstance.auth();
+  }
+  return adminAuthInstance!;
 }
 
 export type AuthRequest = NextRequest & { user: User };
@@ -39,6 +55,7 @@ const hasAuth = async (req: NextRequest) => {
   }
 
   try {
+    const adminAuth = await getAdminAuth();
     const decodedClaims = await adminAuth.verifySessionCookie(
       sessionCookie,
       true
@@ -83,4 +100,33 @@ export function withAuth(
   };
 }
 
-export const adminAuth = admin.auth();
+// 지연 초기화를 위해 함수로 export
+export async function getAdminAuthInstance() {
+  return await getAdminAuth();
+}
+
+// 하위 호환성을 위해 getter 함수로 export (지연 초기화)
+export const adminAuth = {
+  verifyIdToken: async (idToken: string) => {
+    const auth = await getAdminAuth();
+    return auth.verifyIdToken(idToken);
+  },
+  createSessionCookie: async (
+    idToken: string,
+    options: { expiresIn: number }
+  ) => {
+    const auth = await getAdminAuth();
+    return auth.createSessionCookie(idToken, options);
+  },
+  verifySessionCookie: async (
+    sessionCookie: string,
+    checkRevoked?: boolean
+  ) => {
+    const auth = await getAdminAuth();
+    return auth.verifySessionCookie(sessionCookie, checkRevoked);
+  },
+  revokeRefreshTokens: async (uid: string) => {
+    const auth = await getAdminAuth();
+    return auth.revokeRefreshTokens(uid);
+  },
+};

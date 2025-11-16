@@ -15,8 +15,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "세션이 없습니다." }, { status: 401 });
   }
 
+  let decodedClaims;
   try {
-    await adminAuth.verifySessionCookie(session);
+    decodedClaims = await adminAuth.verifySessionCookie(session);
   } catch (error) {
     console.error("세션 검증 실패.", error);
     return NextResponse.json(
@@ -29,8 +30,8 @@ export async function POST(request: NextRequest) {
     const { shouldRevokeAllSessions } = requestParams.parse(
       await request.json()
     );
-    if (shouldRevokeAllSessions) {
-      await adminAuth.revokeRefreshTokens(session);
+    if (shouldRevokeAllSessions && decodedClaims.uid) {
+      await adminAuth.revokeRefreshTokens(decodedClaims.uid);
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
