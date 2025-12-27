@@ -4,7 +4,7 @@ import { useState } from "react";
 import {
   Transaction,
   TransactionPaymentMethod,
-} from "@/app/api/account-books/transactions/types";
+} from "@/domains/account-book/transactions/types";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { getIconById } from "@/app/_utils/category";
 import { isEmpty } from "@/utils/text";

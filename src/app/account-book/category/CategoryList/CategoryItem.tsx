@@ -6,7 +6,7 @@ import { useDeleteTransactionCategoryMutation } from "@/domains/account-book/cat
 import { Button } from "@/components/ui/button";
 import { getIconById } from "@/app/_utils/category";
 import CategoryEditModal from "@/app/account-book/category/CategoryEditModal/CategoryEditModal";
-import { Category } from "@/app/api/account-books/categories/types";
+import { Category } from "@/domains/account-book/categories/types";
 
 interface CategoryItemProps {
   category: Category;

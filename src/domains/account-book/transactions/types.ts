@@ -1,30 +1,70 @@
-export type Frequency = "MONTHLY" | "WEEKLY" | "YEARLY";
+import { z } from "zod";
 
-export interface BaseAccountItem {
+const transactionTypeSchema = z.enum([
+  "INCOME",
+  "EXPENSE",
+  "INVESTMENT",
+  "FLEX",
+]);
+
+const transactionPaymentMethodSchema = z.enum([
+  "CASH",
+  "CREDIT_CARD",
+  "DEBIT_CARD",
+  "TRANSFER",
+]);
+
+export type TransactionPaymentMethod = z.infer<
+  typeof transactionPaymentMethodSchema
+>;
+
+export type TransactionType = z.infer<typeof transactionTypeSchema>;
+
+const transactionSchema = z.object({
+  userId: z.string().optional(),
+  amount: z.number(),
+  type: transactionTypeSchema,
+  categoryId: z.string(),
+  description: z.string(),
+  date: z.string(),
+  paymentMethod: transactionPaymentMethodSchema.optional(),
+  location: z.string().optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+});
+
+export type Transaction = z.infer<typeof transactionSchema> & {
   id: string;
-  amount: number;
-  description?: string;
-  date: string;
-  createdAt: string;
-  updatedAt: string;
-  categoryId: string;
-  categoryDisplayedName: string;
-  frequency?: Frequency;
-}
+};
 
-export interface ExpenseAccountItem extends BaseAccountItem {
-  type: "EXPENSE";
-}
+export const getTransactionsResponseSchema = z.record(
+  z.string(),
+  transactionSchema
+);
 
-export interface IncomeAccountItem extends BaseAccountItem {
-  type: "INCOME";
-}
+export const createTransactionRequestParamsSchema = z.object({
+  transaction: transactionSchema.omit({
+    createdAt: true,
+    updatedAt: true,
+    userId: true,
+  }),
+});
 
-export interface FlexAccountItem extends BaseAccountItem {
-  type: "FLEX";
-}
+export type CreateTransactionRequestParams = z.infer<
+  typeof createTransactionRequestParamsSchema
+>;
 
-export type AccountItem =
-  | ExpenseAccountItem
-  | IncomeAccountItem
-  | FlexAccountItem;
+export const updateTransactionRequestParamsSchema = z.object({
+  transaction: transactionSchema.omit({
+    createdAt: true,
+    updatedAt: true,
+    userId: true,
+  }),
+});
+
+export type UpdateTransactionRequestParams = z.infer<
+  typeof updateTransactionRequestParamsSchema
+>;
+export type Frequency = "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+
+export const frequencySchema = z.enum(["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]);

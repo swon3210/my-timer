@@ -1,26 +1,58 @@
-import { axiosInstance } from "@/app/api/fetcher";
-import { Goal } from "@/app/api/account-books/goals/types";
+import { Goal } from "./types";
+import { get, push, ref, set, remove, update } from "firebase/database";
+import { database } from "@/lib/firebase";
+import { getCurrentUser } from "@/lib/firebase/auth";
+
+const API_PATH = "account-book-goals";
 
 export const getGoals = async () => {
-  const response = await axiosInstance.get<Goal[]>("/api/account-books/goals");
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
 
-  return response.data;
+  const goalsRef = ref(database, `${API_PATH}/${user.uid}`);
+  const snapshot = await get(goalsRef);
+
+  if (!snapshot.exists()) {
+    return [];
+  }
+
+  const data = snapshot.val();
+  return Object.entries(data).map(([id, goal]) => ({
+    id,
+    ...(goal as any),
+  }));
 };
 
 export const postGoals = async (goal: Omit<Goal, "id">) => {
-  const response = await axiosInstance.post("/api/account-books/goals", goal);
-  return response.data;
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const newGoal = {
+    ...goal,
+    status: "ON-GOING",
+  };
+
+  const goalRef = ref(database, `${API_PATH}/${user.uid}`);
+  const newGoalRef = push(goalRef);
+  await set(newGoalRef, newGoal);
+
+  return { ...newGoal, id: newGoalRef.key };
 };
 
 export const patchGoals = async (goal: Goal) => {
-  const response = await axiosInstance.patch(
-    `/api/account-books/goals/${goal.id}`,
-    goal
-  );
-  return response.data;
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const goalRef = ref(database, `${API_PATH}/${user.uid}/${goal.id}`);
+  await update(goalRef, goal);
+
+  return goal;
 };
 
 export const deleteGoals = async (id: string) => {
-  const response = await axiosInstance.delete(`/api/account-books/goals/${id}`);
-  return response.data;
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const goalRef = ref(database, `${API_PATH}/${user.uid}/${id}`);
+  await remove(goalRef);
 };

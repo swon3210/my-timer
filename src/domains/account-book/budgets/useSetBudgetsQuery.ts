@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Budget } from "@/app/api/account-books/budgets/type";
+import { Budget } from "@/domains/account-book/budgets/type";
 import { getBudgetsQueryKey } from "./useBudgetsQuery";
 
 export function useSetBudgetsQuery() {

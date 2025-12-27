@@ -1,7 +1,7 @@
 import { ExpenseFormValues } from "./types";
 import ExpenseForm from "./ExpenseForm";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { TransactionType } from "@/domains/account-book/transactions/types";
 
 export default function ExpenseFormDialog({
   title = "내역 추가",

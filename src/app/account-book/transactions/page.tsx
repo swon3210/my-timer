@@ -4,7 +4,7 @@ import { useState } from "react";
 import { TransactionFilter, TransactionSort } from "@/types/transaction";
 import TransactionList from "./_components/TransactionList";
 import TransactionFilterComponent from "./_components/TransactionFilter";
-import { Transaction } from "@/app/api/account-books/transactions/types";
+import { Transaction } from "@/domains/account-book/transactions/types";
 import useTransactionFormModal from "./_components/TransactionFormModal/useTransactionFormModal";
 import useTransactionDeleteModal from "./_components/TransactionDeleteModal/useTransactionDeleteModal";
 import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";

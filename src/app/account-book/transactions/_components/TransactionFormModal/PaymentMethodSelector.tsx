@@ -1,4 +1,4 @@
-import { TransactionPaymentMethod } from "@/app/api/account-books/transactions/types";
+import { TransactionPaymentMethod } from "@/domains/account-book/transactions/types";
 import { TransactionFormData } from "@/types/transaction";
 import { useFormContext } from "react-hook-form";
 

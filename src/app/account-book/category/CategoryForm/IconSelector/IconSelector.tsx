@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import { getIconsByType, getIconById } from "@/app/_utils/category";
-import { CategoryIcon } from "@/app/api/account-books/categories/types";
-import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { CategoryIcon } from "@/domains/account-book/categories/types";
+import { TransactionType } from "@/domains/account-book/transactions/types";
 
 interface IconSelectorProps {
   selectedIcon?: CategoryIcon;

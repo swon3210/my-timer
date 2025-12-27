@@ -1,19 +1,32 @@
-import { axiosInstance } from "@/app/api/fetcher";
-import { getSettingsResponseSchema, getUserResponseSchema } from "../schemes";
-import api from "@/domains/api";
+import {
+  getAppSettings as getAppSettingsFromFirebase,
+  saveAppSettings as saveAppSettingsToFirebase,
+} from "@/lib/firebase";
+import { getCurrentUser } from "@/lib/firebase/auth";
+import { User } from "@/lib/types";
 
 export const getSettings = async () => {
-  const response = await axiosInstance.get("/api/settings");
+  const user = await getCurrentUser();
 
-  const { appSettings } = getSettingsResponseSchema.parse(response.data);
+  if (!user) {
+    return null;
+  }
 
+  const appSettings = await getAppSettingsFromFirebase(user.uid);
   return appSettings;
 };
 
-export const getUser = async () => {
-  const response = await api.get("/api/users");
+export const getUser = async (): Promise<User | null> => {
+  const firebaseUser = await getCurrentUser();
 
-  const { user } = getUserResponseSchema.parse(response.data);
+  if (!firebaseUser) {
+    return null;
+  }
 
-  return user;
+  return {
+    uid: firebaseUser.uid,
+    email: firebaseUser.email ?? "",
+    displayName: firebaseUser.displayName ?? undefined,
+    imageUrl: firebaseUser.photoURL ?? undefined,
+  };
 };

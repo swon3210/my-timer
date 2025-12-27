@@ -1,15 +1,24 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { AppSettings } from "./types";
-import { axiosInstance } from "../app/api/fetcher";
+
+
+import {
+  saveAppSettings as saveAppSettingsToFirebase,
+  getUserStoragePath,
+  addFolder as addFolderToFirebase,
+} from "@/lib/firebase";
+import { useUserQuery } from "@/domains/users/useUserQuery";
 
 export const useSaveAppSettingsMutation = (
   options?: UseMutationOptions<AppSettings, unknown, AppSettings>
 ) => {
+  const { data: user } = useUserQuery();
+
   return useMutation({
     mutationFn: async (appSettings) => {
-      const response = await axiosInstance.post("/api/settings", appSettings);
-
-      return response.data;
+      if (!user) throw new Error("Unauthorized");
+      await saveAppSettingsToFirebase(user.uid, appSettings);
+      return appSettings; // void를 반환하게 되어있는데, 기존 mutation은 data를 반환했음. settings를 그대로 반환.
     },
     ...options,
   });
@@ -22,11 +31,14 @@ type AddFolderMutationProps = {
 export const useAddFolderMutation = (
   options?: UseMutationOptions<unknown, unknown, AddFolderMutationProps>
 ) => {
+  const { data: user } = useUserQuery();
+
   return useMutation({
     mutationFn: async (props) => {
-      const response = await axiosInstance.post("/api/folders", props);
+      if (!user) throw new Error("Unauthorized");
 
-      return response.data;
+      const userStoragePath = getUserStoragePath(user, props.path);
+      await addFolderToFirebase(userStoragePath);
     },
     ...options,
   });

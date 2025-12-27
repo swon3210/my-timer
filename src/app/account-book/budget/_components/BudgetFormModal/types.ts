@@ -1,4 +1,4 @@
-import { Budget } from "@/app/api/account-books/budgets/type";
+import { Budget } from "@/domains/account-book/budgets/type";
 import { UseFormRegister, FieldError } from "react-hook-form";
 
 export interface BudgetCreateModalProps {

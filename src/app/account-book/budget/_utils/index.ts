@@ -1,4 +1,4 @@
-import { Budget } from "@/app/api/account-books/budgets/type";
+import { Budget } from "@/domains/account-book/budgets/type";
 
 export const getBudgetTargetDateText = (targetDate: Budget["targetDate"]) => {
   if (targetDate.month) {

@@ -1,4 +1,4 @@
-import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { TransactionType } from "@/domains/account-book/transactions/types";
 import { Frequency } from "@/domains/account-book/transactions/types";
 
 export type ExpenseFormValues = {

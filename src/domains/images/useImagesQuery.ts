@@ -1,15 +1,14 @@
-import { axiosInstance } from "@/app/api/fetcher";
 import { useQuery } from "@tanstack/react-query";
-import { z } from "zod";
+import {
+  getImageListFromFolder,
+  getUserStoragePath,
+} from "@/lib/firebase";
+import { useUserQuery } from "@/domains/users/useUserQuery";
 
 export const getImagesQueryKey = (
   categoryName: string | null,
   folderName: string | null
 ) => ["images", { categoryName, folderName }] as const;
-
-const getImageUrlsResponseSchema = z.object({
-  images: z.array(z.string()),
-});
 
 const useImagesQuery = ({
   categoryName,
@@ -18,25 +17,28 @@ const useImagesQuery = ({
   categoryName: string | null;
   folderName: string | null;
 }) => {
+  const { data: user } = useUserQuery();
+
   return useQuery({
     queryKey: getImagesQueryKey(categoryName, folderName),
-    queryFn: async ({ queryKey: [, { categoryName, folderName }] }) => {
+    queryFn: async () => {
       if (categoryName == null || folderName == null) {
         throw new Error("categoryName 혹은 folderName 이 비어있습니다");
       }
 
-      // TODO : 예외처리
-      const response = await axiosInstance.get("/api/folders/images", {
-        params: {
-          path: `images/${categoryName}/${folderName}`,
-        },
-      });
+      if (!user) {
+        throw new Error("유저 정보가 없습니다");
+      }
 
-      const { images } = getImageUrlsResponseSchema.parse(response.data);
+      const path = `images/${categoryName}/${folderName}`;
 
-      return images;
+      const userStoragePath = getUserStoragePath(user, decodeURIComponent(path));
+
+      const images = await getImageListFromFolder(userStoragePath);
+
+      return images ?? [];
     },
-    enabled: categoryName != null && folderName != null,
+    enabled: categoryName != null && folderName != null && !!user,
     initialData: [],
   });
 };

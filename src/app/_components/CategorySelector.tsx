@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { TransactionType } from "@/domains/account-book/transactions/types";
 import useAccountItemCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 
 type CategorySelectorProps = {

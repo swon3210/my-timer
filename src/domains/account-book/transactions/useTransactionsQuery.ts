@@ -4,7 +4,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { getTransactions } from "./fetchers";
-import { Transaction } from "@/app/api/account-books/transactions/types";
+import { Transaction } from "@/domains/account-book/transactions/types";
 
 export const getTransactionsQueryKey = () => ["transactions"] as const;
 

@@ -58,6 +58,15 @@ export const signInByFirebase = async ({
   }
 };
 
+export const getCurrentUser = (): Promise<typeof auth.currentUser> => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      unsubscribe();
+      resolve(user);
+    }, reject);
+  });
+};
+
 export const signOutByFirebase = async () => {
   try {
     await auth.signOut();

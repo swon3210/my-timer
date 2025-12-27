@@ -1,4 +1,4 @@
-import { GoalPriority } from "@/app/api/account-books/goals/types";
+import { GoalPriority } from "@/domains/account-book/goal/types";
 
 export type GoalFilter = {
   priority: GoalPriority | "ALL";

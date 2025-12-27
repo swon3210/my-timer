@@ -1,5 +1,5 @@
-import { Goal } from "@/app/api/account-books/goals/types";
-import { Transaction } from "@/app/api/account-books/transactions/types";
+import { Goal } from "@/domains/account-book/goal/types";
+import { Transaction } from "@/domains/account-book/transactions/types";
 
 export const compareGoalByPriority = (a: Goal, b: Goal) => {
   if (a.priority !== b.priority) {

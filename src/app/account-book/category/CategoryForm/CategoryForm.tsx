@@ -16,8 +16,8 @@ import { getTransactionCategoriesQueryKey } from "@/domains/account-book/categor
 import IconSelector from "@/components/ui/InlineIconSelector";
 import { DEFAULT_ICONS } from "@/app/_utils/category";
 import { useUserQuery } from "@/domains/users/useUserQuery";
-import { CategoryIcon } from "@/app/api/account-books/categories/types";
-import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { CategoryIcon } from "@/domains/account-book/categories/types";
+import { TransactionType } from "@/domains/account-book/transactions/types";
 
 type CategoryFormValues = {
   name: string;

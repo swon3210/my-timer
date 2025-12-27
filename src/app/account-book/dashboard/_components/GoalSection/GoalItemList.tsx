@@ -1,4 +1,4 @@
-import { Goal } from "@/app/api/account-books/goals/types";
+import { Goal } from "@/domains/account-book/goal/types";
 import { useSavingsQuery } from "@/domains/account-book/dashboard/useSavingsQuery";
 import { useGoalsQuery } from "@/domains/account-book/goal/useGoalsQuery";
 import { isEmpty } from "@/utils/text";

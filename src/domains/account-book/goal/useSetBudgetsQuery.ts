@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Goal } from "@/app/api/account-books/goals/types";
+import { Goal } from "@/domains/account-book/goal/types";
 import { getGoalsQueryKey } from "./useGoalsQuery";
 
 export function useSetGoalsQuery() {

@@ -2,7 +2,7 @@ import useTransactionCategoriesQuery from "@/domains/account-book/categories/use
 import useTransactionFormModal from "../TransactionFormModal/useTransactionFormModal";
 import { requestChatCompletion } from "@/domains/AI/openAI/request";
 import { TransactionFormData } from "@/types/transaction";
-import { Category } from "@/app/api/account-books/categories/types";
+import { Category } from "@/domains/account-book/categories/types";
 import { ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useAddTransactionMutation from "@/domains/account-book/transactions/useAddTransactionMutation";

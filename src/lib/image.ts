@@ -1,4 +1,4 @@
-import { axiosInstance } from "../app/api/fetcher";
+import axios from "axios";
 
 const OPTIMIZE_TARGET_SIZE = 2 * 1024 * 1024; // 2MB
 
@@ -84,14 +84,14 @@ export const optimizeGif = async (file: File, quality: number = 0.8) => {
   formData.append("file", file);
   formData.append("quality", quality.toString());
 
-  const response = await axiosInstance.post(
+  const response = await axios.post(
     "http://localhost:3001/optimize-gif",
     formData,
     {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-      responseType: "arraybuffer",
+      responseType: "arraybuffer", // arraybuffer로 받아야 blob 변환 가능
     }
   );
 

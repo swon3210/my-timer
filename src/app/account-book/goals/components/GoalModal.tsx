@@ -1,5 +1,5 @@
 import { overlay } from "overlay-kit";
-import { Goal } from "@/app/api/account-books/goals/types";
+import { Goal } from "@/domains/account-book/goal/types";
 import { useForm } from "react-hook-form";
 import { useAddGoalsMutation } from "@/domains/account-book/goal/useAddGoalsMutation";
 import { useUpdateGoalsMutation } from "@/domains/account-book/goal/useUpdateBudgetsMutation";

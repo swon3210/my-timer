@@ -1,6 +1,6 @@
 "use client";
 
-import { Budget } from "@/app/api/account-books/budgets/type";
+import { Budget } from "@/domains/account-book/budgets/type";
 import BudgetItem from "./BudgetItem";
 
 interface BudgetListProps {

@@ -1,7 +1,7 @@
 import { overlay } from "overlay-kit";
 import ExpenseFormDialog from "../../_components/ExpenseFormDialog";
 import { ExpenseFormValues } from "./types";
-import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { TransactionType } from "@/domains/account-book/transactions/types";
 
 const useExpenseFormDialogOverlay = () => {
   const openExpenseFormDialog = (

@@ -2,11 +2,10 @@ const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 import axios from "axios";
-import { AuthRequest, withAuth } from "../../firebase-admin";
 import { NextResponse } from "next/server";
 import { openAICompletionRequestSchema } from "./type";
 
-export const POST = withAuth(async function (request: AuthRequest) {
+export const POST = async function (request: Request) {
   const params = await request.json();
 
   const validatedParams = openAICompletionRequestSchema.parse(params);
@@ -28,4 +27,4 @@ export const POST = withAuth(async function (request: AuthRequest) {
       { status: 400 }
     );
   }
-});
+};

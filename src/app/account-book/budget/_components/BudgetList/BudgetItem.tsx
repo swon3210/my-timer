@@ -1,4 +1,4 @@
-import { Budget } from "@/app/api/account-books/budgets/type";
+import { Budget } from "@/domains/account-book/budgets/type";
 import { useDeleteBudgetMutation } from "@/domains/account-book/budgets/useDeleteBudgetsMutation";
 import { useUpdateBudgetMutation } from "@/domains/account-book/budgets/useUpdateBudgetsMutation";
 import { formatCurrency } from "@/utils/format";

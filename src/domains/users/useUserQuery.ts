@@ -15,7 +15,7 @@ export const useUserSuspenseQuery = () => {
 };
 
 type UserQueryOptions = Omit<
-  NonNullable<Parameters<typeof useQuery<User>>[0]>,
+  NonNullable<Parameters<typeof useQuery<User | null>>[0]>,
   "queryKey" | "queryFn"
 >;
 

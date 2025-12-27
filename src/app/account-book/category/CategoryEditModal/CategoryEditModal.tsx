@@ -7,7 +7,7 @@ import useUpdateAccountItemCategoryMutation from "@/domains/account-book/categor
 import { getTransactionCategoriesQueryKey } from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import InlineIconSelector from "@/components/ui/InlineIconSelector";
 import { getIconById } from "@/app/_utils/category";
-import { Category } from "@/app/api/account-books/categories/types";
+import { Category } from "@/domains/account-book/categories/types";
 
 interface CategoryEditModalProps {
   isOpen: boolean;

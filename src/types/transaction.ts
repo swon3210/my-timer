@@ -1,7 +1,7 @@
 import {
   Transaction,
   TransactionType,
-} from "@/app/api/account-books/transactions/types";
+} from "@/domains/account-book/transactions/types";
 
 export interface TransactionFilter {
   type?: TransactionType | "ALL";

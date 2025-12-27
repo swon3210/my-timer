@@ -4,7 +4,7 @@ import { TransactionFilter, TransactionSort } from "@/types/transaction";
 import TransactionItem from "./TransactionItem";
 import EmptyTransactionList from "./EmptyTransactionList";
 import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
-import { Transaction } from "@/app/api/account-books/transactions/types";
+import { Transaction } from "@/domains/account-book/transactions/types";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";

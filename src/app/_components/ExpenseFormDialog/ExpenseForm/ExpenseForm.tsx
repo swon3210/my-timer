@@ -9,7 +9,7 @@ import CategorySelector from "../../CategorySelector";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { ExpenseFormValues } from "../types";
-import { TransactionType } from "@/app/api/account-books/transactions/types";
+import { TransactionType } from "@/domains/account-book/transactions/types";
 import FrequencySelector from "./FrequencySelector";
 
 export default function ExpenseForm({

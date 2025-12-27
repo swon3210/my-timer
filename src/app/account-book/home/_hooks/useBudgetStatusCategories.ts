@@ -1,7 +1,7 @@
 import { useBudgetsQuery } from "@/domains/account-book/budgets/useBudgetsQuery";
 import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
-import { Category } from "@/app/api/account-books/categories/types";
+import { Category } from "@/domains/account-book/categories/types";
 import { TabType } from "../_components/ExpenseTabs/ExpenseTabs";
 import dayjs from "dayjs";
 import { useMemo } from "react";

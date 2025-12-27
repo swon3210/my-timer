@@ -1,4 +1,4 @@
-import { Goal, GoalPriority } from "@/app/api/account-books/goals/types";
+import { Goal, GoalPriority } from "@/domains/account-book/goal/types";
 import useTransactionCategoriesQuery from "@/domains/account-book/categories/useTransactionCategoriesQuery";
 import { useTransactionsQuery } from "@/domains/account-book/transactions/useTransactionsQuery";
 

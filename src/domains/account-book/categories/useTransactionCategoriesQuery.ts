@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTransactionCategories } from "./fetchers";
-import { Category } from "@/app/api/account-books/categories/types";
+import { Category } from "@/domains/account-book/categories/types";
 
 export const getTransactionCategoriesQueryKey = () => [
   "transaction-categories",
