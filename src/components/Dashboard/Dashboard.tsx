@@ -45,13 +45,7 @@ const apps = [
     icon: <Wallet size={36} />,
     color: "text-pink-500",
     url: "/account-book/home",
-  },
-  {
-    name: "출퇴근\n기록부",
-    icon: <BookMarked size={36} />,
-    color: "text-blue-500",
-    url: "/account-book/board",
-  },
+  }
 ];
 
 export default function Dashboard() {

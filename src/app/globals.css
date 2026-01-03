@@ -37,64 +37,200 @@ body {
 
 @layer base {
   :root {
+    /* ===== Core Colors ===== */
     --background: 0 0% 100%;
     --foreground: 20 14.3% 4.1%;
     --card: 0 0% 100%;
     --card-foreground: 20 14.3% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 20 14.3% 4.1%;
+
+    /* ===== Brand Colors ===== */
     --primary: 165 100% 41%;
     --primary-heavy: 165 100% 30%;
+    --primary-light: 165 100% 95%;
     --primary-foreground: 60 9.1% 97.8%;
+
     --secondary: 60 4.8% 95.9%;
     --secondary-foreground: 24 9.8% 10%;
+
+    /* ===== Semantic Colors ===== */
+    --success: 142 76% 36%;
+    --success-light: 142 76% 95%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-light: 38 92% 95%;
+    --warning-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-light: 0 84% 95%;
+    --destructive-foreground: 60 9.1% 97.8%;
+
+    --info: 199 89% 48%;
+    --info-light: 199 89% 95%;
+    --info-foreground: 0 0% 100%;
+
+    /* ===== Neutral Colors ===== */
     --muted: 60 4.8% 95.9%;
     --muted-foreground: 25 5.3% 44.7%;
     --accent: 60 4.8% 95.9%;
     --accent-foreground: 24 9.8% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 9.1% 97.8%;
+
+    /* ===== Income/Expense (Account Book) ===== */
+    --income: 142 76% 36%;
+    --income-light: 142 76% 95%;
+    --income-foreground: 0 0% 100%;
+    --expense: 0 84.2% 60.2%;
+    --expense-light: 0 84% 95%;
+    --expense-foreground: 0 0% 100%;
+
+    /* ===== Gallery Theme (Mint) ===== */
+    --mint-light: 165 100% 97%;
+    --mint-medium: 165 60% 90%;
+    --mint-dark: 165 60% 40%;
+
+    /* ===== Form & Interactive ===== */
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
-    --ring: 24.6 95% 53.1%;
+    --ring: 165 100% 41%;
+
+    /* ===== Border Radius ===== */
     --radius: 0.5rem;
+    --radius-sm: 0.25rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-full: 9999px;
+
+    /* ===== Shadows ===== */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* ===== Spacing Scale (4px base) ===== */
+    --space-0: 0;
+    --space-1: 0.25rem;  /* 4px */
+    --space-2: 0.5rem;   /* 8px */
+    --space-3: 0.75rem;  /* 12px */
+    --space-4: 1rem;     /* 16px */
+    --space-5: 1.25rem;  /* 20px */
+    --space-6: 1.5rem;   /* 24px */
+    --space-8: 2rem;     /* 32px */
+    --space-10: 2.5rem;  /* 40px */
+    --space-12: 3rem;    /* 48px */
+    --space-16: 4rem;    /* 64px */
+
+    /* ===== Typography Scale ===== */
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-base: 1rem;     /* 16px */
+    --font-size-lg: 1.125rem;   /* 18px */
+    --font-size-xl: 1.25rem;    /* 20px */
+    --font-size-2xl: 1.5rem;    /* 24px */
+    --font-size-3xl: 1.875rem;  /* 30px */
+    --font-size-4xl: 2.25rem;   /* 36px */
+
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* ===== Chart Colors ===== */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --mint-light: 135 100% 97%;
-    --mint-medium: 135 60% 90%;
+
+    /* ===== Z-Index Scale ===== */
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-fixed: 300;
+    --z-modal-backdrop: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
   }
 
   .dark {
+    /* ===== Core Colors ===== */
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
-    --card: 20 14.3% 4.1%;
+    --card: 20 14.3% 8%;
     --card-foreground: 60 9.1% 97.8%;
     --popover: 20 14.3% 4.1%;
     --popover-foreground: 60 9.1% 97.8%;
+
+    /* ===== Brand Colors ===== */
     --primary: 165 100% 41%;
-    --primary-heavy: 165 100% 30%;
+    --primary-heavy: 165 100% 50%;
+    --primary-light: 165 40% 15%;
     --primary-foreground: 60 9.1% 97.8%;
+
     --secondary: 12 6.5% 15.1%;
     --secondary-foreground: 60 9.1% 97.8%;
+
+    /* ===== Semantic Colors ===== */
+    --success: 142 70% 45%;
+    --success-light: 142 30% 15%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 90% 55%;
+    --warning-light: 38 40% 15%;
+    --warning-foreground: 0 0% 100%;
+
+    --destructive: 0 72.2% 50.6%;
+    --destructive-light: 0 40% 15%;
+    --destructive-foreground: 60 9.1% 97.8%;
+
+    --info: 199 85% 55%;
+    --info-light: 199 40% 15%;
+    --info-foreground: 0 0% 100%;
+
+    /* ===== Neutral Colors ===== */
     --muted: 12 6.5% 15.1%;
     --muted-foreground: 24 5.4% 63.9%;
     --accent: 12 6.5% 15.1%;
     --accent-foreground: 60 9.1% 97.8%;
-    --destructive: 0 72.2% 50.6%;
-    --destructive-foreground: 60 9.1% 97.8%;
+
+    /* ===== Income/Expense (Account Book) ===== */
+    --income: 142 70% 45%;
+    --income-light: 142 30% 15%;
+    --income-foreground: 0 0% 100%;
+    --expense: 0 72% 50%;
+    --expense-light: 0 40% 15%;
+    --expense-foreground: 0 0% 100%;
+
+    /* ===== Gallery Theme (Mint) ===== */
+    --mint-light: 165 20% 15%;
+    --mint-medium: 165 30% 25%;
+    --mint-dark: 165 50% 50%;
+
+    /* ===== Form & Interactive ===== */
     --border: 12 6.5% 15.1%;
     --input: 12 6.5% 15.1%;
-    --ring: 20.5 90.2% 48.2%;
+    --ring: 165 100% 50%;
+
+    /* ===== Shadows (darker for dark mode) ===== */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+
+    /* ===== Chart Colors (Dark Mode) ===== */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --mint-light: 135 20% 15%;
-    --mint-medium: 135 30% 25%;
   }
 }
 

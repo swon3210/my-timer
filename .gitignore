@@ -65,3 +65,5 @@ tasks.json
 tasks/ 
 
 .cursor/mcp.json
+*storybook.log
+storybook-static
