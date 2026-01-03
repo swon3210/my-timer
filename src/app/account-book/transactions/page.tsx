@@ -11,8 +11,12 @@ import useAddTransactionMutation from "@/domains/account-book/transactions/useAd
 import useUpdateTransactionMutation from "@/domains/account-book/transactions/useUpdateTransactionMutation";
 import { isEmpty } from "@/utils/text";
 import AddTransactionByChatButton from "./_components/AddTransactionByChatButton";
-import { Pen } from "lucide-react";
+import { Filter, Pen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
+import { Section, SectionHeader } from "@/components/ui/section";
 import dayjs from "dayjs";
 import AddTransactionByImageButton from "./_components/AddTransactionByImageButton";
 
@@ -93,76 +97,70 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        {/* 모바일 친화적 헤더 */}
-        <div className="px-4 py-6 md:px-6">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                거래 내역
-              </h1>
-              <p className="text-gray-600 text-sm md:text-base mt-1">
-                수입과 지출을 관리하고 분석하세요
-              </p>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <AddTransactionByImageButton />
-              <AddTransactionByChatButton />
-              <Button type="button" onClick={() => handleAddTransaction()}>
-                <Pen />
-              </Button>
-            </div>
+    <div className="min-h-screen bg-muted">
+      <PageHeader
+        title="거래 내역"
+        subtitle="수입과 지출을 관리하고 분석하세요"
+        border
+        rightSlot={
+          <div className="flex items-center gap-2">
+            <AddTransactionByImageButton />
+            <AddTransactionByChatButton />
+            <Button type="button" size="icon" onClick={() => handleAddTransaction()}>
+              <Pen className="h-4 w-4" />
+            </Button>
           </div>
+        }
+      />
+
+      <Container className="py-6">
+        {/* 모바일 필터 토글 */}
+        <div className="lg:hidden mb-4">
+          <Button
+            variant="outline"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="w-full justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4" />
+              <span className="text-label">필터 & 정렬</span>
+            </div>
+            <svg
+              className={`w-5 h-5 text-muted-foreground transform transition-transform ${
+                isFilterOpen ? "rotate-180" : ""
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </Button>
         </div>
 
-        {/* 메인 콘텐츠 */}
-        <div className="px-4 md:px-6 pb-6">
-          {/* 모바일 필터 토글 */}
-          <div className="lg:hidden mb-4">
-            <button
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center space-x-2">
-                <svg
-                  className="w-5 h-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                  />
-                </svg>
-                <span className="font-medium">필터 & 정렬</span>
-              </div>
-              <svg
-                className={`w-5 h-5 text-gray-400 transform transition-transform ${
-                  isFilterOpen ? "rotate-180" : ""
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* 데스크톱 필터 사이드바 */}
+          <div className="hidden lg:block lg:col-span-1">
+            <div className="sticky top-6">
+              <TransactionFilterComponent
+                filter={filter}
+                sort={sort}
+                onFilterChange={setFilter}
+                onSortChange={setSort}
+                onReset={handleResetFilter}
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* 데스크톱 필터 사이드바 */}
-            <div className="hidden lg:block lg:col-span-1">
-              <div className="sticky top-6">
+          {/* 모바일 필터 (토글) */}
+          {isFilterOpen && (
+            <div className="lg:hidden col-span-1 mb-4">
+              <div className="animate-slide-down">
                 <TransactionFilterComponent
                   filter={filter}
                   sort={sort}
@@ -172,31 +170,13 @@ export default function TransactionsPage() {
                 />
               </div>
             </div>
+          )}
 
-            {/* 모바일 필터 (토글) */}
-            {isFilterOpen && (
-              <div className="lg:hidden col-span-1 mb-4">
-                <div className="animate-slide-down">
-                  <TransactionFilterComponent
-                    filter={filter}
-                    sort={sort}
-                    onFilterChange={setFilter}
-                    onSortChange={setSort}
-                    onReset={handleResetFilter}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* 거래 내역 목록 */}
-            <div className="lg:col-span-3">
-              <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6">
-                <div className="flex flex-col space-y-3 md:flex-row md:items-center md:justify-between md:space-y-0 mb-6">
-                  <h2 className="text-lg md:text-xl font-bold text-gray-900">
-                    거래 내역
-                  </h2>
-                </div>
-
+          {/* 거래 내역 목록 */}
+          <div className="lg:col-span-3">
+            <Card className="p-4 md:p-6">
+              <Section spacing="none">
+                <SectionHeader title="거래 내역" spacing="default" />
                 <TransactionList
                   filter={filter}
                   sort={sort}
@@ -204,11 +184,11 @@ export default function TransactionsPage() {
                   onDelete={handleDeleteTransaction}
                   onAddTransaction={handleAddTransaction}
                 />
-              </div>
-            </div>
+              </Section>
+            </Card>
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

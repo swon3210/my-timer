@@ -78,25 +78,25 @@ export default function TransactionItem({
       (cat) => cat.displayedName === categoryName
     );
     if (!category) {
-      return "bg-gray-100 text-gray-600";
+      return "bg-muted text-muted-foreground";
     }
 
     switch (category.type) {
       case "INCOME":
-        return "bg-green-100 text-green-600";
+        return "bg-success-light text-success";
       case "EXPENSE":
-        return "bg-red-100 text-red-600";
+        return "bg-destructive-light text-destructive";
       case "INVESTMENT":
-        return "bg-blue-100 text-blue-600";
+        return "bg-info-light text-info";
       case "FLEX":
-        return "bg-purple-100 text-purple-600";
+        return "bg-primary-light text-primary";
       default:
-        return "bg-gray-100 text-gray-600";
+        return "bg-muted text-muted-foreground";
     }
   };
 
   return (
-    <div className="group bg-white rounded-xl p-4 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200">
+    <div className="group bg-card rounded-xl p-4 border border-border hover:border-primary/30 hover:shadow-md transition-all duration-200">
       <div className="flex items-center space-x-3">
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${getCategoryColors(
@@ -109,20 +109,20 @@ export default function TransactionItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-2">
             <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-gray-900 text-sm leading-5">
+              <h3 className="text-label text-foreground leading-5">
                 {transaction.description}
               </h3>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-caption text-muted-foreground mt-1">
                 {formatDate(transaction.date)}
               </p>
             </div>
 
             <div className="flex items-center space-x-2 ml-2">
               <span
-                className={`text-base font-bold ${
+                className={`text-body font-bold ${
                   transaction.type === "INCOME"
-                    ? "text-green-600"
-                    : "text-red-600"
+                    ? "text-success"
+                    : "text-destructive"
                 }`}
               >
                 {formatAmount(transaction.amount)}
@@ -131,7 +131,7 @@ export default function TransactionItem({
               <div className="relative size-5">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="rounded-full text-gray-400"
+                  className="rounded-full text-muted-foreground"
                 >
                   <svg
                     className="size-5"
@@ -149,13 +149,13 @@ export default function TransactionItem({
                 </button>
 
                 {isMenuOpen && (
-                  <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                  <div className="absolute right-0 top-full mt-1 w-32 bg-card rounded-lg shadow-lg border border-border z-10">
                     <button
                       onClick={() => {
                         onEdit(transaction);
                         setIsMenuOpen(false);
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                      className="w-full px-4 py-2 text-left text-body-sm text-foreground hover:bg-muted rounded-t-lg"
                     >
                       수정
                     </button>
@@ -164,7 +164,7 @@ export default function TransactionItem({
                         onDelete(transaction.id);
                         setIsMenuOpen(false);
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                      className="w-full px-4 py-2 text-left text-body-sm text-destructive hover:bg-destructive-light rounded-b-lg"
                     >
                       삭제
                     </button>
@@ -176,12 +176,12 @@ export default function TransactionItem({
 
           <div className="flex items-center space-x-2 flex-wrap">
             {!isEmpty(transaction.categoryId) && (
-              <span className="bg-gray-100 px-2 py-1 rounded-full text-xs">
+              <span className="bg-muted px-2 py-1 rounded-full text-caption">
                 {getCategoryDisplayedName(transaction.categoryId)}
               </span>
             )}
             {transaction.paymentMethod && (
-              <span className="text-xs text-gray-500">
+              <span className="text-caption text-muted-foreground">
                 {getPaymentMethodDisplayedName(transaction.paymentMethod)}
               </span>
             )}

@@ -2,11 +2,12 @@
 
 import { useAtom, useAtomValue } from "jotai";
 import { Bookmark, Check, FolderPlus, Trash, Upload, X } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import BackButton from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/ui/page-header";
 import useDeleteFoldersMutation from "@/domains/folders/useDeleteFoldersMutation";
 import useFolderNamesQuery, {
   getFolderNamesQueryKey,
@@ -33,9 +34,6 @@ import {
   ImageGroup,
   useImageUploadDialogRef,
 } from "./components/ImageUploadDialog/ImageUploadDialog";
-import { cn } from "@/lib/utils";
-import Z_INDEX from "../_constants/z-index";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import UserProvider from "../_providers/UserProvider";
 
@@ -320,20 +318,15 @@ const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
   };
 
   return (
-    <Button
-      variant={hasSelectedFolder ? "destructive" : "outline"}
-      size="icon"
-      className="w-auto h-10 px-2"
+    <Badge 
+      variant={hasSelectedFolder ? "destructive" : "secondary"} 
+      size="lg"
+      className="cursor-pointer"
       onClick={handleXButtonClick}
     >
-      <div className="flex items-center gap-1">
-        {selectedFolderNames.length}개 선택됨
-        <Trash
-          className="w-4 h-4 text-gray-700"
-          color={hasSelectedFolder ? "white" : undefined}
-        />
-      </div>
-    </Button>
+      {selectedFolderNames.length}개 선택됨
+      <Trash className="w-4 h-4 ml-1" />
+    </Badge>
   );
 };
 
@@ -407,9 +400,9 @@ const ImageCount = ({
   });
 
   return (
-    <h3 className="text-lg font-semibold text-gray-500">
+    <span className="text-body-sm text-muted-foreground">
       ({images.length}개 이미지)
-    </h3>
+    </span>
   );
 };
 
@@ -432,9 +425,9 @@ const ItemCount = ({
 
   return (
     <>
-      <h3 className="text-sm md:text-lg font-semibold text-gray-500">
+      <span className="text-body-sm text-muted-foreground">
         ({imageFolderNames.length}개 폴더)
-      </h3>
+      </span>
       {imageFolderName && (
         <ImageCount
           categoryName={categoryName}
@@ -450,79 +443,81 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const isSelectionMode = useAtomValue(isSelectionModeAtom);
-
-  const [isScrolled, setIsScrolled] = useState(false);
 
   const { categoryName, imageFolderName } = useParams() as {
     categoryName?: string;
     imageFolderName?: string;
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const getTitle = () => {
+    if (isSelectionMode) {
+      return undefined;
+    }
+    if (imageFolderName) {
+      return decodeURIComponent(imageFolderName);
+    }
+    return decodeURIComponent(categoryName ?? "갤러리");
+  };
+
+  const renderLeftSlot = () => {
+    if (isSelectionMode) {
+      return (
+        <TrashCanButton
+          target={imageFolderName && categoryName ? "images" : "folders"}
+        />
+      );
+    }
+    
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-heading-5">{getTitle()}</span>
+        {categoryName && (
+          <ItemCount
+            isSelectionMode={isSelectionMode}
+            categoryName={categoryName}
+            imageFolderName={imageFolderName}
+          />
+        )}
+      </div>
+    );
+  };
+
+  const renderRightSlot = () => (
+    <div className="flex items-center gap-2">
+      {isSelectionMode ? (
+        <XButton
+          target={imageFolderName && categoryName ? "images" : "folders"}
+        />
+      ) : (
+        <SelectionModeButton />
+      )}
+
+      {imageFolderName && categoryName ? (
+        <AddImagesToFolderButton
+          categoryName={categoryName}
+          imageFolderName={imageFolderName}
+        />
+      ) : categoryName ? (
+        <AddImageFolderButton categoryName={categoryName} />
+      ) : (
+        <AddFolderButton />
+      )}
+      <BookMarkButton />
+    </div>
+  );
 
   return (
     <UserProvider>
       <main className="w-full max-w-app-container mx-auto min-h-full">
-        <div
-          className={cn(
-            "sticky top-0 flex items-center justify-between h-16 pl-2 pr-4 bg-white transition-all duration-300",
-            isScrolled && "shadow-md",
-            Z_INDEX.HEADER
-          )}
-        >
-          <div className="flex items-center gap-2">
-            <BackButton />
-            {isSelectionMode ? (
-              <TrashCanButton
-                target={imageFolderName && categoryName ? "images" : "folders"}
-              />
-            ) : imageFolderName ? (
-              <h3 className="text-sm md:text-lg font-semibold">
-                {decodeURIComponent(imageFolderName)}
-              </h3>
-            ) : (
-              <h3 className="text-sm md:text-lg font-semibold">
-                {decodeURIComponent(categoryName ?? "")}
-              </h3>
-            )}
-            {categoryName && (
-              <ItemCount
-                isSelectionMode={isSelectionMode}
-                categoryName={categoryName}
-                imageFolderName={imageFolderName}
-              />
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            {isSelectionMode ? (
-              <XButton
-                target={imageFolderName && categoryName ? "images" : "folders"}
-              />
-            ) : (
-              <SelectionModeButton />
-            )}
-
-            {imageFolderName && categoryName ? (
-              <AddImagesToFolderButton
-                categoryName={categoryName}
-                imageFolderName={imageFolderName}
-              />
-            ) : categoryName ? (
-              <AddImageFolderButton categoryName={categoryName} />
-            ) : (
-              <AddFolderButton />
-            )}
-            <BookMarkButton />
-          </div>
-        </div>
-
+        <PageHeader
+          showBackButton
+          onBack={() => router.back()}
+          leftSlot={renderLeftSlot()}
+          rightSlot={renderRightSlot()}
+          border
+        />
         {children}
       </main>
     </UserProvider>
