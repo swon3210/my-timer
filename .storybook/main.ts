@@ -11,8 +11,5 @@ const config: StorybookConfig = {
   ],
   framework: "@storybook/nextjs-vite",
   staticDirs: ["../public"],
-  docs: {
-    autodocs: true,
-  },
 };
 export default config;
