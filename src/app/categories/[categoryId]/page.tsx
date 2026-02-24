@@ -10,12 +10,12 @@ import ImageFolderItem from "../components/ImageFolderItem";
 export default function CategoriesPage({
   params,
 }: {
-  params: { categoryName: string };
+  params: { categoryId: string };
 }) {
   const isSelectionMode = useAtomValue(isSelectionModeAtom);
 
-  const { data: folderNames } = useImageFolderNamesQuery({
-    categoryName: params.categoryName,
+  const { data: folderNames, error } = useImageFolderNamesQuery({
+    categoryId: params.categoryId,
   });
 
   const [selectedFolderNames, setSelectedFolderNames] = useAtom(
@@ -55,7 +55,7 @@ export default function CategoriesPage({
               >
                 <div id={folderName} className="scroll-mt-20">
                   <ImageFolderItem
-                    categoryName={params.categoryName}
+                    categoryId={params.categoryId}
                     folderName={folderName}
                   />
                 </div>

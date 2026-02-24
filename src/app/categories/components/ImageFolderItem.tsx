@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type ImageFolderItemProps = {
-  categoryName: string;
+  categoryId: string;
   folderName: string;
 };
 
@@ -37,7 +37,7 @@ const ImagePreview = ({ imageUrls }: { imageUrls: string[] }) => {
 };
 
 const ImageFolderItem = ({
-  categoryName,
+  categoryId,
   folderName,
 }: ImageFolderItemProps) => {
   const router = useRouter();
@@ -47,12 +47,12 @@ const ImageFolderItem = ({
   const [, setImageUrlIndex] = useAtom(imageUrlIndexAtom);
 
   const { data: imageUrls = [] } = useImagesQuery({
-    categoryName,
+    categoryId,
     folderName,
   });
 
   const handleFolderSelectButtonClick = (folderName: string) => {
-    setCategoryName(categoryName);
+    setCategoryName(categoryId);
     setFolderName(folderName);
     setImageUrlIndex(0);
 
@@ -72,7 +72,7 @@ const ImageFolderItem = ({
           </Button>
           <Link
             key={folderName}
-            href={`/categories/${categoryName}/${folderName}`}
+            href={`/categories/${categoryId}/${folderName}`}
           >
             <Button variant="secondary">미리보기</Button>
           </Link>

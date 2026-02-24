@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import {
   getStorage,
   ref as storageRef,
@@ -11,6 +11,10 @@ import { getDatabase, ref as dbRef, set, get } from "firebase/database";
 import { AppSettings, User } from "@/lib/types";
 import { optimizeImage } from "../image";
 
+/**
+ * 기존 Firebase 프로젝트 설정
+ * - Storage, Realtime Database, Authentication 사용
+ */
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -21,11 +25,32 @@ export const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+/**
+ * Firestore 전용 프로젝트 설정 (Native 모드)
+ * - Firestore만 사용
+ */
+export const firestoreProjectConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIRESTORE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIRESTORE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIRESTORE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIRESTORE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIRESTORE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIRESTORE_APP_ID,
+};
+
 export type FirebaseConfig = typeof firebaseConfig;
 
-export const firebaseApp = initializeApp(firebaseConfig);
+// 기존 프로젝트 앱 초기화 (Storage, Realtime DB, Auth)
+export const firebaseApp = getApps().find((app) => app.name === "[DEFAULT]")
+  ? getApp()
+  : initializeApp(firebaseConfig);
 
-const storage = getStorage(firebaseApp, "gs://my-timer-12943.appspot.com");
+// Firestore 전용 프로젝트 앱 초기화
+export const firestoreApp = getApps().find((app) => app.name === "firestore")
+  ? getApp("firestore")
+  : initializeApp(firestoreProjectConfig, "firestore");
+
+const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`);
 
 export async function getFolderList(path: string) {
   const folderRef = storageRef(storage, path);

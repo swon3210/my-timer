@@ -9,9 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
 import useDeleteFoldersMutation from "@/domains/folders/useDeleteFoldersMutation";
-import useFolderNamesQuery, {
-  getFolderNamesQueryKey,
-} from "@/domains/folders/useFolderNamesQuery";
+import useFolderNamesQuery from "@/domains/folders/useFolderNamesQuery";
 import useImageFolderNamesQuery, {
   getImageFolderNamesQueryKey,
 } from "@/domains/folders/useImageFolderNamesQuery";
@@ -36,6 +34,12 @@ import {
 } from "./components/ImageUploadDialog/ImageUploadDialog";
 import Link from "next/link";
 import UserProvider from "../_providers/UserProvider";
+import { useGalleriesQuery, getGalleriesQueryKey } from "@/domains/gallery";
+import {
+  createImageFolder,
+  createGalleryImages,
+  getImageFolders,
+} from "@/domains/gallery/fetchers";
 
 const AddFolderButton = () => {
   const { data: folderNames } = useFolderNamesQuery();
@@ -60,7 +64,7 @@ const AddFolderButton = () => {
 
     toast(`${folderName} 폴더를 업로드하였습니다.`);
 
-    void invalidateQuery(getFolderNamesQueryKey());
+    void invalidateQuery(getGalleriesQueryKey());
   };
 
   return (
@@ -75,8 +79,14 @@ const AddFolderButton = () => {
   );
 };
 
-const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
-  const { data: imageFolderNames } = useImageFolderNamesQuery({ categoryName });
+const AddImageFolderButton = ({
+  categoryId,
+  categoryName,
+}: {
+  categoryId: string;
+  categoryName: string;
+}) => {
+  const { data: imageFolderNames } = useImageFolderNamesQuery({ categoryId });
   const { data: user } = useUserQuery();
   const imageUploadDialogRef = useImageUploadDialogRef();
 
@@ -119,34 +129,49 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
 
     for (let index = 0; index < imageGroups.length; index++) {
       const imageGroup = imageGroups[index];
+      const folderName = folderNameInputs[index]?.trim();
+
+      if (!folderName) continue;
 
       imageUploadDialogRef.current?.setAttachedFiles((prev) => {
         return prev.map((attachedFile) => {
           if (attachedFile.folderName === imageGroup.folderName) {
-            return {
-              ...attachedFile,
-              status: "uploading" as const,
-            };
+            return { ...attachedFile, status: "uploading" as const };
           }
           return attachedFile;
         });
       });
 
-      await uploadImages(
-        getUserStoragePath(
-          user,
-          `images/${categoryName}/${folderNameInputs[index]?.trim()}`
-        ),
-        imageGroup.files
+      // 1. Storage에 이미지 업로드
+      const storageFolderPath = getUserStoragePath(
+        user,
+        `images/${categoryId}/${folderName}`
+      );
+      const uploadResults = await uploadImages(storageFolderPath, imageGroup.files);
+
+      // 2. Firestore에 폴더 생성
+      const newFolder = await createImageFolder({
+        galleryId: categoryId,
+        galleryName: categoryName,
+        name: folderName,
+      });
+
+      // 3. Firestore에 이미지 메타데이터 저장
+      await createGalleryImages(
+        uploadResults.map((result, i) => ({
+          galleryId: categoryId,
+          folderId: newFolder.id,
+          fileName: result.fileName,
+          downloadUrl: result.downloadURL,
+          storagePath: `${storageFolderPath}/${result.fileName}`,
+          order: i,
+        }))
       );
 
       imageUploadDialogRef.current?.setAttachedFiles((prev) => {
         return prev.map((attachedFile) => {
           if (attachedFile.folderName === imageGroup.folderName) {
-            return {
-              ...attachedFile,
-              status: "uploaded" as const,
-            };
+            return { ...attachedFile, status: "uploaded" as const };
           }
           return attachedFile;
         });
@@ -157,12 +182,15 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
       imageGroups.length === 1
         ? `${imageGroups[0].folderName} 폴더에 ${imageGroups[0].files.length}개의 이미지를 업로드하였습니다.`
         : `${imageGroups.length}개의 폴더에 ${imageGroups.reduce(
-            (acc, imageGroup) => acc + imageGroup.files.length,
-            0
-          )}개의 이미지를 업로드하였습니다.`
+          (acc, imageGroup) => acc + imageGroup.files.length,
+          0
+        )}개의 이미지를 업로드하였습니다.`
     );
 
-    void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
+    // 확실한 갱신을 위해 파라미터 제외 최상위 key 그룹 전체를 무효화
+    void invalidateQuery(["galleries"]);
+    void invalidateQuery(["folders"]);
+    void invalidateQuery(["images"]);
   };
 
   return (
@@ -182,10 +210,10 @@ const AddImageFolderButton = ({ categoryName }: { categoryName: string }) => {
 };
 
 const AddImagesToFolderButton = ({
-  categoryName,
+  categoryId,
   imageFolderName,
 }: {
-  categoryName: string;
+  categoryId: string;
   imageFolderName: string;
 }) => {
   const imageUploadDialogRef = useImageUploadDialogRef();
@@ -199,9 +227,24 @@ const AddImagesToFolderButton = ({
       return;
     }
 
-    for (let index = 0; index < imageGroups.length; index++) {
-      const imageGroup = imageGroups[index];
+    // 기존 폴더의 folderId 조회
+    const folders = await getImageFolders(categoryId);
+    const targetFolder = folders.find((f) => f.name === decodeURIComponent(imageFolderName));
 
+    if (!targetFolder) {
+      toast("폴더를 찾을 수 없습니다.");
+      return;
+    }
+
+    const storageFolderPath = getUserStoragePath(
+      user,
+      `images/${categoryId}/${imageFolderName.trim()}`
+    );
+
+    // 기존 이미지 수를 order 시작값으로 사용
+    let orderOffset = targetFolder.imageCount;
+
+    for (const imageGroup of imageGroups) {
       imageUploadDialogRef.current?.setAttachedFiles((prev) => {
         return prev.map((attachedFile) => {
           if (attachedFile.folderName === imageGroup.folderName) {
@@ -211,13 +254,22 @@ const AddImagesToFolderButton = ({
         });
       });
 
-      await uploadImages(
-        getUserStoragePath(
-          user,
-          `images/${categoryName}/${imageFolderName.trim()}`
-        ),
-        imageGroup.files
+      // 1. Storage에 이미지 업로드
+      const uploadResults = await uploadImages(storageFolderPath, imageGroup.files);
+
+      // 2. Firestore에 이미지 메타데이터 저장
+      await createGalleryImages(
+        uploadResults.map((result, i) => ({
+          galleryId: categoryId,
+          folderId: targetFolder.id,
+          fileName: result.fileName,
+          downloadUrl: result.downloadURL,
+          storagePath: `${storageFolderPath}/${result.fileName}`,
+          order: orderOffset + i,
+        }))
       );
+
+      orderOffset += imageGroup.files.length;
 
       imageUploadDialogRef.current?.setAttachedFiles((prev) => {
         return prev.map((attachedFile) => {
@@ -240,7 +292,9 @@ const AddImagesToFolderButton = ({
       )}개의 이미지를 업로드하였습니다.`
     );
 
-    void invalidateQuery(getImagesQueryKey(categoryName, imageFolderName));
+    // 확실한 갱신을 위해 최상위 key 그룹 전체 무효화
+    void invalidateQuery(["folders"]);
+    void invalidateQuery(["images"]);
   };
 
   return (
@@ -266,8 +320,8 @@ type SelectionModeButtonProps = {
 const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
   const [, setIsSelectionMode] = useAtom(isSelectionModeAtom);
   const { data: user } = useUserQuery();
-  const { categoryName } = useParams() as {
-    categoryName?: string;
+  const { categoryId } = useParams() as {
+    categoryId?: string;
   };
 
   const [, setSelectedImages] = useAtom(selectedImagesAtom);
@@ -301,25 +355,21 @@ const TrashCanButton = ({ target }: SelectionModeButtonProps) => {
       paths: selectedFolderNames.map((name) =>
         getUserStoragePath(
           user,
-          categoryName ? `images/${categoryName}/${name}` : `images/${name}`
+          categoryId ? `images/${categoryId}/${name}` : `images/${name}`
         )
       ),
+      isImageFolder: !!categoryId,
+      galleryName: categoryId,
     });
 
     toast(`${selectedFolderNames.length}개의 폴더가 삭제되었습니다.`);
-
-    void invalidateQuery(getFolderNamesQueryKey());
-
-    if (categoryName) {
-      void invalidateQuery(getImageFolderNamesQueryKey(categoryName));
-    }
 
     setIsSelectionMode(false);
   };
 
   return (
-    <Badge 
-      variant={hasSelectedFolder ? "destructive" : "secondary"} 
+    <Badge
+      variant={hasSelectedFolder ? "destructive" : "secondary"}
       size="lg"
       className="cursor-pointer"
       onClick={handleXButtonClick}
@@ -388,14 +438,14 @@ const SelectionModeButton = () => {
 };
 
 const ImageCount = ({
-  categoryName,
+  categoryId,
   imageFolderName,
 }: {
-  categoryName: string;
+  categoryId: string;
   imageFolderName: string;
 }) => {
   const { data: images = [] } = useImagesQuery({
-    categoryName,
+    categoryId,
     folderName: imageFolderName,
   });
 
@@ -408,15 +458,15 @@ const ImageCount = ({
 
 const ItemCount = ({
   isSelectionMode,
-  categoryName,
+  categoryId,
   imageFolderName,
 }: {
   isSelectionMode: boolean;
-  categoryName: string;
+  categoryId: string;
   imageFolderName?: string;
 }) => {
   const { data: imageFolderNames = [] } = useImageFolderNamesQuery({
-    categoryName,
+    categoryId,
   });
 
   if (isSelectionMode) {
@@ -430,7 +480,7 @@ const ItemCount = ({
       </span>
       {imageFolderName && (
         <ImageCount
-          categoryName={categoryName}
+          categoryId={categoryId}
           imageFolderName={imageFolderName}
         />
       )}
@@ -446,10 +496,15 @@ export default function RootLayout({
   const router = useRouter();
   const isSelectionMode = useAtomValue(isSelectionModeAtom);
 
-  const { categoryName, imageFolderName } = useParams() as {
-    categoryName?: string;
+  const { categoryId, imageFolderName } = useParams() as {
+    categoryId?: string;
     imageFolderName?: string;
   };
+
+  // galleryId로 갤러리 이름 조회 (헤더 타이틀 표시용)
+  const { data: galleries = [] } = useGalleriesQuery();
+  const currentGallery = galleries.find((g) => g.id === categoryId);
+  const categoryName = currentGallery?.name;
 
   const getTitle = () => {
     if (isSelectionMode) {
@@ -458,25 +513,25 @@ export default function RootLayout({
     if (imageFolderName) {
       return decodeURIComponent(imageFolderName);
     }
-    return decodeURIComponent(categoryName ?? "갤러리");
+    return categoryName ?? "갤러리";
   };
 
   const renderLeftSlot = () => {
     if (isSelectionMode) {
       return (
         <TrashCanButton
-          target={imageFolderName && categoryName ? "images" : "folders"}
+          target={imageFolderName && categoryId ? "images" : "folders"}
         />
       );
     }
-    
+
     return (
       <div className="flex items-center gap-2">
         <span className="text-heading-5">{getTitle()}</span>
-        {categoryName && (
+        {categoryId && (
           <ItemCount
             isSelectionMode={isSelectionMode}
-            categoryName={categoryName}
+            categoryId={categoryId}
             imageFolderName={imageFolderName}
           />
         )}
@@ -488,19 +543,19 @@ export default function RootLayout({
     <div className="flex items-center gap-2">
       {isSelectionMode ? (
         <XButton
-          target={imageFolderName && categoryName ? "images" : "folders"}
+          target={imageFolderName && categoryId ? "images" : "folders"}
         />
       ) : (
         <SelectionModeButton />
       )}
 
-      {imageFolderName && categoryName ? (
+      {imageFolderName && categoryId ? (
         <AddImagesToFolderButton
-          categoryName={categoryName}
+          categoryId={categoryId}
           imageFolderName={imageFolderName}
         />
-      ) : categoryName ? (
-        <AddImageFolderButton categoryName={categoryName} />
+      ) : categoryId ? (
+        <AddImageFolderButton categoryId={categoryId} categoryName={categoryName ?? ""} />
       ) : (
         <AddFolderButton />
       )}

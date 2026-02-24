@@ -39,11 +39,11 @@ const BackgroundGallery = forwardRef<
   BackgroundGalleryHandle,
   BackgroundGalleryProps
 >(({ className }, ref) => {
-  const categoryName = useAtomValue(categoryNameAtom);
+  const categoryId = useAtomValue(categoryNameAtom);
   const [folderName, setFolderName] = useAtom(folderNameAtom);
 
   const { data: imageFolderNames = [] } = useImageFolderNamesQuery({
-    categoryName,
+    categoryId,
   });
 
   const nextImageUrlIndexRef = useRef<number>();
@@ -52,9 +52,8 @@ const BackgroundGallery = forwardRef<
 
   const setBookMarks = useSetAtom(bookMarksAtom);
 
-  // TODO : decodeURIComponent 제거
   const { data: imageUrls = [] } = useImagesQuery({
-    categoryName: decodeURIComponent(categoryName ?? ""),
+    categoryId: categoryId ?? null,
     folderName: decodeURIComponent(folderName ?? ""),
   });
 
@@ -183,7 +182,7 @@ const BackgroundGallery = forwardRef<
   }, [imageUrls.length, setPrevImageUrlIndex, setNextImageUrlIndex]);
 
   useEffect(() => {
-    if (categoryName == null || folderName == null) {
+    if (categoryId == null || folderName == null) {
       return;
     }
 
@@ -192,7 +191,7 @@ const BackgroundGallery = forwardRef<
 
       const targetBookMark = newBookMarks.find(
         (bookMark) =>
-          bookMark.categoryName === categoryName &&
+          bookMark.categoryName === categoryId &&
           bookMark.folderName === folderName
       );
 
@@ -200,7 +199,7 @@ const BackgroundGallery = forwardRef<
         targetBookMark.imageUrlIndex = imageUrlIndex;
       } else {
         newBookMarks.push({
-          categoryName,
+          categoryName: categoryId,
           folderName,
           imageUrlIndex,
         });

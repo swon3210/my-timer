@@ -25,7 +25,7 @@ const gridOptions = [
 export default function ImageFolderPage({
   params,
 }: {
-  params: { categoryName: string; imageFolderName: string };
+  params: { categoryId: string; imageFolderName: string };
 }) {
   const [imageSliceIndex, setImageSliceIndex] = useState(1);
 
@@ -39,9 +39,8 @@ export default function ImageFolderPage({
     gridLayoutColumnNumberAtom
   );
 
-  // TODO : decodeURIComponent 제거
   const { data: imageUrls = [] } = useImagesQuery({
-    categoryName: decodeURIComponent(params.categoryName),
+    categoryId: params.categoryId,
     folderName: decodeURIComponent(params.imageFolderName),
   });
 
@@ -52,7 +51,7 @@ export default function ImageFolderPage({
   };
 
   const handleImageClick = (index: number) => {
-    setCategoryName(params.categoryName);
+    setCategoryName(params.categoryId);
     setFolderName(params.imageFolderName);
     setImageUrlIndex(index);
     router.push(`/gallery-timer`);

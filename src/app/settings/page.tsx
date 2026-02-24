@@ -25,9 +25,12 @@ export default function SettingsPage() {
 
   return (
     <main className="h-full flex flex-col justify-between">
-      <SSRSafeSuspense fallback={<div>Loading...</div>}>
-        <SettingsForm />
-      </SSRSafeSuspense>
+      <div className="flex-1 overflow-auto">
+        <SSRSafeSuspense fallback={<div>Loading...</div>}>
+          <SettingsForm />
+        </SSRSafeSuspense>
+      </div>
+
       <footer className="sticky bottom-0 z-10 bg-background border-t p-4">
         <Button
           variant="destructive"

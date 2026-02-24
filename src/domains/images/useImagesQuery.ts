@@ -1,44 +1,42 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  getImageListFromFolder,
-  getUserStoragePath,
-} from "@/lib/firebase";
 import { useUserQuery } from "@/domains/users/useUserQuery";
+import { getImagesByFolderName } from "@/domains/gallery/fetchers";
 
 export const getImagesQueryKey = (
-  categoryName: string | null,
+  categoryId: string | null,
   folderName: string | null
-) => ["images", { categoryName, folderName }] as const;
+) => ["images", { categoryId, folderName }] as const;
 
+/**
+ * 특정 폴더의 이미지 URL 목록을 조회합니다.
+ * Firestore에서 조회합니다.
+ */
 const useImagesQuery = ({
-  categoryName,
+  categoryId,
   folderName,
 }: {
-  categoryName: string | null;
+  categoryId: string | null;
   folderName: string | null;
 }) => {
   const { data: user } = useUserQuery();
 
   return useQuery({
-    queryKey: getImagesQueryKey(categoryName, folderName),
+    queryKey: getImagesQueryKey(categoryId, folderName),
     queryFn: async () => {
-      if (categoryName == null || folderName == null) {
-        throw new Error("categoryName 혹은 folderName 이 비어있습니다");
+      if (categoryId == null || folderName == null) {
+        throw new Error("categoryId 혹은 folderName 이 비어있습니다");
       }
 
-      if (!user) {
-        throw new Error("유저 정보가 없습니다");
-      }
+      // TODO: galleryId + folderName 기반 직접 조회로 추후 개선 가능
+      const images = await getImagesByFolderName(
+        categoryId,
+        decodeURIComponent(folderName)
+      );
 
-      const path = `images/${categoryName}/${folderName}`;
-
-      const userStoragePath = getUserStoragePath(user, decodeURIComponent(path));
-
-      const images = await getImageListFromFolder(userStoragePath);
-
-      return images ?? [];
+      // 기존 API 호환성 유지: downloadUrl 배열 반환
+      return images.map((image) => image.downloadUrl);
     },
-    enabled: categoryName != null && folderName != null && !!user,
+    enabled: categoryId != null && folderName != null && !!user,
     initialData: [],
   });
 };

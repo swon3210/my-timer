@@ -18,12 +18,12 @@ const FolderSwitchButtons = ({
   onFolderSwitch,
   className,
 }: FolderSwitchButtonsProps) => {
-  const categoryName = useAtomValue(categoryNameAtom);
+  const categoryId = useAtomValue(categoryNameAtom);
   const [folderName, setFolderName] = useAtom(folderNameAtom);
   const [, setImageUrlIndex] = useAtom(imageUrlIndexAtom);
 
   const { data: folderNames } = useImageFolderNamesQuery({
-    categoryName,
+    categoryId,
   });
 
   const handleFolderSwitch = (direction: "prev" | "next") => {

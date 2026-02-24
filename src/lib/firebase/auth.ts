@@ -3,9 +3,12 @@ import {
   getAuth,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import firebaseApp from ".";
+import firebaseApp, { firestoreApp } from ".";
 
 export const auth = getAuth(firebaseApp);
+
+/** Firestore 전용 프로젝트의 Auth (dual sign-in용) */
+export const firestoreAuth = getAuth(firestoreApp);
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -21,6 +24,29 @@ export const getRefreshToken = async () => {
   }
 };
 
+/** Firestore 프로젝트에 사용자 생성 또는 로그인 */
+async function ensureFirestoreUser(email: string, password: string) {
+  try {
+    const { user } = await signInWithEmailAndPassword(
+      firestoreAuth,
+      email,
+      password
+    );
+    return user;
+  } catch (error: unknown) {
+    const err = error as { code?: string };
+    if (err?.code === "auth/user-not-found") {
+      const { user } = await createUserWithEmailAndPassword(
+        firestoreAuth,
+        email,
+        password
+      );
+      return user;
+    }
+    throw error;
+  }
+}
+
 export const signUpByFirebase = async ({
   email,
   password,
@@ -34,6 +60,7 @@ export const signUpByFirebase = async ({
       email,
       password
     );
+    await createUserWithEmailAndPassword(firestoreAuth, email, password);
     return user;
   } catch (error) {
     console.error("회원가입 실패:", error);
@@ -41,7 +68,7 @@ export const signUpByFirebase = async ({
   }
 };
 
-// 로그인 함수
+// 로그인 함수 (메인 앱 + Firestore 앱 dual sign-in)
 export const signInByFirebase = async ({
   email,
   password,
@@ -51,6 +78,7 @@ export const signInByFirebase = async ({
 }) => {
   try {
     const { user } = await signInWithEmailAndPassword(auth, email, password);
+    await ensureFirestoreUser(email, password);
     return user;
   } catch (error) {
     console.error("로그인 실패:", error);
@@ -58,18 +86,53 @@ export const signInByFirebase = async ({
   }
 };
 
+let userPromiseCache: Promise<typeof auth.currentUser> | null = null;
+
 export const getCurrentUser = (): Promise<typeof auth.currentUser> => {
-  return new Promise((resolve, reject) => {
+  if (auth.currentUser) {
+    return Promise.resolve(auth.currentUser);
+  }
+  if (userPromiseCache) {
+    return userPromiseCache;
+  }
+  userPromiseCache = new Promise((resolve, reject) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       unsubscribe();
+      userPromiseCache = null;
       resolve(user);
     }, reject);
   });
+  return userPromiseCache;
+};
+
+let firestoreUserPromiseCache: Promise<
+  (typeof firestoreAuth)["currentUser"]
+> | null = null;
+
+/** Firestore 전용 프로젝트의 현재 사용자 (갤러리 등 Firestore 작업용) */
+export const getCurrentFirestoreUser = (): Promise<
+  (typeof firestoreAuth)["currentUser"]
+> => {
+  if (firestoreAuth.currentUser) {
+    return Promise.resolve(firestoreAuth.currentUser);
+  }
+  if (firestoreUserPromiseCache) {
+    return firestoreUserPromiseCache;
+  }
+  firestoreUserPromiseCache = new Promise((resolve, reject) => {
+    const unsubscribe = firestoreAuth.onAuthStateChanged((user) => {
+      unsubscribe();
+      firestoreUserPromiseCache = null;
+      resolve(user);
+    }, reject);
+  });
+  return firestoreUserPromiseCache;
 };
 
 export const signOutByFirebase = async () => {
   try {
     await auth.signOut();
+    await firestoreAuth.signOut();
   } catch (error) {
     console.error("로그아웃 실패:", error);
     throw error;

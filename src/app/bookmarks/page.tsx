@@ -20,7 +20,7 @@ const BookMarkItem = ({ bookMark }: { bookMark: BookMark }) => {
   const setImageUrlIndex = useSetAtom(imageUrlIndexAtom);
 
   const { data: imageUrls = [] } = useImagesQuery({
-    categoryName: decodeURIComponent(bookMark.categoryName ?? ""),
+    categoryId: decodeURIComponent(bookMark.categoryName ?? ""),
     folderName: decodeURIComponent(bookMark.folderName ?? ""),
   });
 
