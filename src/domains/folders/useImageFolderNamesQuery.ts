@@ -15,7 +15,6 @@ const useImageFolderNamesQuery = ({
   categoryId: string | null;
 }) => {
   const { data: user } = useUserQuery();
-  //
   return useQuery({
     queryKey: getImageFolderNamesQueryKey(categoryId),
     queryFn: () => {
